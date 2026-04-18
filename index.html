@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>🌟 Bé Học Tư Duy – Menu Chính</title>
+<title>🌟 Bé Học Tư Duy</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -13,87 +13,80 @@
   --sh:0 4px 20px rgba(0,0,0,.09);--r:18px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-html,body{min-height:100%;background:var(--bg);font-family:'Nunito',system-ui,sans-serif;color:var(--tx);}
+html,body{min-height:100%;background:var(--bg);font-family:'Nunito',system-ui,sans-serif;color:var(--tx);
+  -webkit-text-size-adjust:100%;}
 body{background:radial-gradient(ellipse at 20% 10%,#FFF0E6,#FEF9F0 50%,#EBF5FF);}
 
 .page{max-width:640px;margin:0 auto;padding:1.5rem 1rem 2.5rem;}
 
-/* HERO */
-.hero{text-align:center;margin-bottom:1.6rem;}
-.hero .emo{font-size:3.4rem;line-height:1;display:block;margin-bottom:8px;}
-.hero h1{font-size:2rem;font-weight:900;color:#FF6B35;letter-spacing:-.5px;}
-.hero p{font-size:.85rem;color:var(--tx2);margin-top:5px;font-weight:600;}
+.hero{text-align:center;margin-bottom:1.5rem;}
+.hero .emo{font-size:3.2rem;line-height:1;display:block;margin-bottom:8px;}
+.hero h1{font-size:1.9rem;font-weight:900;color:#FF6B35;letter-spacing:-.5px;}
+.hero p{font-size:.84rem;color:var(--tx2);margin-top:5px;font-weight:600;}
 
-/* STATS BAR */
-.stats-bar{display:flex;gap:10px;margin-bottom:1.4rem;}
-.stat-chip{flex:1;background:var(--card);border-radius:14px;padding:10px 8px;text-align:center;
-  box-shadow:var(--sh);}
+.stats-bar{display:flex;gap:10px;margin-bottom:1.3rem;}
+.stat-chip{flex:1;background:var(--card);border-radius:14px;padding:10px 8px;text-align:center;box-shadow:var(--sh);}
 .stat-chip .sv{font-size:1.5rem;font-weight:900;color:#FF6B35;}
-.stat-chip .sl{font-size:.65rem;font-weight:700;color:var(--tx2);margin-top:1px;}
+.stat-chip .sl{font-size:.62rem;font-weight:700;color:var(--tx2);margin-top:1px;}
 
-/* HOW TO */
 .howto{background:var(--card);border-radius:var(--r);padding:.9rem 1.1rem;
-  box-shadow:var(--sh);border-left:5px solid #44BE5A;margin-bottom:1.5rem;}
+  box-shadow:var(--sh);border-left:5px solid #44BE5A;margin-bottom:1.4rem;}
 .howto h4{font-size:.8rem;font-weight:800;color:#2A9440;margin-bottom:.4rem;}
-.howto ol{padding-left:1rem;}
+.howto ol{padding-left:1.1rem;}
 .howto li{font-size:.72rem;color:var(--tx2);font-weight:600;line-height:1.7;}
-.howto code{background:#f0f4f8;border-radius:5px;padding:0 5px;font-size:.7rem;color:#333;}
+.howto code{background:#f0f4f8;border-radius:5px;padding:1px 5px;font-size:.68rem;color:#333;}
 
-/* SECTION */
-.section{margin-bottom:1.5rem;}
-.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.7rem;}
-.section-title{font-size:.72rem;font-weight:800;color:var(--tx2);text-transform:uppercase;
-  letter-spacing:1px;padding-left:2px;}
-.section-count{font-size:.65rem;font-weight:800;color:#bbb;background:#f5f5f5;
-  padding:2px 8px;border-radius:10px;}
+.section{margin-bottom:1.4rem;}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.65rem;}
+.section-title{font-size:.7rem;font-weight:800;color:var(--tx2);text-transform:uppercase;letter-spacing:1px;padding-left:2px;}
+.section-count{font-size:.62rem;font-weight:800;color:#bbb;background:#f5f5f5;padding:2px 8px;border-radius:10px;}
 
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 
-/* GAME CARD */
-.gc{background:var(--card);border-radius:var(--r);padding:1rem .9rem;
+/* ---- GAME CARD ---- */
+/* Dùng div + onclick thay vì <a href> để tránh lỗi Safari iPad */
+.gc{
+  background:var(--card);border-radius:var(--r);padding:1rem .9rem;
   display:flex;align-items:center;gap:11px;
-  box-shadow:var(--sh);cursor:pointer;
+  box-shadow:var(--sh);
   border-left:5px solid transparent;
-  text-decoration:none;color:inherit;
-  transition:transform .1s,box-shadow .1s;
+  cursor:pointer;
   -webkit-user-select:none;user-select:none;
-  position:relative;overflow:hidden;}
-.gc::after{content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,rgba(255,255,255,.06),transparent);pointer-events:none;}
+  touch-action:manipulation;
+  -webkit-touch-callout:none;
+  transition:transform .12s,box-shadow .12s;
+  position:relative;overflow:hidden;
+}
 .gc:active{transform:scale(.95);box-shadow:0 2px 8px rgba(0,0,0,.07);}
-.gc .ico{font-size:2rem;flex-shrink:0;width:42px;text-align:center;line-height:1;}
+.gc .ico{font-size:1.9rem;flex-shrink:0;width:40px;text-align:center;line-height:1;}
 .gc .info{flex:1;min-width:0;}
-.gc .info h3{font-size:.88rem;font-weight:800;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.gc .info p{font-size:.65rem;color:var(--tx2);font-weight:600;line-height:1.3;}
-.gc .arr{font-size:.85rem;color:#ccc;margin-left:4px;flex-shrink:0;}
+.gc .info h3{font-size:.86rem;font-weight:800;margin-bottom:2px;line-height:1.2;}
+.gc .info p{font-size:.63rem;color:var(--tx2);font-weight:600;line-height:1.3;}
+.gc .arr{font-size:.9rem;color:#ccc;margin-left:4px;flex-shrink:0;}
 
-/* BADGES */
-.badge{display:inline-block;font-size:.58rem;font-weight:800;padding:2px 6px;border-radius:7px;margin-top:3px;}
+.badge{display:inline-block;font-size:.56rem;font-weight:800;padding:2px 6px;border-radius:7px;margin-top:3px;}
 .new{background:#D6EAFF;color:#0C447C;}
 .hot{background:#FFE5D8;color:#C94A18;}
 .duo{background:#EAD9FF;color:#6636C0;}
+.nat{background:#D6F5DC;color:#2A9440;}
 
-/* COLORS — border-left */
-.c1{border-color:#FF6B35;} .c2{border-color:#3A8EE6;} .c3{border-color:#44BE5A;}
-.c4{border-color:#8B52E8;} .c5{border-color:#E8A020;} .c6{border-color:#E84444;}
-.c7{border-color:#0F6E56;} .c8{border-color:#D85A30;} .c9{border-color:#38BDF8;}
+/* border colours */
+.c1{border-color:#FF6B35;}.c2{border-color:#3A8EE6;}.c3{border-color:#44BE5A;}
+.c4{border-color:#8B52E8;}.c5{border-color:#E8A020;}.c6{border-color:#E84444;}
+.c7{border-color:#0F6E56;}.c8{border-color:#D85A30;}.c9{border-color:#38BDF8;}
 .c10{border-color:#C084FC;}.c11{border-color:#F472B6;}.c12{border-color:#2DD4BF;}
 
-/* COMING SOON card */
-.gc-soon{opacity:.42;cursor:default;pointer-events:none;}
-
-/* FILE TABLE */
+/* file table */
 .file-table{background:var(--card);border-radius:var(--r);padding:.9rem 1.1rem;
-  box-shadow:var(--sh);margin-bottom:1.5rem;}
+  box-shadow:var(--sh);margin-bottom:1.4rem;}
 .file-table h4{font-size:.78rem;font-weight:800;color:var(--tx);margin-bottom:.6rem;}
-.ft-row{display:flex;align-items:center;gap:10px;padding:5px 0;
-  border-bottom:1px solid #f3f3f3;font-size:.7rem;font-weight:600;color:var(--tx2);}
+.ft-row{display:flex;align-items:center;gap:9px;padding:5px 0;
+  border-bottom:1px solid #f3f3f3;font-size:.68rem;font-weight:600;color:var(--tx2);}
 .ft-row:last-child{border-bottom:none;}
-.ft-row .fn{color:#3A8EE6;font-family:monospace;font-size:.68rem;flex:1;}
-.ft-row .fg{font-size:.82rem;}
+.ft-row .fn{color:#3A8EE6;font-family:monospace;font-size:.66rem;flex:1;}
+.ft-row .fg{font-size:.82rem;flex-shrink:0;width:20px;text-align:center;}
 
-/* FOOTER */
-.footer{text-align:center;font-size:.7rem;color:var(--tx2);font-weight:600;padding-top:.5rem;}
+.footer{text-align:center;font-size:.68rem;color:var(--tx2);font-weight:600;padding-top:.5rem;}
 </style>
 </head>
 <body>
@@ -102,169 +95,182 @@ body{background:radial-gradient(ellipse at 20% 10%,#FFF0E6,#FEF9F0 50%,#EBF5FF);
   <div class="hero">
     <span class="emo">🌟</span>
     <h1>Bé Học Tư Duy</h1>
-    <p>15 game · Chạy offline · Tối ưu iPad &amp; Safari</p>
+    <p>15 game · Không cần internet · Tối ưu iPad</p>
   </div>
 
-  <!-- STATS -->
   <div class="stats-bar">
     <div class="stat-chip"><div class="sv">15</div><div class="sl">Tổng game</div></div>
-    <div class="stat-chip"><div class="sv">7</div><div class="sl">Chủ đề</div></div>
+    <div class="stat-chip"><div class="sv">4</div><div class="sl">Chủ đề</div></div>
     <div class="stat-chip"><div class="sv">100%</div><div class="sl">Offline</div></div>
   </div>
 
-  <!-- HOW TO -->
   <div class="howto">
-    <h4>📂 Cách dùng trên iPad</h4>
+    <h4>📱 Cách dùng trên iPad / iPhone</h4>
     <ol>
-      <li>Tải toàn bộ file <code>.html</code> vào <strong>cùng 1 thư mục</strong></li>
-      <li>Mở <code>index.html</code> bằng <strong>Safari</strong> — bấm vào game bất kỳ</li>
-      <li>Bấm <strong>◂ Về</strong> trong game để quay về menu này</li>
-      <li>Không cần wifi — tất cả chạy hoàn toàn offline!</li>
+      <li>Mở link này bằng <strong>Safari</strong> trên iPad</li>
+      <li>Bấm vào game bất kỳ để bắt đầu chơi</li>
+      <li>Bấm <strong>◂</strong> trong game để quay về menu</li>
+      <li>Thêm vào màn hình chính: bấm <strong>Chia sẻ → Thêm vào màn hình chính</strong></li>
     </ol>
   </div>
 
-  <!-- ===== NHÓM 1: SỐ HỌC ===== -->
+  <!-- ===== SỐ HỌC ===== -->
   <div class="section">
     <div class="section-header">
       <div class="section-title">🔢 Số học &amp; Toán cơ bản</div>
-      <div class="section-count">6 game</div>
+      <div class="section-count">6 game · 1 file</div>
     </div>
     <div class="grid">
-      <a class="gc c1" href="be-hoc-toan-v2.html">
+
+      <div class="gc c1" onclick="go('be-hoc-toan-v2.html')">
         <div class="ico">🖐️</div>
         <div class="info"><h3>Tách Số</h3><p>Kéo thả hình vào nhóm</p><span class="badge hot">Kéo thả</span></div>
         <span class="arr">›</span>
-      </a>
-      <a class="gc c2" href="be-hoc-toan-v2.html">
+      </div>
+
+      <div class="gc c2" onclick="go('be-hoc-toan-v2.html')">
         <div class="ico">➕</div>
         <div class="info"><h3>Gộp Số</h3><p>Tìm tổng hai nhóm hình</p></div>
         <span class="arr">›</span>
-      </a>
-      <a class="gc c3" href="be-hoc-toan-v2.html">
+      </div>
+
+      <div class="gc c3" onclick="go('be-hoc-toan-v2.html')">
         <div class="ico">🔗</div>
         <div class="info"><h3>Nối Số</h3><p>Chọn cặp tách đúng</p></div>
         <span class="arr">›</span>
-      </a>
-      <a class="gc c4" href="be-hoc-toan-v2.html">
+      </div>
+
+      <div class="gc c4" onclick="go('be-hoc-toan-v2.html')">
         <div class="ico">🗂️</div>
         <div class="info"><h3>Đếm &amp; Xếp</h3><p>Chia hình vào nhóm</p><span class="badge hot">Kéo thả</span></div>
         <span class="arr">›</span>
-      </a>
-      <a class="gc c5" href="be-hoc-toan-v2.html">
+      </div>
+
+      <div class="gc c5" onclick="go('be-hoc-toan-v2.html')">
         <div class="ico">⚖️</div>
         <div class="info"><h3>So Sánh Số</h3><p>Điền dấu &gt; &lt; =</p></div>
         <span class="arr">›</span>
-      </a>
-      <a class="gc c6" href="be-hoc-toan-v2.html">
+      </div>
+
+      <div class="gc c6" onclick="go('be-hoc-toan-v2.html')">
         <div class="ico">🧮</div>
         <div class="info"><h3>Cộng &amp; Trừ</h3><p>Phạm vi 10 và 20</p></div>
         <span class="arr">›</span>
-      </a>
+      </div>
+
     </div>
-    <p style="font-size:.65rem;color:#bbb;font-weight:600;text-align:right;margin-top:5px;padding-right:2px;">
-      📄 File: <code style="font-size:.62rem;color:#3A8EE6">be-hoc-toan-v2.html</code>
-    </p>
   </div>
 
-  <!-- ===== NHÓM 2: TƯ DUY LOGIC ===== -->
+  <!-- ===== TƯ DUY LOGIC ===== -->
   <div class="section">
     <div class="section-header">
       <div class="section-title">🔮 Tư duy logic &amp; Quy luật</div>
-      <div class="section-count">4 game</div>
+      <div class="section-count">4 game · 4 file</div>
     </div>
     <div class="grid">
-      <a class="gc c9" href="quy-luat.html">
+
+      <div class="gc c9" onclick="go('quy-luat.html')">
         <div class="ico">🔁</div>
-        <div class="info"><h3>Tìm Quy Luật</h3><p>Tiếp tục dãy hình màu sắc</p></div>
+        <div class="info"><h3>Tìm Quy Luật</h3><p>Tiếp tục dãy hình màu</p></div>
         <span class="arr">›</span>
-      </a>
-      <a class="gc c10" href="ma-tran.html">
+      </div>
+
+      <div class="gc c10" onclick="go('ma-tran.html')">
         <div class="ico">🎭</div>
         <div class="info"><h3>Ma Trận 3×3</h3><p>Tìm hình còn thiếu</p></div>
         <span class="arr">›</span>
-      </a>
-      <a class="gc c4" href="tim-khac.html">
+      </div>
+
+      <div class="gc c4" onclick="go('tim-khac.html')">
         <div class="ico">🔍</div>
         <div class="info"><h3>Tìm Vật Khác</h3><p>Odd one out – 6 chủ đề</p></div>
         <span class="arr">›</span>
-      </a>
-      <a class="gc c8" href="suy-luan.html">
+      </div>
+
+      <div class="gc c8" onclick="go('suy-luan.html')">
         <div class="ico">🧠</div>
         <div class="info"><h3>Suy Luận Nhân Quả</h3><p>Nếu... thì điều gì xảy ra?</p></div>
         <span class="arr">›</span>
-      </a>
+      </div>
+
     </div>
   </div>
 
-  <!-- ===== NHÓM 3: KHÔNG GIAN ===== -->
+  <!-- ===== KHÔNG GIAN ===== -->
   <div class="section">
     <div class="section-header">
       <div class="section-title">🧩 Không gian &amp; Hình học</div>
-      <div class="section-count">3 game</div>
+      <div class="section-count">3 game · 3 file</div>
     </div>
     <div class="grid">
-      <a class="gc c9" href="xoay-hinh.html">
+
+      <div class="gc c9" onclick="go('xoay-hinh.html')">
         <div class="ico">🔄</div>
         <div class="info"><h3>Xoay Hình</h3><p>Nhận dạng hình sau khi xoay</p><span class="badge duo">2 chế độ</span></div>
         <span class="arr">›</span>
-      </a>
-      <a class="gc c10" href="doi-xung.html">
+      </div>
+
+      <div class="gc c10" onclick="go('doi-xung.html')">
         <div class="ico">🪞</div>
         <div class="info"><h3>Hình Đối Xứng</h3><p>Tìm &amp; vẽ nửa gương</p><span class="badge duo">2 chế độ</span></div>
         <span class="arr">›</span>
-      </a>
-      <a class="gc c3" href="me-cung.html">
+      </div>
+
+      <div class="gc c3" onclick="go('me-cung.html')">
         <div class="ico">🗺️</div>
         <div class="info"><h3>Mê Cung Định Hướng</h3><p>Trái phải trên dưới</p><span class="badge duo">2 chế độ</span></div>
         <span class="arr">›</span>
-      </a>
+      </div>
+
     </div>
   </div>
 
-  <!-- ===== NHÓM 4: THIÊN NHIÊN ===== -->
+  <!-- ===== THIÊN NHIÊN ===== -->
   <div class="section">
     <div class="section-header">
       <div class="section-title">🌿 Thiên nhiên &amp; Thế giới</div>
-      <div class="section-count">2 game</div>
+      <div class="section-count">2 game · 2 file</div>
     </div>
     <div class="grid">
-      <a class="gc c7" href="thoi-tiet.html">
+
+      <div class="gc c7" onclick="go('thoi-tiet.html')">
         <div class="ico">🌤️</div>
         <div class="info"><h3>Thời Tiết &amp; Mùa</h3><p>Ghép trang phục + xếp 4 mùa</p><span class="badge duo">2 chế độ</span></div>
         <span class="arr">›</span>
-      </a>
-      <a class="gc c3" href="tim-khac.html">
+      </div>
+
+      <div class="gc c3" onclick="go('tim-khac.html')">
         <div class="ico">🐾</div>
-        <div class="info"><h3>Phân Loại Sinh Vật</h3><p>Động vật · Thực phẩm · Thiên nhiên</p></div>
+        <div class="info"><h3>Phân Loại Sinh Vật</h3><p>Động vật · Thực phẩm · Thiên nhiên</p><span class="badge nat">6 chủ đề</span></div>
         <span class="arr">›</span>
-      </a>
+      </div>
+
     </div>
   </div>
 
-  <!-- ===== DANH SÁCH FILE ===== -->
+  <!-- FILE TABLE -->
   <div class="file-table">
-    <h4>📁 Danh sách tất cả file cần có trong thư mục</h4>
+    <h4>📁 Danh sách file trong repo GitHub</h4>
     <div class="ft-row"><span class="fg">🌟</span><span class="fn">index.html</span><span>Menu chính (file này)</span></div>
-    <div class="ft-row"><span class="fg">🔢</span><span class="fn">be-hoc-toan-v2.html</span><span>6 game số học (tách, gộp, nối, xếp, so sánh, cộng trừ)</span></div>
-    <div class="ft-row"><span class="fg">🔁</span><span class="fn">quy-luat.html</span><span>Tìm quy luật – tiếp tục dãy hình màu</span></div>
-    <div class="ft-row"><span class="fg">🎭</span><span class="fn">ma-tran.html</span><span>Ma trận 3×3 – tìm hình còn thiếu</span></div>
-    <div class="ft-row"><span class="fg">🔍</span><span class="fn">tim-khac.html</span><span>Tìm vật khác – odd one out 6 chủ đề</span></div>
-    <div class="ft-row"><span class="fg">🧠</span><span class="fn">suy-luan.html</span><span>Suy luận nhân quả – nếu... thì...</span></div>
-    <div class="ft-row"><span class="fg">🌤️</span><span class="fn">thoi-tiet.html</span><span>Thời tiết &amp; mùa – ghép trang phục + xếp 4 mùa</span></div>
-    <div class="ft-row"><span class="fg">🔄</span><span class="fn">xoay-hinh.html</span><span>Xoay hình – nhận dạng &amp; xoay đến vị trí đúng</span></div>
-    <div class="ft-row"><span class="fg">🪞</span><span class="fn">doi-xung.html</span><span>Hình đối xứng – tìm &amp; vẽ nửa gương</span></div>
-    <div class="ft-row"><span class="fg">🗺️</span><span class="fn">me-cung.html</span><span>Mê cung – điều hướng &amp; đọc bản đồ</span></div>
+    <div class="ft-row"><span class="fg">🔢</span><span class="fn">be-hoc-toan-v2.html</span><span>6 game số học</span></div>
+    <div class="ft-row"><span class="fg">🔁</span><span class="fn">quy-luat.html</span><span>Tìm quy luật dãy hình</span></div>
+    <div class="ft-row"><span class="fg">🎭</span><span class="fn">ma-tran.html</span><span>Ma trận 3×3</span></div>
+    <div class="ft-row"><span class="fg">🔍</span><span class="fn">tim-khac.html</span><span>Tìm vật khác nhau</span></div>
+    <div class="ft-row"><span class="fg">🧠</span><span class="fn">suy-luan.html</span><span>Suy luận nhân quả</span></div>
+    <div class="ft-row"><span class="fg">🌤️</span><span class="fn">thoi-tiet.html</span><span>Thời tiết &amp; mùa</span></div>
+    <div class="ft-row"><span class="fg">🔄</span><span class="fn">xoay-hinh.html</span><span>Xoay hình nhận dạng</span></div>
+    <div class="ft-row"><span class="fg">🪞</span><span class="fn">doi-xung.html</span><span>Hình đối xứng gương</span></div>
+    <div class="ft-row"><span class="fg">🗺️</span><span class="fn">me-cung.html</span><span>Mê cung định hướng</span></div>
   </div>
 
   <div class="footer">✨ 15 game · 10 file HTML · Chạy hoàn toàn offline · Không quảng cáo</div>
 </div>
 
 <script>
-document.querySelectorAll('a.gc').forEach(a=>{
-  a.addEventListener('click',e=>{
-    try{sessionStorage.setItem('homeURL',location.href);}catch(err){}
-  });
-});
+// Dùng window.location.href thay vì <a href> để đảm bảo hoạt động trên Safari iPad
+function go(url) {
+  window.location.href = url;
+}
 </script>
 </body>
 </html>
