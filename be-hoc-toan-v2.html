@@ -668,8 +668,8 @@ function chkG6(){
   stars('g6-stars',ok);updSc(6,ok);$('g6-chk').style.display='none';$('g6-nxt').style.display='block';
 }
 
-/* prevent iOS double-tap zoom */
-document.querySelectorAll('button,.gc,.m-opt').forEach(el=>{
+/* prevent iOS double-tap zoom — chỉ apply cho button, KHÔNG apply cho .gc để tránh block onclick trên iPad */
+document.querySelectorAll('button,.m-opt').forEach(el=>{
   el.addEventListener('touchend',e=>e.preventDefault(),{passive:false});
 });
 </script>
