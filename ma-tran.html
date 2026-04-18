@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>🎭 Ma Trận 3×3</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0A0E1A;--panel:#111827;--card:#1C2537;--card2:#243049;
+  --y:#F9C74F;--g:#90BE6D;--b:#4CC9F0;--p:#C77DFF;--o:#F8961E;--pk:#F72585;--tl:#43AA8B;--r:#FF6B6B;
+  --white:#E8EDF5;--muted:#5A6A82;
+  --rad:20px;--radsm:13px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none;}
+html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Nunito',system-ui,sans-serif;color:var(--white);}
+
+/* aurora bg */
+body::before{content:'';position:fixed;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 60% 40% at 20% 0%,rgba(76,201,240,.08),transparent),
+             radial-gradient(ellipse 50% 35% at 80% 100%,rgba(199,125,255,.07),transparent);}
+
+.scr{display:none;position:fixed;inset:0;flex-direction:column;align-items:center;}
+.scr.on{display:flex;}
+
+/* ====== START ====== */
+#start{justify-content:center;gap:1.5rem;padding:2rem 1.4rem;}
+.s-logo{width:110px;height:110px;border-radius:24px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;padding:10px;
+  background:linear-gradient(135deg,var(--b),var(--p));box-shadow:0 0 50px rgba(76,201,240,.35);
+  animation:logoFloat 3s ease-in-out infinite;}
+@keyframes logoFloat{0%,100%{transform:translateY(0) rotate(-2deg);}50%{transform:translateY(-10px) rotate(2deg);}};
+.s-logo div{border-radius:5px;background:rgba(255,255,255,.25);}
+.s-logo div:nth-child(9){background:rgba(255,255,255,.08);border:2px dashed rgba(255,255,255,.5);}
+.s-title h1{font-size:2.2rem;font-weight:900;text-align:center;
+  background:linear-gradient(135deg,var(--b),var(--p));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.s-title p{text-align:center;font-size:.92rem;color:var(--muted);margin-top:5px;font-weight:700;}
+.diff-wrap{display:flex;flex-direction:column;gap:8px;width:100%;max-width:360px;}
+.diff-row-label{font-size:.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+.diff-pills{display:flex;gap:8px;}
+.dpill{flex:1;padding:10px 8px;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;
+  border-radius:30px;border:2px solid rgba(255,255,255,.1);background:rgba(255,255,255,.06);
+  color:var(--white);cursor:pointer;text-align:center;transition:all .15s;}
+.dpill.on{border-color:var(--b);background:rgba(76,201,240,.15);color:var(--b);}
+.dpill:active{transform:scale(.94);}
+.go-btn{padding:17px 54px;font-family:'Nunito',sans-serif;font-size:1.2rem;font-weight:900;
+  border:none;border-radius:40px;background:linear-gradient(135deg,var(--b),var(--p));
+  color:#fff;cursor:pointer;box-shadow:0 8px 28px rgba(76,201,240,.4);transition:transform .12s;}
+.go-btn:active{transform:scale(.94);}
+
+/* ====== GAME ====== */
+#game{justify-content:space-between;padding:0;}
+
+.hud{width:100%;display:flex;align-items:center;gap:10px;padding:.8rem 1.2rem .35rem;flex-shrink:0;}
+.btn-back{font-size:1.2rem;background:rgba(255,255,255,.08);border:none;border-radius:11px;
+  padding:6px 12px;color:var(--white);cursor:pointer;font-weight:800;}
+.hud-mid{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.hud-prog{width:100%;height:8px;background:rgba(255,255,255,.07);border-radius:8px;overflow:hidden;}
+.hud-prog-fill{height:100%;background:linear-gradient(90deg,var(--b),var(--p));border-radius:8px;transition:width .5s ease;}
+.hud-qnum{font-size:.7rem;font-weight:800;color:var(--muted);}
+.hud-score{font-size:1.1rem;font-weight:900;color:var(--y);white-space:nowrap;}
+
+/* rule hint */
+.rule-hint{flex-shrink:0;text-align:center;padding:.2rem 1rem;}
+.rh-inner{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.1);border-radius:30px;padding:5px 14px;}
+.rh-inner .rh-ico{font-size:1rem;}
+.rh-inner span{font-size:.75rem;font-weight:700;color:var(--muted);}
+.rh-inner strong{color:var(--white);}
+
+/* MATRIX */
+.matrix-wrap{flex-shrink:0;display:flex;justify-content:center;padding:0 1rem;}
+.matrix{display:grid;grid-template-columns:repeat(3,1fr);gap:0;
+  background:rgba(255,255,255,.06);border-radius:var(--rad);overflow:hidden;
+  border:1.5px solid rgba(255,255,255,.1);box-shadow:0 8px 32px rgba(0,0,0,.4);
+  width:100%;max-width:320px;}
+.mat-cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;
+  background:var(--card);border:1px solid rgba(255,255,255,.05);position:relative;padding:6px;}
+.mat-cell:nth-child(3n){border-right:none;}
+.mat-cell:nth-child(n+7){border-bottom:none;}
+/* bold separators every 3 */
+.mat-cell:nth-child(3),.mat-cell:nth-child(6){border-right:2px solid rgba(255,255,255,.12);}
+.mat-cell:nth-child(4),.mat-cell:nth-child(5),.mat-cell:nth-child(6){border-top:2px solid rgba(255,255,255,.12);}
+.mat-cell:nth-child(7),.mat-cell:nth-child(8),.mat-cell:nth-child(9){border-top:2px solid rgba(255,255,255,.12);}
+
+.mat-cell.q-cell{background:rgba(76,201,240,.07);border:2px dashed rgba(76,201,240,.35);
+  animation:qPulse 1.6s ease-in-out infinite;}
+@keyframes qPulse{0%,100%{background:rgba(76,201,240,.07);}50%{background:rgba(76,201,240,.14);}};
+.q-mark{font-size:1.8rem;font-weight:900;color:var(--b);animation:qBounce 1.6s ease-in-out infinite;}
+@keyframes qBounce{0%,100%{transform:scale(1);}50%{transform:scale(1.2);}};
+.mat-cell.filled-ok{background:rgba(144,190,109,.12);border:2px solid var(--g)!important;animation:cellPop .4s ease;}
+@keyframes cellPop{0%{transform:scale(1);}40%{transform:scale(1.18);}100%{transform:scale(1);}};
+
+/* ROW/COL highlight on hover of choice */
+.mat-cell.hl-row{background:rgba(249,199,79,.04);}
+.mat-cell.hl-col{background:rgba(249,199,79,.04);}
+
+/* divider lines visual */
+.mat-row-line{grid-column:1/-1;height:2px;background:rgba(255,255,255,.1);}
+
+/* OPTIONS */
+.opts-label{font-size:.72rem;font-weight:800;color:var(--muted);text-transform:uppercase;
+  letter-spacing:1px;text-align:center;flex-shrink:0;}
+.opts-wrap{flex-shrink:0;padding:0 1rem .4rem;width:100%;}
+.opts-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:420px;margin:0 auto;}
+.opt{border-radius:var(--radsm);background:var(--card);border:2.5px solid rgba(255,255,255,.08);
+  cursor:pointer;aspect-ratio:1;display:flex;align-items:center;justify-content:center;
+  transition:transform .1s,border-color .15s,background .15s;box-shadow:0 3px 12px rgba(0,0,0,.3);
+  padding:8px;position:relative;overflow:hidden;max-height:90px;}
+.opt::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.05),transparent);border-radius:inherit;}
+.opt:active{transform:scale(.9);}
+.opt.correct{border-color:var(--g);background:rgba(144,190,109,.18);animation:optCorrect .45s ease;}
+@keyframes optCorrect{0%{transform:scale(1);}45%{transform:scale(1.14);}100%{transform:scale(1);}};
+.opt.wrong{border-color:var(--r);background:rgba(255,107,107,.15);animation:optShake .38s ease;}
+@keyframes optShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-9px);}75%{transform:translateX(9px);}};
+.opt.dimmed{opacity:.28;pointer-events:none;}
+.opt.reveal{border-color:var(--g);background:rgba(144,190,109,.18);}
+
+/* tick/cross badges */
+.opt .badge-ok{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;
+  background:var(--g);color:#0A0E1A;font-size:.7rem;font-weight:900;
+  display:none;align-items:center;justify-content:center;}
+.opt.correct .badge-ok,.opt.reveal .badge-ok{display:flex;}
+.opt .badge-err{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;
+  background:var(--r);color:#fff;font-size:.7rem;font-weight:900;
+  display:none;align-items:center;justify-content:center;}
+.opt.wrong .badge-err{display:flex;}
+
+/* feedback */
+.fb-wrap{flex-shrink:0;text-align:center;padding:0 1.2rem;min-height:52px;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.fb-msg{font-size:.92rem;font-weight:900;color:transparent;}
+.fb-msg.ok{color:var(--g);}.fb-msg.err{color:var(--r);}
+.fb-why{font-size:.75rem;color:var(--muted);font-weight:700;}
+.btn-next{padding:12px 42px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:900;
+  border:none;border-radius:30px;background:linear-gradient(135deg,var(--g),var(--tl));
+  color:#fff;cursor:pointer;box-shadow:0 5px 18px rgba(144,190,109,.35);display:none;transition:transform .1s;}
+.btn-next:active{transform:scale(.95);}
+
+/* confetti */
+.cp{position:fixed;pointer-events:none;z-index:999;border-radius:3px;animation:cpFall linear forwards;}
+@keyframes cpFall{0%{opacity:1;transform:translateY(0) rotate(0);}100%{opacity:0;transform:translateY(115vh) rotate(900deg);}};
+
+/* ====== RESULT ====== */
+#result{justify-content:center;gap:1.3rem;padding:2rem 1.4rem;text-align:center;}
+.res-trophy{font-size:5rem;animation:trophyPop .6s cubic-bezier(.34,1.56,.64,1) both;}
+@keyframes trophyPop{0%{transform:scale(0) rotate(-30deg);}100%{transform:scale(1) rotate(0);}};
+.res-h1{font-size:2rem;font-weight:900;
+  background:linear-gradient(135deg,var(--y),var(--o));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.res-sub{font-size:.92rem;color:var(--muted);font-weight:700;}
+.res-score-box{background:var(--card);border-radius:var(--rad);padding:1.2rem 2.4rem;
+  border:1.5px solid rgba(255,255,255,.08);}
+.res-score-num{font-size:3.5rem;font-weight:900;color:var(--g);}
+.res-score-lbl{font-size:.8rem;color:var(--muted);font-weight:700;}
+.res-stars{display:flex;gap:8px;justify-content:center;}
+.rs{font-size:2.2rem;opacity:.2;transition:opacity .35s,transform .35s;}
+.rs.on{opacity:1;transform:scale(1.2);}
+.res-btns{display:flex;gap:12px;}
+.rb{padding:14px 28px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:900;border:none;border-radius:30px;cursor:pointer;transition:transform .1s;}
+.rb:active{transform:scale(.95);}
+.rb.p{background:linear-gradient(135deg,var(--b),var(--p));color:#fff;}
+.rb.s{background:rgba(255,255,255,.1);color:var(--white);border:2px solid rgba(255,255,255,.18);}
+
+/* LANDSCAPE */
+@media(orientation:landscape)and(max-height:520px){
+  .matrix{max-width:240px;}.opts-grid{grid-template-columns:repeat(4,1fr);max-width:380px;}
+  .opt{max-height:70px;padding:5px;}.rule-hint{display:none;}
+  .s-logo{width:80px;height:80px;}.s-title h1{font-size:1.5rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- START -->
+<div id="start" class="scr on">
+  <div class="s-logo">
+    <div></div><div></div><div></div>
+    <div></div><div></div><div></div>
+    <div></div><div></div><div></div>
+  </div>
+  <div class="s-title">
+    <h1>Ma Trận 3×3</h1>
+    <p>Tìm hình còn thiếu theo quy luật!</p>
+  </div>
+  <div class="diff-wrap">
+    <div class="diff-row-label">Độ khó:</div>
+    <div class="diff-pills">
+      <div class="dpill on" id="d1" onclick="setD('easy',this)">⭐ Dễ</div>
+      <div class="dpill" id="d2" onclick="setD('med',this)">⭐⭐ Vừa</div>
+      <div class="dpill" id="d3" onclick="setD('hard',this)">⭐⭐⭐ Khó</div>
+    </div>
+  </div>
+  <button class="go-btn" onclick="startGame()">Bắt đầu! 🚀</button>
+</div>
+
+<!-- GAME -->
+<div id="game" class="scr">
+  <div class="hud">
+    <button class="btn-back" onclick="goStart()">◂</button>
+    <div class="hud-mid">
+      <div class="hud-prog"><div class="hud-prog-fill" id="prog"></div></div>
+      <div class="hud-qnum" id="qnum">Câu 1 / 10</div>
+    </div>
+    <div class="hud-score" id="hud-sc">0 ⭐</div>
+  </div>
+  <div class="rule-hint"><div class="rh-inner"><span class="rh-ico">💡</span><span id="hint-text">Tìm hình <strong>còn thiếu</strong> ở ô dấu ?</span></div></div>
+  <div class="matrix-wrap"><div class="matrix" id="matrix"></div></div>
+  <div class="opts-label">Chọn đáp án đúng:</div>
+  <div class="opts-wrap"><div class="opts-grid" id="opts"></div></div>
+  <div class="fb-wrap">
+    <div class="fb-msg" id="fb-msg"></div>
+    <div class="fb-why" id="fb-why"></div>
+    <button class="btn-next" id="btn-next" onclick="nextQ()">Câu tiếp →</button>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="result" class="scr">
+  <div class="res-trophy" id="res-trophy"></div>
+  <div class="res-h1" id="res-h1"></div>
+  <div class="res-sub" id="res-sub"></div>
+  <div class="res-stars" id="res-stars"></div>
+  <div class="res-score-box">
+    <div class="res-score-num" id="res-num"></div>
+    <div class="res-score-lbl">Điểm số</div>
+  </div>
+  <div class="res-btns">
+    <button class="rb p" onclick="startGame()">Chơi lại 🔁</button>
+    <button class="rb s" onclick="goStart()">Trang chủ</button>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   SHAPE + COLOR SYSTEM
+   ============================================================ */
+const COLORS = {
+  r:'#FF6B6B', b:'#4CC9F0', g:'#90BE6D', y:'#F9C74F',
+  p:'#C77DFF', o:'#F8961E', pk:'#F72585', tl:'#43AA8B'
+};
+const CKEYS = Object.keys(COLORS);
+const SHAPES = ['circle','square','tri','diamond','star','heart','penta','cross'];
+
+function svg(shape, col, sz=42) {
+  const c = COLORS[col] || col, s = sz, h = Math.round(s*.87), w2 = s/2;
+  const open = `<svg width="${s}" height="${s}" viewBox="0 0 ${s} ${s}" style="display:block;overflow:visible">`;
+  const fs = `fill="${c}"`;
+  switch(shape) {
+    case'circle':  return open+`<circle cx="${w2}" cy="${w2}" r="${w2-2}" ${fs}/></svg>`;
+    case'square':  return open+`<rect x="3" y="3" width="${s-6}" height="${s-6}" rx="5" ${fs}/></svg>`;
+    case'tri':     return open+`<polygon points="${w2},3 ${s-3},${s-3} 3,${s-3}" ${fs}/></svg>`;
+    case'diamond': return open+`<polygon points="${w2},3 ${s-3},${w2} ${w2},${s-3} 3,${w2}" ${fs}/></svg>`;
+    case'star': {
+      const pts=[];for(let i=0;i<10;i++){const a=Math.PI*i/5-Math.PI/2,r2=i%2===0?w2-2:w2*.42;pts.push(`${w2+r2*Math.cos(a)},${w2+r2*Math.sin(a)}`);}
+      return open+`<polygon points="${pts.join(' ')}" ${fs}/></svg>`;
+    }
+    case'heart': {
+      const x=w2,q=Math.round(s*.28),tp=Math.round(s*.6);
+      return open+`<path d="M${x} ${s-4} C${x} ${s-4} 4 ${tp} 4 ${Math.round(s*.35)} C4 ${Math.round(s*.18)} ${Math.round(s*.2)} ${Math.round(s*.1)} ${x} ${q} C${Math.round(s*.8)} ${Math.round(s*.1)} ${s-4} ${Math.round(s*.18)} ${s-4} ${Math.round(s*.35)} C${s-4} ${tp} ${x} ${s-4} ${x} ${s-4}Z" ${fs}/></svg>`;
+    }
+    case'penta': {
+      const pts=[];for(let i=0;i<5;i++){const a=Math.PI*2*i/5-Math.PI/2;pts.push(`${w2+(w2-3)*Math.cos(a)},${w2+(w2-3)*Math.sin(a)}`);}
+      return open+`<polygon points="${pts.join(' ')}" ${fs}/></svg>`;
+    }
+    case'cross': {
+      const t=Math.round(s*.28),b2=Math.round(s*.72),m1=Math.round(s*.35),m2=Math.round(s*.65);
+      return open+`<polygon points="${t},3 ${b2},3 ${b2},${m1} ${s-3},${m1} ${s-3},${m2} ${b2},${m2} ${b2},${s-3} ${t},${s-3} ${t},${m2} 3,${m2} 3,${m1} ${t},${m1}" ${fs}/></svg>`;
+    }
+    default: return open+`<circle cx="${w2}" cy="${w2}" r="${w2-2}" ${fs}/></svg>`;
+  }
+}
+
+/* size variants */
+function svgSized(shape, col, size, sz=42) {
+  // size: 'sm'=0.55x, 'md'=0.8x, 'lg'=1x
+  const sc = size==='sm'?0.55:size==='md'?0.8:1;
+  const actual = Math.round(sz*sc);
+  const wrapper_sz = sz;
+  const offset = Math.round((wrapper_sz-actual)/2);
+  const c = COLORS[col]||col, s=actual, h=Math.round(s*.87), w2=s/2;
+  const open=`<svg width="${wrapper_sz}" height="${wrapper_sz}" viewBox="0 0 ${wrapper_sz} ${wrapper_sz}" style="display:block">`;
+  const inner = svgInner(shape,c,s,offset);
+  return open+inner+`</svg>`;
+}
+function svgInner(shape,c,s,off=0) {
+  const w2=s/2,h=Math.round(s*.87),fs=`fill="${c}"`;
+  const x=(i)=>i+off, y=(i)=>i+off;
+  switch(shape){
+    case'circle':  return `<circle cx="${x(w2)}" cy="${y(w2)}" r="${w2-1}" ${fs}/>`;
+    case'square':  return `<rect x="${x(2)}" y="${y(2)}" width="${s-4}" height="${s-4}" rx="4" ${fs}/>`;
+    case'tri':     return `<polygon points="${x(w2)},${y(2)} ${x(s-2)},${y(s-2)} ${x(2)},${y(s-2)}" ${fs}/>`;
+    case'diamond': return `<polygon points="${x(w2)},${y(2)} ${x(s-2)},${y(w2)} ${x(w2)},${y(s-2)} ${x(2)},${y(w2)}" ${fs}/>`;
+    case'star':{const pts=[];for(let i=0;i<10;i++){const a=Math.PI*i/5-Math.PI/2,r2=i%2===0?w2-1:w2*.42;pts.push(`${x(w2+r2*Math.cos(a))},${y(w2+r2*Math.sin(a))}`);}return`<polygon points="${pts.join(' ')}" ${fs}/>"`;}
+    case'heart':{const cx=x(w2),q=y(Math.round(s*.28)),tp=y(Math.round(s*.6));return`<path d="M${cx} ${y(s-2)} C${cx} ${y(s-2)} ${x(2)} ${tp} ${x(2)} ${y(Math.round(s*.35))} C${x(2)} ${y(Math.round(s*.18))} ${x(Math.round(s*.2))} ${y(Math.round(s*.1))} ${cx} ${q} C${x(Math.round(s*.8))} ${y(Math.round(s*.1))} ${x(s-2)} ${y(Math.round(s*.18))} ${x(s-2)} ${y(Math.round(s*.35))} C${x(s-2)} ${tp} ${cx} ${y(s-2)} ${cx} ${y(s-2)}Z" ${fs}/>`;}
+    case'penta':{const pts=[];for(let i=0;i<5;i++){const a=Math.PI*2*i/5-Math.PI/2;pts.push(`${x(w2+(w2-1)*Math.cos(a))},${y(w2+(w2-1)*Math.sin(a))}`);}return`<polygon points="${pts.join(' ')}" ${fs}/>"`;}
+    default: return `<circle cx="${x(w2)}" cy="${y(w2)}" r="${w2-1}" ${fs}/>`;
+  }
+}
+
+/* ============================================================
+   MATRIX GENERATORS
+   ============================================================ */
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{const b=[...a];for(let i=b.length-1;i>0;i--){const j=rnd(0,i);[b[i],b[j]]=[b[j],b[i]];}return b;};
+
+// A matrix question: cells[0..7] are shown, cells[8] is answer
+// Each cell = {shape, col, size:'sm'|'md'|'lg', count:1|2}
+// We render each cell's content as SVG
+
+function genMatrix(diff) {
+  const gens = diff==='easy'   ? [genColorRow, genShapeRow, genColorCol, genShapeCol]
+             : diff==='med'    ? [genColorRow, genShapeRow, genColorCol, genShapeCol, genBothRow, genSizeRow, genCountRow]
+             :                   [genBothRow, genSizeRow, genCountRow, genDiagColor, genBothCol, genRotateMix];
+  const fn = pick(gens);
+  return fn();
+}
+
+/* --- RULE 1: same shape, colors cycle across rows --- */
+function genColorRow() {
+  const [c1,c2,c3] = shuffle(CKEYS).slice(0,3);
+  const s = pick(SHAPES.slice(0,5));
+  const cells = [
+    {s,c:c1},{s,c:c2},{s,c:c3},
+    {s,c:c2},{s,c:c3},{s,c:c1},
+    {s,c:c3},{s,c:c1},null
+  ];
+  return {cells, ans:{s,c:c2}, rule:'Màu xoay vòng theo từng hàng', diff:'easy'};
+}
+
+/* --- RULE 2: colors same in each row, shape cycles across rows --- */
+function genShapeRow() {
+  const [s1,s2,s3] = shuffle(SHAPES.slice(0,6)).slice(0,3);
+  const c = pick(CKEYS);
+  const cells = [
+    {s:s1,c},{s:s1,c},{s:s1,c},
+    {s:s2,c},{s:s2,c},{s:s2,c},
+    {s:s3,c},{s:s3,c},null
+  ];
+  return {cells, ans:{s:s3,c}, rule:'Mỗi hàng dùng cùng một hình', diff:'easy'};
+}
+
+/* --- RULE 3: same shape, colors cycle across columns --- */
+function genColorCol() {
+  const [c1,c2,c3] = shuffle(CKEYS).slice(0,3);
+  const s = pick(SHAPES.slice(0,5));
+  const cells = [
+    {s,c:c1},{s,c:c2},{s,c:c3},
+    {s,c:c1},{s,c:c2},{s,c:c3},
+    {s,c:c1},{s,c:c2},null
+  ];
+  return {cells, ans:{s,c:c3}, rule:'Màu giống nhau trong mỗi cột', diff:'easy'};
+}
+
+/* --- RULE 4: shape cycles across columns --- */
+function genShapeCol() {
+  const [s1,s2,s3] = shuffle(SHAPES.slice(0,6)).slice(0,3);
+  const [c1,c2,c3] = shuffle(CKEYS).slice(0,3);
+  const cells = [
+    {s:s1,c:c1},{s:s2,c:c1},{s:s3,c:c1},
+    {s:s1,c:c2},{s:s2,c:c2},{s:s3,c:c2},
+    {s:s1,c:c3},{s:s2,c:c3},null
+  ];
+  return {cells, ans:{s:s3,c:c3}, rule:'Hình xoay vòng theo cột, màu theo hàng', diff:'easy'};
+}
+
+/* --- RULE 5: both shape and color change together --- */
+function genBothRow() {
+  const [s1,s2,s3] = shuffle(SHAPES.slice(0,6)).slice(0,3);
+  const [c1,c2,c3] = shuffle(CKEYS).slice(0,3);
+  const cells = [
+    {s:s1,c:c1},{s:s2,c:c2},{s:s3,c:c3},
+    {s:s2,c:c2},{s:s3,c:c3},{s:s1,c:c1},
+    {s:s3,c:c3},{s:s1,c:c1},null
+  ];
+  return {cells, ans:{s:s2,c:c2}, rule:'Cả hình và màu đều xoay vòng', diff:'med'};
+}
+
+/* --- RULE 6: size changes across columns (sm→md→lg) --- */
+function genSizeRow() {
+  const s = pick(SHAPES.slice(0,5));
+  const [c1,c2,c3] = shuffle(CKEYS).slice(0,3);
+  const cells = [
+    {s,c:c1,sz:'sm'},{s,c:c1,sz:'md'},{s,c:c1,sz:'lg'},
+    {s,c:c2,sz:'sm'},{s,c:c2,sz:'md'},{s,c:c2,sz:'lg'},
+    {s,c:c3,sz:'sm'},{s,c:c3,sz:'md'},null
+  ];
+  return {cells, ans:{s,c:c3,sz:'lg'}, rule:'Kích thước tăng dần từ nhỏ → vừa → lớn', diff:'med'};
+}
+
+/* --- RULE 7: count of shapes 1→2→3 --- */
+function genCountRow() {
+  const s = pick(SHAPES.slice(0,4));
+  const [c1,c2,c3] = shuffle(CKEYS).slice(0,3);
+  const cells = [
+    {s,c:c1,n:1},{s,c:c1,n:2},{s,c:c1,n:3},
+    {s,c:c2,n:1},{s,c:c2,n:2},{s,c:c2,n:3},
+    {s,c:c3,n:1},{s,c:c3,n:2},null
+  ];
+  return {cells, ans:{s,c:c3,n:3}, rule:'Số lượng hình tăng từ 1 → 2 → 3', diff:'med'};
+}
+
+/* --- RULE 8: diagonal same color --- */
+function genDiagColor() {
+  const [c1,c2,c3] = shuffle(CKEYS).slice(0,3);
+  const [s1,s2,s3] = shuffle(SHAPES.slice(0,6)).slice(0,3);
+  const cells = [
+    {s:s1,c:c1},{s:s2,c:c2},{s:s3,c:c3},
+    {s:s3,c:c2},{s:s1,c:c3},{s:s2,c:c1},
+    {s:s2,c:c3},{s:s3,c:c1},null
+  ];
+  return {cells, ans:{s:s1,c:c2}, rule:'Màu xoay theo đường chéo', diff:'hard'};
+}
+
+/* --- RULE 9: both shape and color in columns --- */
+function genBothCol() {
+  const [s1,s2,s3] = shuffle(SHAPES.slice(0,6)).slice(0,3);
+  const [c1,c2,c3] = shuffle(CKEYS).slice(0,3);
+  const cells = [
+    {s:s1,c:c1},{s:s2,c:c2},{s:s3,c:c3},
+    {s:s1,c:c2},{s:s2,c:c3},{s:s3,c:c1},
+    {s:s1,c:c3},{s:s2,c:c1},null
+  ];
+  return {cells, ans:{s:s3,c:c2}, rule:'Hình giữ nguyên theo cột, màu xoay vòng', diff:'hard'};
+}
+
+/* --- RULE 10: mixed size+shape --- */
+function genRotateMix() {
+  const [s1,s2,s3] = shuffle(SHAPES.slice(0,6)).slice(0,3);
+  const c = pick(CKEYS);
+  const cells = [
+    {s:s1,c,sz:'lg'},{s:s2,c,sz:'md'},{s:s3,c,sz:'sm'},
+    {s:s2,c,sz:'sm'},{s:s3,c,sz:'lg'},{s:s1,c,sz:'md'},
+    {s:s3,c,sz:'md'},{s:s1,c,sz:'sm'},null
+  ];
+  return {cells, ans:{s:s2,c,sz:'lg'}, rule:'Hình và kích thước đều xoay vòng', diff:'hard'};
+}
+
+/* ============================================================
+   RENDER CELL
+   ============================================================ */
+function renderCell(cell, sz=44) {
+  if(!cell) return '';
+  const {s,c,sz:sizeTag,n} = cell;
+  if(n && n>1) {
+    // multi-shape cell
+    const small = Math.round(sz*(n===2?.48:.38));
+    if(n===2) return `<div style="display:flex;gap:2px;align-items:center">${svg(s,c,small)}${svg(s,c,small)}</div>`;
+    return `<div style="display:grid;grid-template-columns:1fr 1fr;gap:2px">${svg(s,c,small)}${svg(s,c,small)}${svg(s,c,small)}<div></div></div>`;
+  }
+  if(sizeTag) return svgSized(s,c,sizeTag,sz);
+  return svg(s,c,sz);
+}
+
+/* ============================================================
+   WRONG OPTION GENERATOR
+   ============================================================ */
+function genWrongs(ans, cells, diff) {
+  const wrongs = [];
+  const usedSig = new Set();
+  const ansSig = `${ans.s}|${ans.c}|${ans.sz||''}|${ans.n||1}`;
+  usedSig.add(ansSig);
+  // also exclude cells already visible
+  cells.forEach(c=>{if(c){const sig=`${c.s}|${c.c}|${c.sz||''}|${c.n||1}`;usedSig.add(sig);}});
+
+  let attempts=0;
+  while(wrongs.length<3 && attempts<300) {
+    attempts++;
+    let w = {...ans};
+    const r = Math.random();
+    if(r<.4)       w = {...ans, c: pick(CKEYS)};
+    else if(r<.7)  w = {...ans, s: pick(SHAPES.slice(0,6))};
+    else if(r<.85) w = {...ans, s: pick(SHAPES.slice(0,6)), c: pick(CKEYS)};
+    else if(ans.sz) w = {...ans, sz: pick(['sm','md','lg'])};
+    else if(ans.n)  w = {...ans, n: pick([1,2,3])};
+
+    const sig=`${w.s}|${w.c}|${w.sz||''}|${w.n||1}`;
+    if(!usedSig.has(sig)){usedSig.add(sig);wrongs.push(w);}
+  }
+  // fallback: force
+  while(wrongs.length<3) {
+    const w={s:pick(SHAPES.slice(0,5)),c:pick(CKEYS)};
+    const sig=`${w.s}|${w.c}||1`;
+    if(!usedSig.has(sig)){usedSig.add(sig);wrongs.push(w);}
+  }
+  return wrongs.slice(0,3);
+}
+
+/* ============================================================
+   STATE & FLOW
+   ============================================================ */
+let diff='easy', score=0, qNum=0, TOTAL=10, answered=false;
+const $=id=>document.getElementById(id);
+function show(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));$(id).classList.add('on');}
+
+function setD(d,btn){
+  diff=d;
+  document.querySelectorAll('.dpill').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+}
+function goStart(){show('start');}
+
+function startGame(){
+  score=0;qNum=0;answered=false;
+  show('game');
+  nextQ();
+}
+
+let currentAns=null;
+function nextQ(){
+  if(qNum>=TOTAL){endGame();return;}
+  answered=false;
+  $('btn-next').style.display='none';
+  $('fb-msg').textContent='';$('fb-msg').className='fb-msg';
+  $('fb-why').textContent='';
+
+  // update HUD
+  $('prog').style.width=((qNum/TOTAL)*100)+'%';
+  $('qnum').textContent=`Câu ${qNum+1} / ${TOTAL}`;
+  $('hud-sc').textContent=score+' ⭐';
+
+  const q = genMatrix(diff);
+  currentAns = q.ans;
+  $('hint-text').innerHTML=`💡 <strong>${q.rule}</strong>`;
+
+  // render matrix
+  const mat=$('matrix');
+  mat.innerHTML='';
+  q.cells.forEach((cell,i)=>{
+    const div=document.createElement('div');
+    div.className='mat-cell'+(cell===null?' q-cell':'');
+    if(cell===null) div.innerHTML='<div class="q-mark">?</div>';
+    else div.innerHTML=renderCell(cell,46);
+    mat.appendChild(div);
+  });
+
+  // render options
+  const wrongs = genWrongs(q.ans, q.cells, diff);
+  const opts = shuffle([{...q.ans,correct:true},...wrongs.map(w=>({...w,correct:false}))]);
+  const og=$('opts');
+  og.innerHTML='';
+  opts.forEach(opt=>{
+    const btn=document.createElement('div');
+    btn.className='opt';
+    btn.innerHTML=`<div class="badge-ok">✓</div><div class="badge-err">✗</div>${renderCell(opt,40)}`;
+    btn.addEventListener('pointerdown',e=>{e.preventDefault();selectOpt(opt,btn,opts,q);},{passive:false});
+    og.appendChild(btn);
+  });
+}
+
+function selectOpt(opt, btn, opts, q) {
+  if(answered) return;
+  answered=true;
+
+  const ok = opt.correct;
+  if(ok) {
+    btn.classList.add('correct');
+    // fill the matrix q-cell
+    const qcell=$('matrix').querySelector('.q-cell');
+    if(qcell){qcell.classList.remove('q-cell');qcell.classList.add('filled-ok');qcell.innerHTML=renderCell(q.ans,46);}
+    score++;
+    confetti();
+    $('fb-msg').textContent='Đúng rồi! Giỏi lắm! 🎉';$('fb-msg').className='fb-msg ok';
+    $('fb-why').textContent=q.rule;
+    document.querySelectorAll('.opt').forEach(b=>{if(b!==btn)b.classList.add('dimmed');});
+  } else {
+    btn.classList.add('wrong');
+    $('fb-msg').textContent='Chưa đúng! Thử lại nhé 😊';$('fb-msg').className='fb-msg err';
+    answered=false;
+    setTimeout(()=>{btn.classList.remove('wrong');$('fb-msg').textContent='';$('fb-msg').className='fb-msg';},1000);
+    return;
+  }
+
+  qNum++;
+  $('hud-sc').textContent=score+' ⭐';
+  setTimeout(()=>{$('btn-next').style.display='block';},300);
+}
+
+/* ============================================================
+   CONFETTI
+   ============================================================ */
+const CC=['#F9C74F','#90BE6D','#4CC9F0','#C77DFF','#F8961E','#F72585','#43AA8B'];
+function confetti(){
+  for(let i=0;i<32;i++){
+    const el=document.createElement('div');el.className='cp';
+    const sz=5+Math.random()*9;
+    el.style.cssText=`width:${sz}px;height:${sz}px;background:${CC[Math.floor(Math.random()*CC.length)]};left:${15+Math.random()*70}%;top:${10+Math.random()*55}%;border-radius:${Math.random()>.5?'50%':'3px'};animation-duration:${.7+Math.random()*.9}s;animation-delay:${Math.random()*.15}s;`;
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),2000);
+  }
+}
+
+/* ============================================================
+   RESULT
+   ============================================================ */
+function endGame(){
+  show('result');
+  const pct=score/TOTAL;
+  let trophy,h1,sub;
+  if(pct>=.9){trophy='🏆';h1='Xuất sắc!';sub='Con thật sự rất thông minh!';}
+  else if(pct>=.7){trophy='🌟';h1='Giỏi lắm!';sub='Con đã tư duy rất tốt!';}
+  else if(pct>=.5){trophy='😊';h1='Cố gắng lắm!';sub='Luyện thêm sẽ giỏi hơn nhé!';}
+  else{trophy='💪';h1='Cố lên!';sub='Quan sát kỹ từng hàng và cột nhé!';}
+  $('res-trophy').textContent=trophy;
+  $('res-h1').textContent=h1;
+  $('res-sub').textContent=sub;
+  $('res-num').textContent=score+' / '+TOTAL;
+
+  const sr=$('res-stars');sr.innerHTML='';
+  const ns=pct>=.9?3:pct>=.6?2:pct>=.3?1:0;
+  for(let i=0;i<3;i++){
+    const s=document.createElement('div');s.className='rs';s.textContent='⭐';sr.appendChild(s);
+    if(i<ns)setTimeout(()=>{s.classList.add('on');if(i===0)confetti();},350+i*320);
+  }
+}
+
+/* prevent iOS double-tap zoom */
+document.addEventListener('touchend',e=>{
+  if(e.target.closest('.opt,.go-btn,.dpill,.btn-next,.rb,.btn-back'))e.preventDefault();
+},{passive:false});
+</script>
+</body>
+</html>

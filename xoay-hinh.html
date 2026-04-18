@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>🔄 Xoay Hình – Nhận Dạng</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0C1526;--panel:#132035;--card:#1A2E4A;--card2:#213858;
+  --y:#FBBF24;--g:#34D399;--b:#38BDF8;--p:#A78BFA;--o:#FB923C;--r:#F87171;--pk:#F472B6;--tl:#2DD4BF;
+  --white:#E2EDF8;--muted:#4E6A88;
+  --rad:22px;--radsm:14px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none;}
+html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Nunito',system-ui,sans-serif;color:var(--white);}
+
+/* cosmic bg */
+body::before{content:'';position:fixed;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 60% 50% at 15% 0%,rgba(56,189,248,.1),transparent),
+             radial-gradient(ellipse 50% 40% at 85% 100%,rgba(167,139,250,.09),transparent);}
+
+/* twinkling stars */
+body::after{content:'';position:fixed;inset:0;pointer-events:none;
+  background-image:
+    radial-gradient(1.5px 1.5px at 5% 8%,rgba(255,255,255,.25) 0%,transparent 100%),
+    radial-gradient(1px 1px at 18% 55%,rgba(255,255,255,.18) 0%,transparent 100%),
+    radial-gradient(1.5px 1.5px at 35% 20%,rgba(255,255,255,.2) 0%,transparent 100%),
+    radial-gradient(1px 1px at 52% 78%,rgba(255,255,255,.15) 0%,transparent 100%),
+    radial-gradient(1px 1px at 68% 12%,rgba(255,255,255,.22) 0%,transparent 100%),
+    radial-gradient(1.5px 1.5px at 82% 45%,rgba(255,255,255,.17) 0%,transparent 100%),
+    radial-gradient(1px 1px at 93% 70%,rgba(255,255,255,.2) 0%,transparent 100%);}
+
+.scr{display:none;position:fixed;inset:0;flex-direction:column;align-items:center;}
+.scr.on{display:flex;}
+
+/* ====== START ====== */
+#start{justify-content:center;gap:1.5rem;padding:2rem 1.4rem;}
+.s-spinner{width:120px;height:120px;position:relative;animation:spinnerSpin 8s linear infinite;}
+@keyframes spinnerSpin{to{transform:rotate(360deg);}}
+.s-spinner svg{position:absolute;inset:0;}
+.s-title{text-align:center;}
+.s-title h1{font-size:2.2rem;font-weight:900;
+  background:linear-gradient(135deg,var(--b),var(--p),var(--pk));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.s-title p{font-size:.9rem;color:var(--muted);margin-top:5px;font-weight:700;}
+.mode-pills{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+.mpill{padding:9px 20px;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;
+  border-radius:30px;border:2px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);
+  color:var(--white);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.mpill.on{border-color:var(--b);background:rgba(56,189,248,.18);color:var(--b);}
+.mpill:active{transform:scale(.94);}
+.s-preview{display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.05);
+  border-radius:var(--rad);padding:14px 18px;border:1.5px solid rgba(255,255,255,.08);}
+.sp-cell{display:flex;flex-direction:column;align-items:center;gap:5px;}
+.sp-lbl{font-size:.65rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+.sp-arrow{font-size:1.6rem;color:var(--muted);}
+.go-btn{padding:16px 52px;font-family:'Nunito',sans-serif;font-size:1.2rem;font-weight:900;
+  border:none;border-radius:40px;background:linear-gradient(135deg,var(--b),var(--p));
+  color:#fff;cursor:pointer;box-shadow:0 8px 28px rgba(56,189,248,.4);transition:transform .12s;}
+.go-btn:active{transform:scale(.94);}
+
+/* ====== HUD ====== */
+.hud{width:100%;display:flex;align-items:center;gap:10px;padding:.75rem 1.2rem .3rem;flex-shrink:0;}
+.btn-back{font-size:1.2rem;background:rgba(255,255,255,.08);border:none;border-radius:11px;
+  padding:6px 12px;color:var(--white);cursor:pointer;font-weight:800;}
+.hud-mid{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.hud-prog{width:100%;height:8px;background:rgba(255,255,255,.07);border-radius:8px;overflow:hidden;}
+.hud-prog-fill{height:100%;background:linear-gradient(90deg,var(--b),var(--p));border-radius:8px;transition:width .45s ease;}
+.hud-q{font-size:.7rem;font-weight:800;color:var(--muted);}
+.hud-score{font-size:1.1rem;font-weight:900;color:var(--y);white-space:nowrap;}
+
+/* ====== GAME A: FIND MATCHING ROTATION ====== */
+#gA{justify-content:space-between;}
+
+.mode-badge{flex-shrink:0;text-align:center;padding:.15rem 1rem;}
+.mb-inner{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;
+  border-radius:30px;border:1.5px solid rgba(56,189,248,.35);background:rgba(56,189,248,.1);
+  font-size:.72rem;font-weight:800;color:var(--b);}
+
+/* REFERENCE shape */
+.ref-area{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:6px;padding:.3rem 1rem;}
+.ref-label{font-size:.68rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+.ref-card{background:var(--card);border-radius:var(--rad);border:2px solid rgba(56,189,248,.25);
+  padding:16px;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 24px rgba(0,0,0,.35);}
+.ref-hint{font-size:.75rem;font-weight:700;color:var(--muted);text-align:center;}
+
+/* OPTIONS grid */
+.opts-label{font-size:.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;
+  flex-shrink:0;text-align:center;}
+.opts-wrap{flex-shrink:0;padding:0 1rem;width:100%;}
+.opts-grid{display:grid;gap:10px;max-width:440px;margin:0 auto;}
+.opt-card{background:var(--card);border-radius:var(--rad);border:2.5px solid rgba(255,255,255,.08);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:transform .1s,border-color .15s,background .15s;box-shadow:0 4px 16px rgba(0,0,0,.3);
+  position:relative;overflow:hidden;padding:10px;aspect-ratio:1;max-height:120px;}
+.opt-card::before{content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.04),transparent);pointer-events:none;}
+.opt-card:active{transform:scale(.9);}
+.opt-card .opt-badge{position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:50%;
+  display:none;align-items:center;justify-content:center;font-size:.7rem;font-weight:900;}
+.opt-card.correct{border-color:var(--g);background:rgba(52,211,153,.15);animation:optOk .42s ease;}
+.opt-card.correct .opt-badge{display:flex;background:var(--g);color:#0C1526;}
+@keyframes optOk{0%{transform:scale(1);}45%{transform:scale(1.12);}100%{transform:scale(1);}}
+.opt-card.wrong{border-color:var(--r);background:rgba(248,113,113,.13);animation:optErr .38s ease;}
+.opt-card.wrong .opt-badge{display:flex;background:var(--r);color:#fff;}
+@keyframes optErr{0%,100%{transform:translateX(0);}25%{transform:translateX(-10px);}75%{transform:translateX(10px);}}
+.opt-card.dimmed{opacity:.25;pointer-events:none;}
+.opt-card.reveal{border-color:var(--g);background:rgba(52,211,153,.12);}
+.opt-card.reveal .opt-badge{display:flex;background:var(--g);color:#0C1526;}
+
+/* ANGLE LABEL on each option */
+.angle-lbl{position:absolute;bottom:5px;left:0;right:0;text-align:center;
+  font-size:.6rem;font-weight:800;color:var(--muted);}
+
+/* FB */
+.fb-bar{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;
+  padding:.3rem 1rem .5rem;min-height:40px;gap:10px;}
+.fb-msg{font-size:.9rem;font-weight:900;color:transparent;flex:1;}
+.fb-msg.ok{color:var(--g);}.fb-msg.err{color:var(--r);}
+.btn-next{padding:10px 28px;font-family:'Nunito',sans-serif;font-size:.92rem;font-weight:900;
+  border:none;border-radius:30px;background:linear-gradient(135deg,var(--g),var(--tl));
+  color:#0C1526;cursor:pointer;display:none;white-space:nowrap;
+  box-shadow:0 4px 16px rgba(52,211,153,.35);transition:transform .1s;}
+.btn-next:active{transform:scale(.95);}
+
+/* ====== GAME B: SPIN & GUESS ====== */
+#gB{justify-content:space-between;}
+
+.spin-stage{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:8px;padding:.4rem 1rem;}
+.spin-q{font-size:.85rem;font-weight:700;color:var(--muted);text-align:center;}
+.spin-card{background:var(--card);border-radius:var(--rad);border:2px solid rgba(255,255,255,.08);
+  padding:18px;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 28px rgba(0,0,0,.4);}
+.spin-card canvas{display:block;}
+.spin-angle-display{font-size:1.2rem;font-weight:900;color:var(--y);}
+.spin-controls{display:flex;gap:10px;align-items:center;flex-shrink:0;padding:0 1rem;justify-content:center;}
+.spin-btn{width:64px;height:64px;border-radius:50%;border:2.5px solid rgba(255,255,255,.12);
+  background:var(--card2);font-size:1.8rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .1s,background .15s;box-shadow:0 4px 14px rgba(0,0,0,.3);}
+.spin-btn:active{transform:scale(.88);background:var(--card);}
+.spin-btn.ccw{font-size:1.5rem;}
+.spin-confirm{flex:1;max-width:180px;padding:14px;font-family:'Nunito',sans-serif;
+  font-size:1rem;font-weight:900;border:none;border-radius:30px;
+  background:linear-gradient(135deg,var(--y),var(--o));color:#0C1526;cursor:pointer;
+  box-shadow:0 5px 18px rgba(251,191,36,.35);transition:transform .1s;}
+.spin-confirm:active{transform:scale(.95);}
+.spin-hint{font-size:.75rem;font-weight:700;color:var(--muted);text-align:center;flex-shrink:0;padding:0 1rem;}
+
+/* GHOST reference (shown after answer) */
+.ghost-wrap{flex-shrink:0;display:flex;gap:10px;align-items:center;justify-content:center;
+  padding:0 1rem;opacity:0;transition:opacity .4s;}
+.ghost-wrap.show{opacity:1;}
+.ghost-lbl{font-size:.7rem;font-weight:800;color:var(--muted);}
+.ghost-card{background:rgba(52,211,153,.1);border:2px solid var(--g);border-radius:var(--radsm);
+  padding:8px;display:flex;align-items:center;justify-content:center;}
+
+/* ====== RESULT ====== */
+#result{justify-content:center;gap:1.4rem;padding:2rem 1.4rem;text-align:center;}
+.res-ico{font-size:5rem;animation:resIn .5s cubic-bezier(.34,1.56,.64,1) both;}
+@keyframes resIn{0%{transform:scale(0) rotate(-30deg);}100%{transform:scale(1) rotate(0);}}
+.res-h1{font-size:2rem;font-weight:900;
+  background:linear-gradient(135deg,var(--y),var(--o));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.res-sub{font-size:.9rem;color:var(--muted);font-weight:700;}
+.res-score-box{background:var(--card);border-radius:var(--rad);padding:1.1rem 2.4rem;
+  border:1.5px solid rgba(255,255,255,.08);}
+.res-big{font-size:3.4rem;font-weight:900;color:var(--g);}
+.res-lbl{font-size:.78rem;color:var(--muted);font-weight:700;}
+.res-btns{display:flex;gap:12px;}
+.rb{padding:13px 26px;font-family:'Nunito',sans-serif;font-size:.92rem;font-weight:900;border:none;border-radius:30px;cursor:pointer;transition:transform .1s;}
+.rb:active{transform:scale(.95);}
+.rb.p{background:linear-gradient(135deg,var(--b),var(--p));color:#fff;}
+.rb.s{background:rgba(255,255,255,.1);color:var(--white);border:2px solid rgba(255,255,255,.18);}
+
+/* CONFETTI */
+.cp{position:fixed;pointer-events:none;z-index:999;border-radius:3px;animation:cpFall linear forwards;}
+@keyframes cpFall{0%{opacity:1;transform:translateY(0) rotate(0);}100%{opacity:0;transform:translateY(115vh) rotate(900deg);}}
+
+/* LANDSCAPE */
+@media(orientation:landscape)and(max-height:520px){
+  .ref-card{padding:10px;}.opts-grid{grid-template-columns:repeat(4,1fr)!important;max-width:560px;}
+  .opt-card{max-height:90px;}.spin-card{padding:10px;}
+  .spin-controls{gap:6px;}.spin-btn{width:52px;height:52px;font-size:1.4rem;}
+  .s-preview{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- ====== START ====== -->
+<div id="start" class="scr on">
+  <div class="s-spinner">
+    <svg viewBox="0 0 120 120" width="120" height="120">
+      <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(56,189,248,.15)" stroke-width="8"/>
+      <path d="M60 6 A54 54 0 0 1 114 60" fill="none" stroke="#38BDF8" stroke-width="8" stroke-linecap="round"/>
+      <path d="M60 60 L60 16" stroke="rgba(167,139,250,.6)" stroke-width="3" stroke-linecap="round"/>
+      <path d="M60 60 L88 82" stroke="rgba(251,191,36,.5)" stroke-width="2.5" stroke-linecap="round"/>
+      <polygon points="60,6 54,20 66,20" fill="#38BDF8"/>
+    </svg>
+  </div>
+  <div class="s-title">
+    <h1>Xoay Hình</h1>
+    <p>Nhận dạng hình sau khi xoay — thử thách tư duy không gian!</p>
+  </div>
+  <div class="mode-pills">
+    <div class="mpill on" id="mA" onclick="setMode('A',this)">🔍 Tìm hình giống</div>
+    <div class="mpill" id="mB" onclick="setMode('B',this)">🔄 Xoay đến vị trí đúng</div>
+  </div>
+  <div class="s-preview" id="s-preview"></div>
+  <div class="mode-pills" style="margin-top:-.5rem;">
+    <div class="mpill on" id="d1" onclick="setDiff('easy',this)">⭐ Dễ</div>
+    <div class="mpill" id="d2" onclick="setDiff('med',this)">⭐⭐ Vừa</div>
+    <div class="mpill" id="d3" onclick="setDiff('hard',this)">⭐⭐⭐ Khó</div>
+  </div>
+  <button class="go-btn" onclick="startGame()">Bắt đầu! 🚀</button>
+</div>
+
+<!-- ====== GAME A: FIND MATCHING ====== -->
+<div id="gA" class="scr">
+  <div class="hud">
+    <button class="btn-back" onclick="goStart()">◂</button>
+    <div class="hud-mid">
+      <div class="hud-prog"><div class="hud-prog-fill" id="A-prog"></div></div>
+      <div class="hud-q" id="A-q">Câu 1/10</div>
+    </div>
+    <div class="hud-score" id="A-sc">0 ⭐</div>
+  </div>
+  <div class="mode-badge"><div class="mb-inner">🔍 Hình nào giống hình gốc sau khi xoay?</div></div>
+  <div class="ref-area">
+    <div class="ref-label">Hình gốc</div>
+    <div class="ref-card"><canvas id="A-ref" width="110" height="110"></canvas></div>
+    <div class="ref-hint" id="A-hint"></div>
+  </div>
+  <div class="opts-label">Chọn hình giống sau khi xoay:</div>
+  <div class="opts-wrap"><div class="opts-grid" id="A-opts"></div></div>
+  <div class="fb-bar">
+    <div class="fb-msg" id="A-fb"></div>
+    <button class="btn-next" id="A-nx" onclick="nextA()">Tiếp theo →</button>
+  </div>
+</div>
+
+<!-- ====== GAME B: SPIN TO MATCH ====== -->
+<div id="gB" class="scr">
+  <div class="hud">
+    <button class="btn-back" onclick="goStart()">◂</button>
+    <div class="hud-mid">
+      <div class="hud-prog"><div class="hud-prog-fill" id="B-prog"></div></div>
+      <div class="hud-q" id="B-q">Câu 1/8</div>
+    </div>
+    <div class="hud-score" id="B-sc">0 ⭐</div>
+  </div>
+  <div class="spin-stage">
+    <div class="spin-q" id="B-task"></div>
+    <div class="spin-card"><canvas id="B-spin" width="160" height="160"></canvas></div>
+    <div class="spin-angle-display" id="B-angle">0°</div>
+  </div>
+  <div class="ghost-wrap" id="ghost-wrap">
+    <div class="ghost-lbl">Đáp án:</div>
+    <div class="ghost-card"><canvas id="B-ghost" width="70" height="70"></canvas></div>
+    <div style="font-size:.75rem;font-weight:700;color:var(--g)" id="ghost-deg"></div>
+  </div>
+  <div class="spin-hint">Xoay hình đến vị trí giống hình nhỏ ở góc màn hình!</div>
+  <div class="spin-controls">
+    <button class="spin-btn ccw" onclick="rotateSpin(-45)">↺</button>
+    <button class="spin-confirm" onclick="confirmSpin()">✓ Đúng rồi!</button>
+    <button class="spin-btn" onclick="rotateSpin(45)">↻</button>
+  </div>
+  <div class="fb-bar">
+    <div class="fb-msg" id="B-fb"></div>
+    <button class="btn-next" id="B-nx" onclick="nextB()">Tiếp theo →</button>
+  </div>
+  <!-- target reference (small, always visible) -->
+  <div style="position:absolute;top:72px;right:14px;display:flex;flex-direction:column;align-items:center;gap:3px;z-index:10;">
+    <div style="font-size:.6rem;font-weight:800;color:var(--muted);">MỤC TIÊU</div>
+    <div style="background:rgba(251,191,36,.12);border:2px solid rgba(251,191,36,.4);border-radius:12px;padding:6px;">
+      <canvas id="B-target" width="60" height="60"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ====== RESULT ====== -->
+<div id="result" class="scr">
+  <div class="res-ico" id="res-ico"></div>
+  <div class="res-h1" id="res-h1"></div>
+  <div class="res-sub" id="res-sub"></div>
+  <div class="res-score-box"><div class="res-big" id="res-big"></div><div class="res-lbl">Điểm số</div></div>
+  <div class="res-btns">
+    <button class="rb p" onclick="startGame()">Chơi lại 🔁</button>
+    <button class="rb s" onclick="goStart()">Trang chủ</button>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   SHAPE LIBRARY – drawn on Canvas
+   Each shape is a draw function: (ctx, cx, cy, r) → fills shape
+   ============================================================ */
+const SHAPES = {
+  // ARROW pointing RIGHT
+  arrow: (ctx,cx,cy,r)=>{
+    const hw=r*.45,hh=r*.22,ah=r*.42,aw=r*.38;
+    ctx.beginPath();
+    ctx.moveTo(cx-hw,cy-hh); ctx.lineTo(cx+aw-hw,cy-hh);
+    ctx.lineTo(cx+aw-hw,cy-ah); ctx.lineTo(cx+hw,cy);
+    ctx.lineTo(cx+aw-hw,cy+ah); ctx.lineTo(cx+aw-hw,cy+hh);
+    ctx.lineTo(cx-hw,cy+hh); ctx.closePath();
+  },
+  // HOUSE
+  house: (ctx,cx,cy,r)=>{
+    const w=r*.7,h=r*.5,rh=r*.45;
+    // body
+    ctx.beginPath();ctx.rect(cx-w,cy-h*.3,w*2,h*1.3);ctx.closePath();ctx.fill();
+    // roof
+    ctx.beginPath();
+    ctx.moveTo(cx-w-r*.1,cy-h*.3);ctx.lineTo(cx,cy-h-rh*.4);ctx.lineTo(cx+w+r*.1,cy-h*.3);
+    ctx.closePath();
+  },
+  // LIGHTNING BOLT
+  bolt: (ctx,cx,cy,r)=>{
+    ctx.beginPath();
+    ctx.moveTo(cx+r*.15,cy-r*.75);ctx.lineTo(cx-r*.25,cy+r*.05);
+    ctx.lineTo(cx+r*.05,cy+r*.05);ctx.lineTo(cx-r*.15,cy+r*.75);
+    ctx.lineTo(cx+r*.3,cy-r*.05);ctx.lineTo(cx+r*.02,cy-r*.05);
+    ctx.closePath();
+  },
+  // STAR (5-point)
+  star: (ctx,cx,cy,r)=>{
+    ctx.beginPath();
+    for(let i=0;i<10;i++){
+      const angle=Math.PI*i/5-Math.PI/2;
+      const rad=i%2===0?r*.75:r*.35;
+      const x=cx+rad*Math.cos(angle),y=cy+rad*Math.sin(angle);
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    }ctx.closePath();
+  },
+  // FISH
+  fish: (ctx,cx,cy,r)=>{
+    // body ellipse
+    ctx.beginPath();ctx.ellipse(cx-r*.05,cy,r*.55,r*.32,0,0,Math.PI*2);ctx.closePath();ctx.fill();
+    // tail
+    ctx.beginPath();
+    ctx.moveTo(cx+r*.48,cy);ctx.lineTo(cx+r*.82,cy-r*.38);ctx.lineTo(cx+r*.82,cy+r*.38);
+    ctx.closePath();
+  },
+  // CRESCENT MOON
+  moon: (ctx,cx,cy,r)=>{
+    ctx.beginPath();ctx.arc(cx,cy,r*.65,0,Math.PI*2);ctx.closePath();ctx.fill();
+    // cutout – we use composite
+    ctx.globalCompositeOperation='destination-out';
+    ctx.beginPath();ctx.arc(cx+r*.28,cy-r*.1,r*.52,0,Math.PI*2);ctx.fill();
+    ctx.globalCompositeOperation='source-over';
+  },
+  // ANCHOR
+  anchor: (ctx,cx,cy,r)=>{
+    const lw=ctx.lineWidth; ctx.lineWidth=r*.14;
+    // ring
+    ctx.beginPath();ctx.arc(cx,cy-r*.4,r*.22,0,Math.PI*2);ctx.stroke();
+    // vertical bar
+    ctx.beginPath();ctx.moveTo(cx,cy-r*.18);ctx.lineTo(cx,cy+r*.55);ctx.stroke();
+    // horizontal bar
+    ctx.beginPath();ctx.moveTo(cx-r*.45,cy-r*.06);ctx.lineTo(cx+r*.45,cy-r*.06);ctx.stroke();
+    // bottom curve
+    ctx.beginPath();ctx.arc(cx,cy+r*.1,r*.46,Math.PI*.15,Math.PI*.85);ctx.stroke();
+    ctx.lineWidth=lw;
+  },
+  // DINOSAUR (simplified T-Rex silhouette)
+  dino: (ctx,cx,cy,r)=>{
+    ctx.beginPath();
+    // body
+    ctx.ellipse(cx+r*.05,cy+r*.1,r*.42,r*.28,-.2,0,Math.PI*2);ctx.closePath();ctx.fill();
+    // head
+    ctx.beginPath();ctx.ellipse(cx+r*.52,cy-r*.25,r*.28,r*.2,.3,0,Math.PI*2);ctx.closePath();ctx.fill();
+    // neck
+    ctx.beginPath();ctx.moveTo(cx+r*.28,cy-.05*r);ctx.lineTo(cx+r*.38,cy-r*.18);
+    ctx.lineTo(cx+r*.52,cy-r*.06);ctx.lineTo(cx+r*.42,cy+r*.05);ctx.closePath();ctx.fill();
+    // tail
+    ctx.beginPath();ctx.moveTo(cx-r*.35,cy+r*.05);ctx.lineTo(cx-r*.82,cy+r*.35);ctx.lineTo(cx-r*.7,cy+r*.44);
+    ctx.lineTo(cx-r*.3,cy+r*.22);ctx.closePath();ctx.fill();
+    // legs
+    ctx.beginPath();ctx.rect(cx-.08*r,cy+r*.32,r*.16,r*.36);ctx.fill();
+    ctx.beginPath();ctx.rect(cx+r*.2,cy+r*.3,r*.16,r*.38);ctx.fill();
+    // arms
+    ctx.beginPath();ctx.rect(cx+r*.3,cy-r*.08,r*.14,r*.2);ctx.fill();
+  },
+  // ROCKET
+  rocket: (ctx,cx,cy,r)=>{
+    // body
+    ctx.beginPath();ctx.ellipse(cx,cy-r*.1,r*.22,r*.5,0,0,Math.PI*2);ctx.closePath();ctx.fill();
+    // nose
+    ctx.beginPath();ctx.moveTo(cx-r*.22,cy-r*.42);ctx.lineTo(cx,cy-r*.82);ctx.lineTo(cx+r*.22,cy-r*.42);ctx.closePath();ctx.fill();
+    // fins
+    ctx.beginPath();ctx.moveTo(cx-r*.22,cy+r*.22);ctx.lineTo(cx-r*.48,cy+r*.62);ctx.lineTo(cx-r*.22,cy+r*.44);ctx.closePath();ctx.fill();
+    ctx.beginPath();ctx.moveTo(cx+r*.22,cy+r*.22);ctx.lineTo(cx+r*.48,cy+r*.62);ctx.lineTo(cx+r*.22,cy+r*.44);ctx.closePath();ctx.fill();
+    // flame
+    ctx.fillStyle='rgba(251,146,60,.8)';
+    ctx.beginPath();ctx.ellipse(cx,cy+r*.62,r*.12,r*.18,0,0,Math.PI*2);ctx.fill();
+  },
+};
+
+const SHAPE_KEYS=Object.keys(SHAPES);
+const COLORS=['#38BDF8','#34D399','#FBBF24','#A78BFA','#FB923C','#F472B6','#2DD4BF','#F87171'];
+
+/* ============================================================
+   DRAW HELPER
+   ============================================================ */
+function drawShapeOnCanvas(canvas,shapeKey,color,rotDeg,bgAlpha=0){
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  if(bgAlpha>0){ctx.fillStyle=`rgba(255,255,255,${bgAlpha})`;ctx.fillRect(0,0,W,H);}
+  ctx.save();
+  ctx.translate(W/2,H/2);
+  ctx.rotate(rotDeg*Math.PI/180);
+  ctx.translate(-W/2,-H/2);
+  ctx.fillStyle=color;
+  ctx.strokeStyle=color;
+  const fn=SHAPES[shapeKey];
+  if(fn){fn(ctx,W/2,H/2,Math.min(W,H)*.42);}
+  // for shapes that use stroke only (anchor), call fill too as noop
+  if(shapeKey==='moon'||shapeKey==='fish'||shapeKey==='house'){/* already filled inside */}
+  else if(shapeKey!=='anchor'){ctx.fill();}
+  ctx.restore();
+}
+
+/* ============================================================
+   STATE
+   ============================================================ */
+const $=id=>document.getElementById(id);
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;};
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+
+let gameMode='A',diff='easy',score=0,qNum=0,TOTAL=10,answered=false;
+
+function setMode(m,btn){
+  gameMode=m;
+  document.querySelectorAll('.mpill').forEach(b=>{if(['mA','mB'].includes(b.id))b.classList.remove('on');});
+  btn.classList.add('on');
+  renderPreview();
+}
+function setDiff(d,btn){
+  diff=d;
+  document.querySelectorAll('.mpill').forEach(b=>{if(['d1','d2','d3'].includes(b.id))b.classList.remove('on');});
+  btn.classList.add('on');
+}
+function show(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));$(id).classList.add('on');}
+function goStart(){show('start');}
+
+/* ---- PREVIEW on start screen ---- */
+function renderPreview(){
+  const p=$('s-preview');
+  const shp=pick(SHAPE_KEYS),col=pick(COLORS);
+  if(gameMode==='A'){
+    const ang=rnd(1,3)*90;
+    p.innerHTML=`
+      <div class="sp-cell"><div class="sp-lbl">Hình gốc</div><canvas id="pv-ref" width="70" height="70"></canvas></div>
+      <div class="sp-arrow">→ xoay ${ang}° →</div>
+      <div class="sp-cell"><div class="sp-lbl">Tìm hình này</div><canvas id="pv-rot" width="70" height="70"></canvas></div>`;
+    setTimeout(()=>{
+      const c1=$('pv-ref'),c2=$('pv-rot');
+      if(c1)drawShapeOnCanvas(c1,shp,col,0);
+      if(c2)drawShapeOnCanvas(c2,shp,col,ang);
+    },10);
+  } else {
+    const ang=rnd(1,7)*45;
+    p.innerHTML=`
+      <div class="sp-cell"><div class="sp-lbl">Hình đang xoay</div><canvas id="pv-spin" width="70" height="70"></canvas></div>
+      <div class="sp-arrow">↺↻</div>
+      <div class="sp-cell"><div class="sp-lbl">Mục tiêu</div><canvas id="pv-tgt" width="70" height="70"></canvas></div>`;
+    setTimeout(()=>{
+      const c1=$('pv-spin'),c2=$('pv-tgt');
+      if(c1)drawShapeOnCanvas(c1,shp,col,ang*2);
+      if(c2)drawShapeOnCanvas(c2,shp,col,ang);
+    },10);
+  }
+}
+
+/* ============================================================
+   GAME A – FIND MATCHING ROTATION
+   ============================================================ */
+let currA={};
+
+function startA(){
+  TOTAL=10;score=0;qNum=0;answered=false;
+  show('gA');nextA();
+}
+
+function nextA(){
+  if(qNum>=TOTAL){endGame();return;}
+  answered=false;
+  $('A-nx').style.display='none';
+  $('A-fb').textContent='';$('A-fb').className='fb-msg';
+  $('A-prog').style.width=((qNum/TOTAL)*100)+'%';
+  $('A-q').textContent=`Câu ${qNum+1}/${TOTAL}`;
+  $('A-sc').textContent=score+' ⭐';
+
+  // pick shape
+  const shapeKey=pick(SHAPE_KEYS);
+  const color=pick(COLORS);
+
+  // difficulty → rotation angles available
+  const anglePool = diff==='easy'?[90,180,270]:
+                    diff==='med' ?[45,90,135,180,225,270,315]:
+                                  [30,60,90,120,150,180,210,240,270,300,330];
+
+  // reference is at 0°; answer is at some rotation
+  const answerAngle=pick(anglePool);
+
+  // generate wrong angles (different from answer and 0)
+  const wrongs=[];
+  const used=new Set([0,answerAngle]);
+  let tries=0;
+  while(wrongs.length<3&&tries<200){
+    tries++;
+    const a=pick(anglePool);
+    if(!used.has(a)){used.add(a);wrongs.push(a);}
+  }
+  // fallback
+  while(wrongs.length<3){
+    const a=(wrongs.length*90+45)%360;
+    if(!used.has(a)){used.add(a);wrongs.push(a);}else wrongs.push((wrongs.length*60)%360+10);
+  }
+
+  currA={shapeKey,color,answerAngle};
+
+  // draw reference
+  const refC=$('A-ref');
+  drawShapeOnCanvas(refC,shapeKey,color,0);
+
+  // hint text
+  const angleText=diff==='easy'?`Hình này sẽ trông như thế nào khi xoay ${answerAngle}°?`:`Hình xoay ${answerAngle}° trông như thế nào?`;
+  $('A-hint').textContent=angleText;
+
+  // build options
+  const numCols=diff==='hard'?4:2;
+  $('A-opts').style.gridTemplateColumns=`repeat(${numCols},1fr)`;
+  const opts=shuffle([{ang:answerAngle,correct:true},...wrongs.map(a=>({ang:a,correct:false}))]);
+  const grid=$('A-opts');grid.innerHTML='';
+
+  opts.forEach(opt=>{
+    const card=document.createElement('div');card.className='opt-card';
+    card.innerHTML=`<div class="opt-badge">${opt.correct?'✓':'✗'}</div><div class="angle-lbl">${opt.ang}°</div>`;
+    const cv=document.createElement('canvas');cv.width=90;cv.height=90;
+    card.appendChild(cv);
+    setTimeout(()=>drawShapeOnCanvas(cv,shapeKey,color,opt.ang),10);
+    card.addEventListener('pointerdown',e=>{e.preventDefault();selectA(opt,card);},{passive:false});
+    grid.appendChild(card);
+  });
+}
+
+function selectA(opt,card){
+  if(answered)return;
+  const ok=opt.correct;
+  if(ok){
+    answered=true;
+    card.classList.add('correct');
+    document.querySelectorAll('.opt-card').forEach(c=>{if(c!==card)c.classList.add('dimmed');});
+    score++;qNum++;
+    $('A-sc').textContent=score+' ⭐';
+    $('A-fb').textContent='Đúng rồi! Tư duy không gian tốt lắm! 🎉';$('A-fb').className='fb-msg ok';
+    confetti();
+    setTimeout(()=>$('A-nx').style.display='block',350);
+  } else {
+    card.classList.add('wrong');
+    $('A-fb').textContent='Chưa đúng! Xoay hình kỹ hơn nhé 😊';$('A-fb').className='fb-msg err';
+    setTimeout(()=>{card.classList.remove('wrong');$('A-fb').textContent='';$('A-fb').className='fb-msg';},900);
+  }
+}
+
+/* ============================================================
+   GAME B – SPIN TO MATCH
+   ============================================================ */
+let currB={shapeKey:'',color:'',targetAngle:0,currentAngle:0};
+
+function startB(){
+  TOTAL=8;score=0;qNum=0;answered=false;
+  show('gB');nextB();
+}
+
+function nextB(){
+  if(qNum>=TOTAL){endGame();return;}
+  answered=false;
+  $('B-nx').style.display='none';
+  $('B-fb').textContent='';$('B-fb').className='fb-msg';
+  $('ghost-wrap').classList.remove('show');
+  $('B-prog').style.width=((qNum/TOTAL)*100)+'%';
+  $('B-q').textContent=`Câu ${qNum+1}/${TOTAL}`;
+  $('B-sc').textContent=score+' ⭐';
+
+  const shapeKey=pick(SHAPE_KEYS);
+  const color=pick(COLORS);
+  const step=diff==='easy'?90:diff==='med'?45:30;
+  const steps=360/step;
+  const targetAngle=(rnd(1,steps-1))*step;
+  const startAngle=0;
+
+  currB={shapeKey,color,targetAngle,currentAngle:startAngle,step};
+
+  $('B-task').textContent='Xoay hình để khớp với ô Mục tiêu ở góc phải!';
+  $('B-angle').textContent=`${startAngle}°`;
+
+  drawShapeOnCanvas($('B-spin'),shapeKey,color,startAngle);
+  drawShapeOnCanvas($('B-target'),shapeKey,color,targetAngle);
+}
+
+function rotateSpin(delta){
+  if(answered)return;
+  currB.currentAngle=(currB.currentAngle+delta+360)%360;
+  $('B-angle').textContent=`${currB.currentAngle}°`;
+  drawShapeOnCanvas($('B-spin'),currB.shapeKey,currB.color,currB.currentAngle);
+}
+
+function confirmSpin(){
+  if(answered)return;
+  const tol=currB.step/2;
+  const diff2=Math.abs(((currB.currentAngle-currB.targetAngle)+360)%360);
+  const ok=diff2<=tol||(360-diff2)<=tol;
+
+  if(ok){
+    answered=true;score++;qNum++;
+    $('B-sc').textContent=score+' ⭐';
+    $('B-fb').textContent='Chính xác! Giỏi lắm! 🎉';$('B-fb').className='fb-msg ok';
+    confetti();
+    setTimeout(()=>$('B-nx').style.display='block',350);
+  } else {
+    $('B-fb').textContent='Chưa khớp! Xoay thêm nhé 😊';$('B-fb').className='fb-msg err';
+    // show ghost answer after 2 wrong attempts
+    if(!currB.attempts)currB.attempts=0;
+    currB.attempts++;
+    if(currB.attempts>=2){
+      $('ghost-wrap').classList.add('show');
+      drawShapeOnCanvas($('B-ghost'),currB.shapeKey,currB.color,currB.targetAngle);
+      $('ghost-deg').textContent=`${currB.targetAngle}°`;
+    }
+    setTimeout(()=>{$('B-fb').textContent='';$('B-fb').className='fb-msg';},800);
+  }
+}
+
+/* ============================================================
+   SHARED
+   ============================================================ */
+function startGame(){
+  if(gameMode==='A')startA();else startB();
+}
+
+const CC=['#FBBF24','#34D399','#38BDF8','#A78BFA','#FB923C','#F472B6','#2DD4BF'];
+function confetti(){
+  for(let i=0;i<30;i++){
+    const el=document.createElement('div');el.className='cp';
+    const sz=5+Math.random()*9;
+    el.style.cssText=`width:${sz}px;height:${sz}px;background:${CC[Math.floor(Math.random()*CC.length)]};left:${15+Math.random()*70}%;top:${10+Math.random()*55}%;border-radius:${Math.random()>.5?'50%':'3px'};animation-duration:${.7+Math.random()*.9}s;animation-delay:${Math.random()*.12}s;`;
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),2000);
+  }
+}
+
+function endGame(){
+  show('result');
+  const pct=score/TOTAL;
+  let ico,h1,sub;
+  if(pct>=.9){ico='🏆';h1='Tư duy không gian siêu đỉnh!';sub='Con nhận dạng hình xoay cực giỏi!';}
+  else if(pct>=.7){ico='🌟';h1='Giỏi lắm!';sub='Con hiểu hình xoay tốt rồi!';}
+  else if(pct>=.5){ico='😊';h1='Cố gắng tốt!';sub='Luyện thêm sẽ giỏi hơn nhé!';}
+  else{ico='💪';h1='Tiếp tục nhé!';sub='Tưởng tượng hình đang xoay trong đầu!';}
+  $('res-ico').textContent=ico;$('res-h1').textContent=h1;$('res-sub').textContent=sub;
+  $('res-big').textContent=score+' / '+TOTAL;
+  confetti();
+}
+
+/* init */
+renderPreview();
+document.addEventListener('touchend',e=>{
+  if(e.target.closest('.opt-card,.go-btn,.mpill,.btn-next,.rb,.btn-back,.spin-btn,.spin-confirm'))e.preventDefault();
+},{passive:false});
+</script>
+</body>
+</html>

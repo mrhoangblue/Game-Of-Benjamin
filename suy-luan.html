@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>🧠 Suy Luận Nhân Quả</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#08111F;--panel:#0F1E35;--card:#162847;--card2:#1D3456;
+  --y:#FFD166;--g:#06D6A0;--b:#48CAE4;--p:#A855F7;--o:#FB923C;--r:#F87171;--pk:#F472B6;--tl:#34D399;
+  --white:#DDE8F5;--muted:#4D6A8A;
+  --rad:22px;--radsm:14px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none;}
+html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Nunito',system-ui,sans-serif;color:var(--white);}
+
+/* nebula bg */
+body::before{content:'';position:fixed;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 55% 45% at 10% 5%,rgba(72,202,228,.09),transparent),
+             radial-gradient(ellipse 45% 40% at 90% 95%,rgba(168,85,247,.08),transparent),
+             radial-gradient(ellipse 40% 30% at 50% 50%,rgba(6,214,160,.04),transparent);}
+
+/* tiny stars */
+body::after{content:'';position:fixed;inset:0;pointer-events:none;
+  background-image:radial-gradient(1px 1px at 8% 12%,rgba(255,255,255,.22) 0%,transparent 100%),
+    radial-gradient(1.5px 1.5px at 25% 65%,rgba(255,255,255,.15) 0%,transparent 100%),
+    radial-gradient(1px 1px at 60% 8%,rgba(255,255,255,.2) 0%,transparent 100%),
+    radial-gradient(1px 1px at 78% 40%,rgba(255,255,255,.12) 0%,transparent 100%),
+    radial-gradient(1.5px 1.5px at 92% 75%,rgba(255,255,255,.18) 0%,transparent 100%),
+    radial-gradient(1px 1px at 45% 88%,rgba(255,255,255,.14) 0%,transparent 100%);}
+
+.scr{display:none;position:fixed;inset:0;flex-direction:column;align-items:center;}
+.scr.on{display:flex;}
+
+/* ====== START ====== */
+#start{justify-content:center;gap:1.4rem;padding:1.8rem 1.4rem;}
+.s-brain{font-size:5rem;animation:brainBob 2.5s ease-in-out infinite;line-height:1;}
+@keyframes brainBob{0%,100%{transform:translateY(0) scale(1);}50%{transform:translateY(-10px) scale(1.05);}};
+.s-title{text-align:center;}
+.s-title h1{font-size:2.1rem;font-weight:900;
+  background:linear-gradient(135deg,var(--b),var(--g));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.s-title p{font-size:.9rem;color:var(--muted);margin-top:5px;font-weight:700;}
+
+/* example chain on start */
+.s-demo{display:flex;align-items:center;gap:0;background:rgba(255,255,255,.05);
+  border-radius:var(--rad);border:1.5px solid rgba(255,255,255,.08);overflow:hidden;width:100%;max-width:360px;}
+.s-demo-cell{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 8px;}
+.s-demo-cell .de{font-size:2.2rem;line-height:1;}
+.s-demo-cell .dt{font-size:.68rem;font-weight:700;color:var(--muted);text-align:center;}
+.s-demo-arr{font-size:1.4rem;color:var(--b);font-weight:900;flex-shrink:0;}
+
+/* diff + cat selectors */
+.sel-group{width:100%;max-width:380px;display:flex;flex-direction:column;gap:7px;}
+.sel-label{font-size:.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+.pill-row{display:flex;gap:7px;flex-wrap:wrap;}
+.pill{padding:8px 16px;font-family:'Nunito',sans-serif;font-size:.78rem;font-weight:800;
+  border-radius:30px;border:2px solid rgba(255,255,255,.1);background:rgba(255,255,255,.06);
+  color:var(--white);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.pill.on{border-color:var(--b);background:rgba(72,202,228,.18);color:var(--b);}
+.pill:active{transform:scale(.93);}
+.go-btn{padding:16px 52px;font-family:'Nunito',sans-serif;font-size:1.2rem;font-weight:900;
+  border:none;border-radius:40px;background:linear-gradient(135deg,var(--b),var(--p));
+  color:#fff;cursor:pointer;box-shadow:0 8px 28px rgba(72,202,228,.4);transition:transform .12s;}
+.go-btn:active{transform:scale(.94);}
+
+/* ====== GAME ====== */
+#game{justify-content:space-between;padding:0;}
+
+.hud{width:100%;display:flex;align-items:center;gap:10px;padding:.75rem 1.2rem .3rem;flex-shrink:0;}
+.btn-back{font-size:1.2rem;background:rgba(255,255,255,.08);border:none;border-radius:11px;
+  padding:6px 12px;color:var(--white);cursor:pointer;font-weight:800;}
+.hud-mid{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.hud-prog{width:100%;height:7px;background:rgba(255,255,255,.07);border-radius:8px;overflow:hidden;}
+.hud-prog-fill{height:100%;background:linear-gradient(90deg,var(--b),var(--p));border-radius:8px;transition:width .45s ease;}
+.hud-meta{display:flex;gap:8px;font-size:.68rem;font-weight:800;color:var(--muted);}
+.hud-score{font-size:1.1rem;font-weight:900;color:var(--y);white-space:nowrap;}
+
+/* TYPE BADGE */
+.type-badge{flex-shrink:0;text-align:center;padding:.15rem 1rem;}
+.tb-inner{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:30px;border:1.5px solid;font-size:.72rem;font-weight:800;}
+.tb-cause{border-color:rgba(72,202,228,.4);background:rgba(72,202,228,.1);color:var(--b);}
+.tb-effect{border-color:rgba(168,85,247,.4);background:rgba(168,85,247,.1);color:var(--p);}
+.tb-chain{border-color:rgba(251,146,60,.4);background:rgba(251,146,60,.1);color:var(--o);}
+
+/* STORY PANELS */
+.story-wrap{flex-shrink:0;width:100%;padding:0 .9rem;display:flex;flex-direction:column;gap:6px;}
+
+/* single cause/effect panel */
+.story-panel{background:var(--card);border-radius:var(--rad);padding:14px;
+  display:flex;align-items:center;gap:12px;border:1.5px solid rgba(255,255,255,.08);
+  box-shadow:0 6px 20px rgba(0,0,0,.35);}
+.sp-emoji{font-size:3rem;line-height:1;flex-shrink:0;}
+.sp-text{flex:1;}
+.sp-label{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:2px;}
+.sp-main{font-size:1.05rem;font-weight:900;line-height:1.35;}
+.sp-tag{font-size:.7rem;font-weight:700;color:var(--muted);margin-top:2px;}
+
+/* chain: 3 panels in row */
+.chain-row{display:flex;align-items:stretch;gap:4px;width:100%;}
+.chain-cell{flex:1;background:var(--card);border-radius:var(--radsm);padding:10px 6px;
+  display:flex;flex-direction:column;align-items:center;gap:4px;border:1.5px solid rgba(255,255,255,.08);}
+.chain-cell.missing{background:rgba(72,202,228,.07);border:2px dashed rgba(72,202,228,.35);
+  animation:chainPulse 1.6s ease-in-out infinite;}
+@keyframes chainPulse{0%,100%{border-color:rgba(72,202,228,.35);}50%{border-color:rgba(72,202,228,.7);}};
+.chain-cell .cc-e{font-size:2rem;line-height:1;}
+.chain-cell .cc-t{font-size:.65rem;font-weight:800;color:var(--muted);text-align:center;line-height:1.2;}
+.chain-cell .cc-q{font-size:1.5rem;font-weight:900;color:var(--b);animation:qBob 1.6s ease-in-out infinite;}
+@keyframes qBob{0%,100%{transform:scale(1);}50%{transform:scale(1.18);}};
+.chain-arr{font-size:1rem;color:var(--muted);align-self:center;flex-shrink:0;}
+.chain-cell.fill-ok{border-style:solid;border-color:var(--g);background:rgba(6,214,160,.1);animation:cellIn .4s ease;}
+@keyframes cellIn{0%{transform:scale(.8);opacity:0;}100%{transform:scale(1);opacity:1;}};
+
+/* Q connector */
+.q-connector{display:flex;align-items:center;gap:8px;padding:0 2px;}
+.qc-line{flex:1;height:2px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);}
+.qc-text{font-size:.82rem;font-weight:800;color:var(--muted);white-space:nowrap;}
+.qc-arrow{font-size:1.2rem;color:var(--b);}
+
+/* QUESTION TEXT */
+.q-text{font-size:.95rem;font-weight:900;text-align:center;padding:0 1rem;flex-shrink:0;
+  color:var(--white);}
+.q-text span{color:var(--y);}
+
+/* ANSWER OPTIONS */
+.opts-wrap{flex-shrink:0;padding:0 .9rem;width:100%;}
+.opts-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;max-width:460px;margin:0 auto;}
+.opt{background:var(--card);border:2.5px solid rgba(255,255,255,.08);border-radius:var(--rad);
+  cursor:pointer;padding:11px 10px;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  transition:transform .1s,border-color .15s,background .15s;
+  box-shadow:0 4px 14px rgba(0,0,0,.3);position:relative;overflow:hidden;min-height:80px;}
+.opt::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.04),transparent);pointer-events:none;}
+.opt:active{transform:scale(.92);}
+.opt .oe{font-size:2.4rem;line-height:1;}
+.opt .ot{font-size:.75rem;font-weight:800;color:var(--muted);text-align:center;line-height:1.25;}
+.opt .ob{position:absolute;top:6px;right:7px;width:20px;height:20px;border-radius:50%;
+  display:none;align-items:center;justify-content:center;font-size:.65rem;font-weight:900;}
+.opt.correct{border-color:var(--g);background:rgba(6,214,160,.14);animation:optOk .42s ease;}
+.opt.correct .ob{display:flex;background:var(--g);color:#08111F;}
+@keyframes optOk{0%{transform:scale(1);}40%{transform:scale(1.1);}100%{transform:scale(1);}};
+.opt.wrong{border-color:var(--r);background:rgba(248,113,113,.13);animation:optErr .38s ease;}
+.opt.wrong .ob{display:flex;background:var(--r);color:#fff;}
+@keyframes optErr{0%,100%{transform:translateX(0);}25%{transform:translateX(-9px);}75%{transform:translateX(9px);}};
+.opt.dimmed{opacity:.25;pointer-events:none;}
+.opt.reveal{border-color:var(--g);background:rgba(6,214,160,.12);}
+.opt.reveal .ob{display:flex;background:var(--g);color:#08111F;}
+
+/* EXPLANATION */
+.explain-area{flex-shrink:0;padding:0 .9rem;width:100%;min-height:50px;}
+.explain-box{background:var(--card2);border-radius:var(--radsm);padding:8px 12px;
+  border-left:3px solid var(--g);display:none;animation:explainIn .3s ease;}
+@keyframes explainIn{0%{opacity:0;transform:translateY(8px);}100%{opacity:1;transform:translateY(0);}};
+.explain-box p{font-size:.78rem;font-weight:700;color:var(--white);line-height:1.5;}
+.explain-box .ex-fact{font-size:.7rem;color:var(--muted);margin-top:3px;font-style:italic;}
+
+.fb-bar{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;
+  padding:0 .9rem .6rem;min-height:42px;}
+.fb-msg{font-size:.9rem;font-weight:900;color:transparent;}
+.fb-msg.ok{color:var(--g);}.fb-msg.err{color:var(--r);}
+.btn-next{padding:10px 32px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:900;
+  border:none;border-radius:30px;background:linear-gradient(135deg,var(--g),var(--tl));
+  color:#08111F;cursor:pointer;box-shadow:0 4px 16px rgba(6,214,160,.35);
+  display:none;white-space:nowrap;transition:transform .1s;}
+.btn-next:active{transform:scale(.95);}
+
+/* CONFETTI */
+.cp{position:fixed;pointer-events:none;z-index:999;border-radius:3px;animation:cpFall linear forwards;}
+@keyframes cpFall{0%{opacity:1;transform:translateY(0) rotate(0);}100%{opacity:0;transform:translateY(115vh) rotate(900deg);}};
+
+/* ====== RESULT ====== */
+#result{justify-content:center;gap:1.3rem;padding:2rem 1.4rem;text-align:center;}
+.res-ico{font-size:5rem;animation:resIco .5s cubic-bezier(.34,1.56,.64,1) both;}
+@keyframes resIco{0%{transform:scale(0) rotate(-20deg);}100%{transform:scale(1) rotate(0);}};
+.res-title{font-size:2rem;font-weight:900;
+  background:linear-gradient(135deg,var(--y),var(--o));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.res-sub{font-size:.9rem;color:var(--muted);font-weight:700;}
+.res-chain{display:flex;align-items:center;gap:6px;background:var(--card);
+  border-radius:var(--rad);padding:12px 16px;border:1.5px solid rgba(255,255,255,.08);font-size:1.4rem;}
+.res-chain span{font-size:.75rem;color:var(--muted);font-weight:700;}
+.res-score-box{background:var(--card);border-radius:var(--rad);padding:1rem 2.4rem;
+  border:1.5px solid rgba(255,255,255,.08);}
+.res-big{font-size:3.4rem;font-weight:900;color:var(--g);}
+.res-lbl{font-size:.78rem;color:var(--muted);font-weight:700;}
+.res-btns{display:flex;gap:12px;}
+.rb{padding:13px 26px;font-family:'Nunito',sans-serif;font-size:.92rem;font-weight:900;border:none;border-radius:30px;cursor:pointer;transition:transform .1s;}
+.rb:active{transform:scale(.95);}
+.rb.p{background:linear-gradient(135deg,var(--b),var(--p));color:#fff;}
+.rb.s{background:rgba(255,255,255,.1);color:var(--white);border:2px solid rgba(255,255,255,.18);}
+
+/* LANDSCAPE */
+@media(orientation:landscape)and(max-height:520px){
+  .s-brain{font-size:3rem;}.s-title h1{font-size:1.5rem;}.s-demo{display:none;}
+  .story-panel{padding:8px 10px;}.sp-emoji{font-size:2rem;}.sp-main{font-size:.9rem;}
+  .opts-grid{grid-template-columns:repeat(4,1fr);max-width:560px;}
+  .opt{min-height:60px;padding:7px;}.opt .oe{font-size:1.8rem;}.opt .ot{font-size:.65rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- START -->
+<div id="start" class="scr on">
+  <div class="s-brain">🧠</div>
+  <div class="s-title">
+    <h1>Suy Luận Nhân Quả</h1>
+    <p>Nếu... thì điều gì xảy ra?</p>
+  </div>
+  <div class="s-demo">
+    <div class="s-demo-cell"><div class="de">🌧️</div><div class="dt">Trời mưa</div></div>
+    <div class="s-demo-arr">→</div>
+    <div class="s-demo-cell"><div class="de">❓</div><div class="dt">Thì sao?</div></div>
+    <div class="s-demo-arr">→</div>
+    <div class="s-demo-cell"><div class="de">🌈</div><div class="dt">Cầu vồng!</div></div>
+  </div>
+  <div class="sel-group">
+    <div class="sel-label">Độ khó:</div>
+    <div class="pill-row">
+      <div class="pill on" id="d1" onclick="setD('easy',this)">⭐ Dễ</div>
+      <div class="pill"    id="d2" onclick="setD('med',this)">⭐⭐ Vừa</div>
+      <div class="pill"    id="d3" onclick="setD('hard',this)">⭐⭐⭐ Khó</div>
+    </div>
+  </div>
+  <button class="go-btn" onclick="startGame()">Bắt đầu! 🚀</button>
+</div>
+
+<!-- GAME -->
+<div id="game" class="scr">
+  <div class="hud">
+    <button class="btn-back" onclick="goStart()">◂</button>
+    <div class="hud-mid">
+      <div class="hud-prog"><div class="hud-prog-fill" id="prog"></div></div>
+      <div class="hud-meta"><span id="qnum">Câu 1/10</span><span id="cat-tag"></span></div>
+    </div>
+    <div class="hud-score" id="hud-sc">0 ⭐</div>
+  </div>
+  <div class="type-badge"><div class="tb-inner" id="type-badge"></div></div>
+  <div class="story-wrap" id="story-wrap"></div>
+  <div class="q-text" id="q-text"></div>
+  <div class="opts-wrap"><div class="opts-grid" id="opts"></div></div>
+  <div class="explain-area"><div class="explain-box" id="explain-box"><p id="explain-p"></p><div class="ex-fact" id="explain-fact"></div></div></div>
+  <div class="fb-bar">
+    <div class="fb-msg" id="fb-msg"></div>
+    <button class="btn-next" id="btn-next" onclick="nextQ()">Tiếp theo →</button>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="result" class="scr">
+  <div class="res-ico" id="res-ico"></div>
+  <div class="res-title" id="res-title"></div>
+  <div class="res-sub" id="res-sub"></div>
+  <div class="res-chain">
+    <span>🧠</span><span>→</span><span>💡</span><span>→</span><span>⭐</span>
+    <span style="flex:1;text-align:right">Suy luận tốt = Thông minh hơn!</span>
+  </div>
+  <div class="res-score-box"><div class="res-big" id="res-big"></div><div class="res-lbl">Điểm số</div></div>
+  <div class="res-btns">
+    <button class="rb p" onclick="startGame()">Chơi lại 🔁</button>
+    <button class="rb s" onclick="goStart()">Trang chủ</button>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   DATA: Questions
+   type: 'CE' = cause→effect,  'EC' = effect→cause,  'CH' = chain (fill middle)
+   scene: what we show
+   q: question text
+   ans: correct answer option
+   wrong: 3 wrong options
+   explain: explanation shown after
+   fact: fun fact
+   cat: category emoji+name
+   diff: easy|med|hard
+   ============================================================ */
+const QS = [
+  // ===== THIÊN NHIÊN =====
+  {type:'CE',scene:{e:'🌧️',t:'Trời mưa rất to',tag:'Thiên nhiên'},
+   q:'Sau khi trời tạnh mưa, điều gì có thể xảy ra?',
+   ans:{e:'🌈',t:'Có cầu vồng đẹp'},
+   wrong:[{e:'⛄',t:'Trời tuyết rơi'},{e:'🌪️',t:'Có lốc xoáy'},{e:'🌋',t:'Núi lửa phun'}],
+   explain:'Sau mưa, ánh nắng chiếu qua hạt nước tạo ra cầu vồng 7 màu!',fact:'🌈 Cầu vồng có 7 màu: Đỏ-Cam-Vàng-Lục-Lam-Chàm-Tím',diff:'easy',cat:'🌿 Thiên nhiên'},
+
+  {type:'EC',scene:{e:'🌵',t:'Cây xương rồng sống tốt ở sa mạc',tag:'Thiên nhiên'},
+   q:'Tại sao cây xương rồng sống được ở nơi rất ít nước?',
+   ans:{e:'💧',t:'Nó tích trữ nước bên trong thân'},
+   wrong:[{e:'☁️',t:'Nó hút nước từ mây'},{e:'🌊',t:'Nó đi tìm sông suối'},{e:'🧊',t:'Nó không cần nước'}],
+   explain:'Thân cây xương rồng dày và mọng nước giúp nó tự trữ nước để sống qua mùa khô!',fact:'🌵 Xương rồng có thể sống hàng tháng không cần mưa',diff:'med',cat:'🌿 Thiên nhiên'},
+
+  {type:'CE',scene:{e:'🌱',t:'Hạt giống được gieo vào đất ẩm',tag:'Thiên nhiên'},
+   q:'Sau vài ngày, điều gì sẽ xảy ra?',
+   ans:{e:'🌿',t:'Mầm non nhú lên'},
+   wrong:[{e:'🍎',t:'Ra quả ngay lập tức'},{e:'🌳',t:'Thành cây to ngay'},{e:'🌸',t:'Nở hoa luôn'}],
+   explain:'Hạt giống cần nước và ánh sáng để nảy mầm, sau đó từ từ lớn thành cây!',fact:'🌱 Một hạt nhỏ xíu có thể trở thành cây to hàng chục năm',diff:'easy',cat:'🌿 Thiên nhiên'},
+
+  {type:'CE',scene:{e:'🍂',t:'Mùa thu đến, trời se lạnh',tag:'Thiên nhiên'},
+   q:'Chuyện gì xảy ra với lá cây?',
+   ans:{e:'🍁',t:'Lá chuyển màu vàng đỏ và rụng'},
+   wrong:[{e:'🌸',t:'Cây nở hoa rực rỡ'},{e:'💚',t:'Lá xanh tươi hơn'},{e:'🍎',t:'Cây ra rất nhiều quả'}],
+   explain:'Khi trời lạnh và ít nắng, cây không cần lá nhiều nữa nên lá đổi màu và rụng để bảo toàn năng lượng!',fact:'🍂 Lá cây có chất diệp lục giúp chúng hấp thụ ánh sáng mặt trời',diff:'med',cat:'🌿 Thiên nhiên'},
+
+  {type:'CH',scene:{chain:[
+    {e:'☀️',t:'Mặt trời đốt nóng nước biển'},
+    {e:'❓',t:'???'},
+    {e:'🌧️',t:'Mưa rơi xuống'}
+  ]},q:'Điều gì xảy ra ở giữa — trước khi có mưa?',
+   ans:{e:'☁️',t:'Hơi nước bay lên thành mây'},
+   wrong:[{e:'🌊',t:'Biển tràn vào đất liền'},{e:'❄️',t:'Nước đóng băng ngay'},{e:'🌈',t:'Cầu vồng xuất hiện'}],
+   explain:'Nước biển bốc hơi bay lên cao, gặp lạnh thành mây, rồi mưa rơi xuống — đây là vòng tuần hoàn nước!',fact:'💧 Nước trên Trái Đất đã tuần hoàn hàng tỉ năm rồi!',diff:'hard',cat:'🌿 Thiên nhiên'},
+
+  {type:'CE',scene:{e:'🌬️',t:'Gió mạnh thổi liên tục',tag:'Thiên nhiên'},
+   q:'Điều gì sẽ xảy ra với chiếc diều?',
+   ans:{e:'🪁',t:'Diều bay cao lên trời'},
+   wrong:[{e:'💧',t:'Diều bị ướt nước'},{e:'🔥',t:'Diều bị cháy'},{e:'🧊',t:'Diều bị đóng băng'}],
+   explain:'Gió tạo ra lực nâng giúp diều bay lên cao — không có gió thì diều không thể bay!',fact:'🪁 Diều đã được phát minh cách đây hơn 2000 năm ở Trung Quốc',diff:'easy',cat:'🌿 Thiên nhiên'},
+
+  // ===== ĐỘNG VẬT =====
+  {type:'CE',scene:{e:'🐝',t:'Con ong thấy cánh đồng hoa',tag:'Động vật'},
+   q:'Con ong sẽ làm gì?',
+   ans:{e:'🍯',t:'Bay đến hút mật và làm mật ong'},
+   wrong:[{e:'😴',t:'Ngủ trưa trên cánh đồng'},{e:'🏊',t:'Nhảy xuống ao bơi'},{e:'📚',t:'Ngồi đọc sách'}],
+   explain:'Ong hút mật hoa rồi mang về tổ để tạo ra mật ong — đây cũng giúp hoa thụ phấn!',fact:'🐝 Một con ong cần bay thăm 2 triệu bông hoa để làm 0.5kg mật!',diff:'easy',cat:'🐾 Động vật'},
+
+  {type:'EC',scene:{e:'🐻❄️',t:'Gấu Bắc Cực có bộ lông dày và màu trắng',tag:'Động vật'},
+   q:'Tại sao gấu Bắc Cực có lông màu trắng?',
+   ans:{e:'🏔️',t:'Để lẫn vào tuyết trắng, dễ săn mồi'},
+   wrong:[{e:'🛁',t:'Vì nó hay tắm bằng sữa'},{e:'🌞',t:'Vì nó thích ánh nắng'},{e:'🧊',t:'Vì nó ăn nhiều đá'}],
+   explain:'Lông trắng giúp gấu Bắc Cực ngụy trang trong tuyết để tiếp cận con mồi mà không bị phát hiện!',fact:'🐻‍❄️ Thực ra lông gấu Bắc Cực trong suốt — ánh sáng phản chiếu làm nó trông trắng!',diff:'med',cat:'🐾 Động vật'},
+
+  {type:'CE',scene:{e:'🐸',t:'Ếch nghe tiếng sấm và trời mưa',tag:'Động vật'},
+   q:'Ếch sẽ làm gì?',
+   ans:{e:'🎵',t:'Kêu ộp ộp rất to'},
+   wrong:[{e:'😴',t:'Ngủ ngon lành'},{e:'🏃',t:'Chạy trốn vào hang'},{e:'🍕',t:'Đi tìm đồ ăn'}],
+   explain:'Ếch kêu to khi trời mưa vì đây là lúc chúng đi kiếm ăn và gặp nhau — mưa là bữa tiệc của ếch!',fact:'🐸 Ếch uống nước qua da, không phải qua miệng!',diff:'easy',cat:'🐾 Động vật'},
+
+  {type:'CH',scene:{chain:[
+    {e:'🐛',t:'Sâu bướm'},
+    {e:'❓',t:'???'},
+    {e:'🦋',t:'Bướm xinh đẹp'}
+  ]},q:'Giai đoạn ở giữa là gì?',
+   ans:{e:'🫘',t:'Nhộng (kén)'},
+   wrong:[{e:'🥚',t:'Quả trứng'},{e:'🌸',t:'Bông hoa'},{e:'🐞',t:'Con bọ rùa'}],
+   explain:'Sâu bướm tạo kén xung quanh mình, bên trong nó biến đổi hoàn toàn thành con bướm!',fact:'🦋 Quá trình biến đổi này gọi là "lột xác" và mất từ 10 ngày đến vài tuần',diff:'med',cat:'🐾 Động vật'},
+
+  {type:'CE',scene:{e:'🐦',t:'Chim thấy con mèo đang đến gần',tag:'Động vật'},
+   q:'Chim sẽ làm gì?',
+   ans:{e:'✈️',t:'Bay vội lên cao để thoát'},
+   wrong:[{e:'🤝',t:'Chào hỏi con mèo'},{e:'😴',t:'Ngủ yên không động'},{e:'🍽️',t:'Mời mèo cùng ăn'}],
+   explain:'Chim biết mèo là kẻ săn mồi nguy hiểm nên phản xạ đầu tiên là bay đi để tự bảo vệ!',fact:'🐦 Chim có tốc độ phản xạ nhanh hơn con người 3-4 lần!',diff:'easy',cat:'🐾 Động vật'},
+
+  {type:'EC',scene:{e:'🦔',t:'Nhím cuộn tròn lại thành quả bóng gai',tag:'Động vật'},
+   q:'Tại sao nhím lại cuộn tròn?',
+   ans:{e:'🦁',t:'Để bảo vệ mình khỏi kẻ thù'},
+   wrong:[{e:'😴',t:'Để ngủ thoải mái hơn'},{e:'🎮',t:'Để chơi trò lăn'},{e:'🌡️',t:'Vì trời quá nóng'}],
+   explain:'Khi gặp nguy hiểm, nhím cuộn tròn để những chiếc gai nhọn bảo vệ toàn bộ cơ thể mềm bên trong!',fact:'🦔 Nhím có thể có tới 5000 chiếc gai trên mình!',diff:'med',cat:'🐾 Động vật'},
+
+  // ===== CUỘC SỐNG =====
+  {type:'CE',scene:{e:'🍦',t:'Để cây kem dưới nắng nóng',tag:'Cuộc sống'},
+   q:'Điều gì sẽ xảy ra với cây kem?',
+   ans:{e:'💧',t:'Kem chảy ra thành nước'},
+   wrong:[{e:'🧊',t:'Kem đông cứng hơn'},{e:'🌈',t:'Kem đổi màu đẹp hơn'},{e:'🎂',t:'Kem thành bánh sinh nhật'}],
+   explain:'Nhiệt độ nóng làm kem tan chảy — đây là lý do phải ăn kem thật nhanh ngoài nắng!',fact:'🍦 Nhiệt độ làm kem chảy chỉ cần vài phút dưới ánh nắng mặt trời',diff:'easy',cat:'🏠 Cuộc sống'},
+
+  {type:'CE',scene:{e:'🌱',t:'Không tưới nước cho cây nhiều ngày',tag:'Cuộc sống'},
+   q:'Cây sẽ trở nên như thế nào?',
+   ans:{e:'🥀',t:'Cây héo và lá rủ xuống'},
+   wrong:[{e:'🌳',t:'Cây to lớn hơn nhiều'},{e:'🌸',t:'Cây ra hoa rất đẹp'},{e:'💪',t:'Cây mạnh khỏe hơn'}],
+   explain:'Cây cần nước để sống — không có nước, cây không thể tự đứng thẳng và sẽ héo!',fact:'🌱 Cây cần nước để vận chuyển chất dinh dưỡng lên các lá',diff:'easy',cat:'🏠 Cuộc sống'},
+
+  {type:'CE',scene:{e:'🙌',t:'Con rửa tay sạch trước khi ăn',tag:'Cuộc sống'},
+   q:'Việc rửa tay giúp ích gì?',
+   ans:{e:'🦠❌',t:'Tiêu diệt vi khuẩn gây bệnh'},
+   wrong:[{e:'😴',t:'Giúp con ngủ ngon hơn'},{e:'🏃',t:'Giúp con chạy nhanh hơn'},{e:'🎨',t:'Giúp tay vẽ đẹp hơn'}],
+   explain:'Tay tiếp xúc với nhiều thứ mang vi khuẩn — rửa tay giúp loại bỏ chúng trước khi ăn!',fact:'🤲 Rửa tay đúng cách là rửa ít nhất 20 giây với xà phòng',diff:'easy',cat:'🏠 Cuộc sống'},
+
+  {type:'EC',scene:{e:'😬',t:'Bé bị đau răng và phải đi gặp nha sĩ',tag:'Cuộc sống'},
+   q:'Điều gì có thể đã dẫn đến tình huống này?',
+   ans:{e:'🍬',t:'Ăn nhiều kẹo ngọt mà không đánh răng'},
+   wrong:[{e:'📚',t:'Đọc sách quá nhiều'},{e:'🏃',t:'Chạy nhảy quá mạnh'},{e:'🎵',t:'Hát to quá nhiều'}],
+   explain:'Vi khuẩn trong miệng ăn đường từ kẹo và tạo ra axit phá hủy men răng, gây sâu răng!',fact:'🦷 Đánh răng 2 lần mỗi ngày giúp bảo vệ răng khỏi vi khuẩn',diff:'med',cat:'🏠 Cuộc sống'},
+
+  {type:'CH',scene:{chain:[
+    {e:'📚',t:'Đọc sách mỗi ngày'},
+    {e:'❓',t:'???'},
+    {e:'🧠',t:'Trở nên thông minh hơn'}
+  ]},q:'Điều gì xảy ra ở giữa?',
+   ans:{e:'💡',t:'Học được nhiều điều mới'},
+   wrong:[{e:'😴',t:'Buồn ngủ hơn nhiều'},{e:'🏋️',t:'Cơ bắp to hơn'},{e:'🍕',t:'Thấy đói bụng hơn'}],
+   explain:'Đọc sách giúp não học từ mới, ý tưởng mới, và kết nối các kiến thức lại với nhau!',fact:'📚 Đọc sách 20 phút mỗi ngày giúp học được hơn 1 triệu từ mỗi năm!',diff:'med',cat:'🏠 Cuộc sống'},
+
+  {type:'CE',scene:{e:'🏃',t:'Con tập thể dục và chạy nhảy mỗi ngày',tag:'Cuộc sống'},
+   q:'Điều tốt gì xảy ra với cơ thể?',
+   ans:{e:'💪',t:'Cơ thể khỏe mạnh và cơ bắp to hơn'},
+   wrong:[{e:'😴',t:'Luôn buồn ngủ hơn'},{e:'🤧',t:'Hay bị ốm hơn'},{e:'📉',t:'Trở nên yếu hơn'}],
+   explain:'Khi vận động, tim đập mạnh hơn, cơ bắp được rèn luyện và cơ thể tiết ra hormone giúp vui vẻ!',fact:'🏃 Trẻ em nên vận động ít nhất 60 phút mỗi ngày',diff:'easy',cat:'🏠 Cuộc sống'},
+
+  // ===== THỜI TIẾT =====
+  {type:'CE',scene:{e:'❄️',t:'Nhiệt độ xuống rất thấp, trời lạnh buốt',tag:'Thời tiết'},
+   q:'Điều gì có thể xảy ra với nước?',
+   ans:{e:'🧊',t:'Nước đóng thành băng'},
+   wrong:[{e:'☁️',t:'Nước bay lên thành mây'},{e:'🌊',t:'Nước chảy thành sóng lớn'},{e:'🌈',t:'Nước đổi màu thành cầu vồng'}],
+   explain:'Khi nhiệt độ xuống dưới 0°C, các phân tử nước chuyển động chậm lại và liên kết thành băng cứng!',fact:'🧊 Nước là chất hiếm hoi nở ra khi đóng băng — đó là sao băng nhẹ hơn nước',diff:'med',cat:'🌦️ Thời tiết'},
+
+  {type:'EC',scene:{e:'🌪️',t:'Có lốc xoáy mạnh đang đến gần',tag:'Thời tiết'},
+   q:'Con người nên làm gì ngay lập tức?',
+   ans:{e:'🏠',t:'Vào nhà và xuống tầng hầm ngay'},
+   wrong:[{e:'📸',t:'Đứng ngoài chụp ảnh'},{e:'🏃',t:'Chạy ra đồng trống'},{e:'🌳',t:'Trèo lên cây cao'}],
+   explain:'Tầng hầm hoặc phòng không có cửa sổ là nơi an toàn nhất — lốc xoáy có thể hất bay người!',fact:'🌪️ Lốc xoáy có thể đạt tốc độ 480 km/h — nhanh hơn xe đua F1!',diff:'hard',cat:'🌦️ Thời tiết'},
+
+  {type:'CE',scene:{e:'☀️🌡️',t:'Trời nắng to, nhiệt độ rất cao',tag:'Thời tiết'},
+   q:'Con nên làm gì để không bị say nắng?',
+   ans:{e:'💧🧢',t:'Uống nhiều nước và đội mũ'},
+   wrong:[{e:'🏃',t:'Chạy nhanh ra nắng thật nhiều'},{e:'🧊',t:'Ăn thật nhiều đá lạnh'},{e:'😴',t:'Ngủ ngoài trời nắng'}],
+   explain:'Uống nước bù lại lượng mồ hôi mất đi, mũ che nắng bảo vệ đầu khỏi nhiệt — hai thứ quan trọng nhất!',fact:'☀️ Cơ thể có thể mất đến 1 lít nước mỗi giờ khi ở ngoài nắng',diff:'easy',cat:'🌦️ Thời tiết'},
+
+  // ===== KHOA HỌC VUI =====
+  {type:'CE',scene:{e:'🎈',t:'Thả bóng bay ra ngoài tay',tag:'Khoa học'},
+   q:'Bóng bay sẽ làm gì?',
+   ans:{e:'⬆️',t:'Bay lên cao và xa dần'},
+   wrong:[{e:'⬇️',t:'Rơi xuống đất ngay'},{e:'🔄',t:'Quay vòng tại chỗ'},{e:'💥',t:'Nổ ngay lập tức'}],
+   explain:'Bóng bay chứa khí heli nhẹ hơn không khí, nên nó bị đẩy lên cao bởi không khí xung quanh!',fact:'🎈 Bóng bay sẽ tiếp tục bay lên đến khi áp suất ngoài làm nó nổ — thường ở 8km so với mặt đất!',diff:'easy',cat:'🔬 Khoa học'},
+
+  {type:'EC',scene:{e:'🧲',t:'Nam châm hút được đinh sắt',tag:'Khoa học'},
+   q:'Tại sao nam châm hút được đinh sắt?',
+   ans:{e:'⚡',t:'Đinh sắt có tính từ, bị lực từ hút'},
+   wrong:[{e:'🍯',t:'Vì đinh sắt có chất keo bên trong'},{e:'🌊',t:'Vì nước giúp chúng dính lại'},{e:'🔥',t:'Vì nhiệt độ cao làm chúng gắn lại'}],
+   explain:'Nam châm tạo ra từ trường, và sắt là kim loại có tính từ — chúng bị lực từ kéo lại với nhau!',fact:'🧲 Nam châm mạnh nhất thế giới mạnh hơn nam châm thông thường 300.000 lần!',diff:'hard',cat:'🔬 Khoa học'},
+
+  {type:'CH',scene:{chain:[
+    {e:'🌱',t:'Hạt giống'},
+    {e:'❓',t:'???'},
+    {e:'🍎',t:'Cây táo sai quả'}
+  ]},q:'Điều gì cần xảy ra ở giữa?',
+   ans:{e:'☀️💧',t:'Cần ánh sáng, nước và thời gian'},
+   wrong:[{e:'🎵',t:'Cho cây nghe nhạc mỗi ngày'},{e:'🎨',t:'Vẽ quả lên cây'},{e:'🛒',t:'Mua quả rồi gắn vào'}],
+   explain:'Cây cần ánh sáng để quang hợp, nước để vận chuyển chất dinh dưỡng, và thời gian để lớn và ra quả!',fact:'🍎 Cây táo mất 4-10 năm mới bắt đầu ra quả lần đầu tiên!',diff:'med',cat:'🔬 Khoa học'},
+
+  {type:'CE',scene:{e:'🕯️',t:'Thắp nến trong phòng tối',tag:'Khoa học'},
+   q:'Điều gì xảy ra với căn phòng?',
+   ans:{e:'💡',t:'Phòng sáng lên, có thể thấy mọi thứ'},
+   wrong:[{e:'🌑',t:'Phòng tối hơn nữa'},{e:'❄️',t:'Phòng trở nên lạnh hơn'},{e:'💨',t:'Gió thổi mạnh vào phòng'}],
+   explain:'Nến tạo ra ánh sáng từ phản ứng đốt cháy — ánh sáng lan ra mọi hướng giúp ta nhìn thấy!',fact:'🕯️ Ánh sáng từ nến truyền đi với tốc độ 300.000 km/giây!',diff:'easy',cat:'🔬 Khoa học'},
+
+  // Extra variety
+  {type:'CE',scene:{e:'🎸',t:'Gảy dây đàn guitar mạnh',tag:'Âm nhạc'},
+   q:'Điều gì xảy ra với dây đàn?',
+   ans:{e:'〰️',t:'Dây rung và tạo ra âm thanh'},
+   wrong:[{e:'🔥',t:'Dây đàn bắt lửa'},{e:'💧',t:'Dây đàn chảy nước'},{e:'🌈',t:'Dây đàn đổi màu'}],
+   explain:'Khi gảy, dây đàn rung rất nhanh, tạo ra sóng âm lan qua không khí đến tai chúng ta!',fact:'🎸 Dây đàn guitar có thể rung 400 lần mỗi giây để tạo ra một nốt nhạc!',diff:'easy',cat:'🎵 Âm nhạc'},
+
+  {type:'EC',scene:{e:'🥁',t:'Trống kêu bùm bùm rất to',tag:'Âm nhạc'},
+   q:'Bằng cách nào tạo ra âm thanh như vậy?',
+   ans:{e:'🥢',t:'Dùi đánh vào mặt trống làm nó rung'},
+   wrong:[{e:'💨',t:'Thổi gió vào lỗ trống'},{e:'💧',t:'Đổ nước vào trong trống'},{e:'🔥',t:'Đốt lửa gần trống'}],
+   explain:'Dùi đánh vào mặt trống làm màng da căng rung lên, rung động này tạo ra sóng âm mạnh!',fact:'🥁 Sóng âm từ trống có thể cảm nhận được qua da thịt, không chỉ qua tai!',diff:'med',cat:'🎵 Âm nhạc'},
+];
+
+/* ============================================================
+   STATE & CONFIG
+   ============================================================ */
+let diff='easy', score=0, qNum=0, TOTAL=10, answered=false, pool=[];
+const $=id=>document.getElementById(id);
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;};
+function show(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));$(id).classList.add('on');}
+
+function setD(d,btn){diff=d;document.querySelectorAll('.pill').forEach(b=>b.classList.remove('on'));btn.classList.add('on');}
+function goStart(){show('start');}
+
+/* ============================================================
+   GAME FLOW
+   ============================================================ */
+function startGame(){
+  score=0;qNum=0;answered=false;
+  // build pool
+  const diffMap={easy:['easy'],med:['easy','med'],hard:['easy','med','hard']};
+  const allowed=diffMap[diff];
+  pool=shuffle(QS.filter(q=>allowed.includes(q.diff)));
+  if(pool.length<TOTAL){while(pool.length<TOTAL)pool.push(...shuffle(QS.filter(q=>allowed.includes(q.diff))));}
+  show('game');
+  nextQ();
+}
+
+let currentQ=null;
+function nextQ(){
+  if(qNum>=TOTAL){endGame();return;}
+  answered=false;
+  $('btn-next').style.display='none';
+  $('fb-msg').textContent='';$('fb-msg').className='fb-msg';
+  $('explain-box').style.display='none';
+
+  $('prog').style.width=((qNum/TOTAL)*100)+'%';
+  $('qnum').textContent=`Câu ${qNum+1}/${TOTAL}`;
+  $('hud-sc').textContent=score+' ⭐';
+
+  currentQ=pool[qNum];
+  renderQuestion(currentQ);
+}
+
+function renderQuestion(q){
+  // type badge
+  const tb=$('type-badge');
+  if(q.type==='CE'){tb.className='tb-inner tb-cause';tb.innerHTML='→ Nếu... thì điều gì xảy ra?';}
+  else if(q.type==='EC'){tb.className='tb-inner tb-effect';tb.innerHTML='← Tại sao điều này xảy ra?';}
+  else{tb.className='tb-inner tb-chain';tb.innerHTML='🔗 Điền vào chỗ trống trong chuỗi';}
+
+  // cat tag
+  $('cat-tag').textContent=q.cat||'';
+
+  // story panels
+  const sw=$('story-wrap');
+  sw.innerHTML='';
+  if(q.type==='CH'){
+    // chain row
+    const crow=document.createElement('div');crow.className='chain-row';
+    q.scene.chain.forEach((cell,i)=>{
+      if(i>0){const a=document.createElement('div');a.className='chain-arr';a.textContent='→';crow.appendChild(a);}
+      const cc=document.createElement('div');
+      cc.className='chain-cell'+(cell.e==='❓'?' missing':'');
+      if(cell.e==='❓'){cc.innerHTML=`<div class="cc-q">?</div><div class="cc-t">${cell.t}</div>`;}
+      else{cc.innerHTML=`<div class="cc-e">${cell.e}</div><div class="cc-t">${cell.t}</div>`;}
+      cc.id=(cell.e==='❓')?'chain-missing':'';
+      crow.appendChild(cc);
+    });
+    sw.appendChild(crow);
+  } else {
+    // single panel
+    const sp=document.createElement('div');sp.className='story-panel';
+    sp.innerHTML=`<div class="sp-emoji">${q.scene.e}</div><div class="sp-text"><div class="sp-label">${q.type==='CE'?'Nguyên nhân:':'Kết quả:'}</div><div class="sp-main">${q.scene.t}</div>${q.scene.tag?`<div class="sp-tag">${q.scene.tag}</div>`:''}</div>`;
+    sw.appendChild(sp);
+  }
+
+  // question
+  $('q-text').textContent=q.q;
+
+  // options
+  const og=$('opts');og.innerHTML='';
+  const opts=shuffle([{...q.ans,correct:true},...q.wrong.map(w=>({...w,correct:false}))]);
+  opts.forEach(opt=>{
+    const btn=document.createElement('div');btn.className='opt';
+    btn.innerHTML=`<div class="ob">${opt.correct?'✓':'✗'}</div><div class="oe">${opt.e}</div><div class="ot">${opt.t}</div>`;
+    btn.addEventListener('pointerdown',e=>{e.preventDefault();selectOpt(opt,btn);},{passive:false});
+    og.appendChild(btn);
+  });
+}
+
+function selectOpt(opt,btn){
+  if(answered)return;
+  const ok=opt.correct;
+
+  if(ok){
+    answered=true;
+    btn.classList.add('correct');
+    document.querySelectorAll('.opt').forEach(b=>{if(b!==btn)b.classList.add('dimmed');});
+    // fill chain missing cell
+    if(currentQ.type==='CH'){
+      const mc=$('chain-missing');
+      if(mc){mc.className='chain-cell fill-ok';mc.innerHTML=`<div class="cc-e">${opt.e}</div><div class="cc-t">${opt.t}</div>`;}
+    }
+    score++;
+    confetti();
+    $('fb-msg').textContent='Đúng rồi! Thông minh quá! 🎉';$('fb-msg').className='fb-msg ok';
+    // show explanation
+    $('explain-p').textContent=currentQ.explain;
+    $('explain-fact').textContent=currentQ.fact||'';
+    $('explain-box').style.display='block';
+    qNum++;
+    $('hud-sc').textContent=score+' ⭐';
+    setTimeout(()=>$('btn-next').style.display='block',400);
+  } else {
+    btn.classList.add('wrong');
+    $('fb-msg').textContent='Chưa đúng! Thử lại nhé 😊';$('fb-msg').className='fb-msg err';
+    setTimeout(()=>{btn.classList.remove('wrong');$('fb-msg').textContent='';$('fb-msg').className='fb-msg';},900);
+  }
+}
+
+/* ============================================================
+   CONFETTI
+   ============================================================ */
+const CC=['#FFD166','#06D6A0','#48CAE4','#A855F7','#FB923C','#F472B6','#34D399'];
+function confetti(){
+  for(let i=0;i<28;i++){
+    const el=document.createElement('div');el.className='cp';
+    const sz=5+Math.random()*9;
+    el.style.cssText=`width:${sz}px;height:${sz}px;background:${CC[Math.floor(Math.random()*CC.length)]};left:${15+Math.random()*70}%;top:${10+Math.random()*55}%;border-radius:${Math.random()>.5?'50%':'3px'};animation-duration:${.75+Math.random()*.85}s;animation-delay:${Math.random()*.12}s;`;
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),2000);
+  }
+}
+
+/* ============================================================
+   RESULT
+   ============================================================ */
+function endGame(){
+  show('result');
+  const pct=score/TOTAL;
+  let ico,title,sub;
+  if(pct>=.9){ico='🏆';title='Siêu suy luận!';sub='Con thật sự rất thông minh!';}
+  else if(pct>=.7){ico='🌟';title='Giỏi lắm!';sub='Con suy nghĩ rất tốt rồi!';}
+  else if(pct>=.5){ico='😊';title='Cố gắng tốt!';sub='Luyện thêm sẽ giỏi hơn nhé!';}
+  else{ico='💪';title='Tiếp tục cố nhé!';sub='Quan sát kỹ nguyên nhân và kết quả!';}
+  $('res-ico').textContent=ico;$('res-title').textContent=title;$('res-sub').textContent=sub;
+  $('res-big').textContent=score+' / '+TOTAL;
+  confetti();if(pct>=.7)setTimeout(confetti,400);
+}
+
+/* prevent iOS double-tap zoom */
+document.addEventListener('touchend',e=>{
+  if(e.target.closest('.opt,.go-btn,.pill,.btn-next,.rb,.btn-back'))e.preventDefault();
+},{passive:false});
+</script>
+</body>
+</html>

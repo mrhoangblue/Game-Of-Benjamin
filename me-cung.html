@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>🗺️ Mê Cung Tư Duy</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0A1628;--panel:#0F1E36;--card:#162944;--card2:#1D3558;
+  --y:#FCD34D;--g:#4ADE80;--b:#38BDF8;--p:#C084FC;--o:#FB923C;--r:#F87171;--tl:#2DD4BF;--pk:#F9A8D4;
+  --wall:#1E3A5F;--path:#0F2030;--floor:#0D1B2E;
+  --white:#D8E8F8;--muted:#3D5A78;
+  --rad:20px;--radsm:13px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none;}
+html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Nunito',system-ui,sans-serif;color:var(--white);}
+
+body::before{content:'';position:fixed;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 60% 50% at 10% 0%,rgba(56,189,248,.08),transparent),
+             radial-gradient(ellipse 50% 40% at 90% 100%,rgba(192,132,252,.07),transparent);}
+
+.scr{display:none;position:fixed;inset:0;flex-direction:column;align-items:center;}
+.scr.on{display:flex;}
+
+/* ===== START ===== */
+#start{justify-content:center;gap:1.4rem;padding:1.8rem 1.4rem;}
+
+.s-hero{font-size:5rem;line-height:1;animation:heroFloat 3s ease-in-out infinite;}
+@keyframes heroFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-12px);}}
+.s-title h1{font-size:2.2rem;font-weight:900;text-align:center;
+  background:linear-gradient(135deg,var(--b),var(--tl),var(--g));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.s-title p{text-align:center;font-size:.88rem;color:var(--muted);margin-top:4px;font-weight:700;}
+
+/* mode selection */
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:400px;}
+.mcard{background:var(--card);border-radius:var(--rad);padding:14px 10px;
+  display:flex;flex-direction:column;align-items:center;gap:7px;
+  border:2.5px solid rgba(255,255,255,.08);cursor:pointer;transition:all .15s;
+  box-shadow:0 4px 16px rgba(0,0,0,.35);}
+.mcard:active{transform:scale(.94);}
+.mcard.on{border-color:var(--b);background:rgba(56,189,248,.1);}
+.mcard .mc-ico{font-size:2.4rem;line-height:1;}
+.mcard h3{font-size:.88rem;font-weight:900;}
+.mcard p{font-size:.66rem;color:var(--muted);font-weight:700;text-align:center;line-height:1.3;}
+
+.diff-row{display:flex;gap:8px;}
+.dpill{padding:8px 18px;font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:800;
+  border-radius:30px;border:2px solid rgba(255,255,255,.1);background:rgba(255,255,255,.06);
+  color:var(--white);cursor:pointer;transition:all .15s;}
+.dpill.on{border-color:var(--g);background:rgba(74,222,128,.15);color:var(--g);}
+.dpill:active{transform:scale(.94);}
+
+.go-btn{padding:16px 52px;font-family:'Nunito',sans-serif;font-size:1.2rem;font-weight:900;
+  border:none;border-radius:40px;background:linear-gradient(135deg,var(--b),var(--g));
+  color:#0A1628;cursor:pointer;box-shadow:0 8px 28px rgba(56,189,248,.4);transition:transform .12s;}
+.go-btn:active{transform:scale(.94);}
+
+/* ===== HUD ===== */
+.hud{width:100%;display:flex;align-items:center;gap:10px;padding:.7rem 1.2rem .3rem;flex-shrink:0;}
+.btn-back{font-size:1.2rem;background:rgba(255,255,255,.08);border:none;border-radius:11px;
+  padding:6px 12px;color:var(--white);cursor:pointer;font-weight:800;}
+.hud-mid{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.hud-prog{width:100%;height:8px;background:rgba(255,255,255,.07);border-radius:8px;overflow:hidden;}
+.hud-prog-fill{height:100%;background:linear-gradient(90deg,var(--b),var(--g));border-radius:8px;transition:width .45s ease;}
+.hud-q{font-size:.68rem;font-weight:800;color:var(--muted);}
+.hud-sc{font-size:1.1rem;font-weight:900;color:var(--y);white-space:nowrap;}
+
+/* ===== GAME A: MAZE ===== */
+#gA{justify-content:space-between;}
+
+.maze-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:.3rem .8rem;width:100%;min-height:0;}
+#maze-canvas{border-radius:var(--radsm);box-shadow:0 8px 32px rgba(0,0,0,.5);
+  display:block;max-width:100%;max-height:100%;touch-action:none;}
+
+/* D-PAD */
+.dpad-wrap{flex-shrink:0;padding:.4rem 1rem .6rem;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.dpad-hint{font-size:.72rem;font-weight:700;color:var(--muted);margin-bottom:3px;}
+.dpad{display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:1fr 1fr 1fr;gap:5px;width:160px;height:160px;}
+.dpad-btn{border-radius:var(--radsm);border:2px solid rgba(255,255,255,.1);background:var(--card2);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.8rem;
+  transition:transform .08s,background .1s;box-shadow:0 3px 10px rgba(0,0,0,.4);}
+.dpad-btn:active,.dpad-btn.pressed{transform:scale(.88);background:var(--card);}
+.dpad-btn.up   {grid-column:2;grid-row:1;}
+.dpad-btn.left {grid-column:1;grid-row:2;}
+.dpad-btn.center{grid-column:2;grid-row:2;font-size:1rem;color:var(--muted);cursor:default;background:rgba(255,255,255,.04);}
+.dpad-btn.right{grid-column:3;grid-row:2;}
+.dpad-btn.down {grid-column:2;grid-row:3;}
+
+.maze-status{flex-shrink:0;text-align:center;font-size:.82rem;font-weight:800;
+  color:var(--muted);padding:0 1rem;min-height:22px;}
+.maze-status.ok{color:var(--g);}.maze-status.err{color:var(--r);}
+
+/* ===== GAME B: DIRECTION FOLLOW ===== */
+#gB{justify-content:space-between;}
+
+.scenario-card{flex-shrink:0;background:var(--card);border-radius:var(--rad);
+  border:1.5px solid rgba(255,255,255,.08);padding:14px 16px;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  box-shadow:0 6px 24px rgba(0,0,0,.4);width:100%;max-width:440px;margin:0 .8rem;}
+.sc-scene{font-size:3.5rem;line-height:1;animation:scScene 2.5s ease-in-out infinite;}
+@keyframes scScene{0%,100%{transform:scale(1);}50%{transform:scale(1.06);}}
+.sc-q{font-size:.95rem;font-weight:900;text-align:center;line-height:1.4;}
+.sc-q span{color:var(--y);}
+
+/* map display for B */
+.b-map-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:.2rem .8rem;width:100%;min-height:0;}
+#b-map-canvas{border-radius:var(--radsm);box-shadow:0 6px 20px rgba(0,0,0,.4);display:block;max-width:100%;max-height:100%;}
+
+.b-opts{flex-shrink:0;display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:0 .8rem .4rem;width:100%;max-width:440px;}
+.b-opt{background:var(--card);border:2.5px solid rgba(255,255,255,.08);border-radius:var(--rad);
+  cursor:pointer;padding:10px;display:flex;align-items:center;justify-content:center;gap:8px;
+  font-size:.9rem;font-weight:800;color:var(--white);
+  transition:transform .1s,border-color .15s,background .15s;box-shadow:0 3px 12px rgba(0,0,0,.3);}
+.b-opt:active{transform:scale(.93);}
+.b-opt .b-opt-ico{font-size:1.8rem;}
+.b-opt.correct{border-color:var(--g);background:rgba(74,222,128,.14);animation:optOk .4s ease;}
+@keyframes optOk{0%{transform:scale(1);}42%{transform:scale(1.08);}100%{transform:scale(1);}}
+.b-opt.wrong{border-color:var(--r);background:rgba(248,113,113,.13);animation:optErr .36s ease;}
+@keyframes optErr{0%,100%{transform:translateX(0);}25%{transform:translateX(-8px);}75%{transform:translateX(8px);}}
+.b-opt.dimmed{opacity:.25;pointer-events:none;}
+
+.b-fb{flex-shrink:0;text-align:center;font-size:.88rem;font-weight:900;
+  min-height:22px;color:transparent;padding:0 1rem;}
+.b-fb.ok{color:var(--g);}.b-fb.err{color:var(--r);}
+
+.btn-next{padding:10px 32px;font-family:'Nunito',sans-serif;font-size:.92rem;font-weight:900;
+  border:none;border-radius:30px;background:linear-gradient(135deg,var(--g),var(--tl));
+  color:#0A1628;cursor:pointer;display:none;white-space:nowrap;flex-shrink:0;
+  box-shadow:0 4px 14px rgba(74,222,128,.35);margin-bottom:.5rem;transition:transform .1s;}
+.btn-next:active{transform:scale(.95);}
+
+/* CONFETTI */
+.cp{position:fixed;pointer-events:none;z-index:999;border-radius:3px;animation:cpFall linear forwards;}
+@keyframes cpFall{0%{opacity:1;transform:translateY(0) rotate(0);}100%{opacity:0;transform:translateY(115vh) rotate(900deg);}}
+
+/* RESULT */
+#result{justify-content:center;gap:1.3rem;padding:2rem 1.4rem;text-align:center;}
+.res-ico{font-size:5rem;animation:resIn .5s cubic-bezier(.34,1.56,.64,1) both;}
+@keyframes resIn{0%{transform:scale(0) rotate(-20deg);}100%{transform:scale(1) rotate(0);}}
+.res-h1{font-size:2rem;font-weight:900;
+  background:linear-gradient(135deg,var(--y),var(--o));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.res-sub{font-size:.9rem;color:var(--muted);font-weight:700;}
+.res-score{background:var(--card);border-radius:var(--rad);padding:1.1rem 2.4rem;
+  border:1.5px solid rgba(255,255,255,.08);}
+.res-big{font-size:3.4rem;font-weight:900;color:var(--g);}
+.res-lbl{font-size:.78rem;color:var(--muted);font-weight:700;}
+.res-btns{display:flex;gap:12px;}
+.rb{padding:13px 26px;font-family:'Nunito',sans-serif;font-size:.92rem;font-weight:900;border:none;border-radius:30px;cursor:pointer;transition:transform .1s;}
+.rb:active{transform:scale(.95);}
+.rb.p{background:linear-gradient(135deg,var(--b),var(--g));color:#0A1628;}
+.rb.s{background:rgba(255,255,255,.1);color:var(--white);border:2px solid rgba(255,255,255,.18);}
+
+@media(orientation:landscape)and(max-height:520px){
+  .s-hero{font-size:3rem;}.s-title h1{font-size:1.5rem;}
+  .mode-grid{grid-template-columns:repeat(2,1fr);}.dpad{width:120px;height:120px;}
+  .dpad-btn{font-size:1.4rem;}.sc-scene{font-size:2.5rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- START -->
+<div id="start" class="scr on">
+  <div class="s-hero">🗺️</div>
+  <div class="s-title">
+    <h1>Mê Cung Tư Duy</h1>
+    <p>Luyện định hướng trái-phải, trên-dưới, trong-ngoài!</p>
+  </div>
+  <div class="mode-grid">
+    <div class="mcard on" id="mA" onclick="setMode('A',this)">
+      <div class="mc-ico">🎮</div>
+      <h3>Điều hướng mê cung</h3>
+      <p>Dùng nút mũi tên dẫn nhân vật ra khỏi mê cung</p>
+    </div>
+    <div class="mcard" id="mB" onclick="setMode('B',this)">
+      <div class="mc-ico">🧭</div>
+      <h3>Đọc bản đồ</h3>
+      <p>Chọn đường đi đúng theo chỉ dẫn trái-phải-trên-dưới</p>
+    </div>
+  </div>
+  <div class="diff-row">
+    <div class="dpill on" id="d1" onclick="setDiff('easy',this)">⭐ Dễ</div>
+    <div class="dpill" id="d2" onclick="setDiff('med',this)">⭐⭐ Vừa</div>
+    <div class="dpill" id="d3" onclick="setDiff('hard',this)">⭐⭐⭐ Khó</div>
+  </div>
+  <button class="go-btn" onclick="startGame()">Bắt đầu! 🚀</button>
+</div>
+
+<!-- GAME A: MAZE -->
+<div id="gA" class="scr">
+  <div class="hud">
+    <button class="btn-back" onclick="goStart()">◂</button>
+    <div class="hud-mid">
+      <div class="hud-prog"><div class="hud-prog-fill" id="A-prog"></div></div>
+      <div class="hud-q" id="A-q">Màn 1/6</div>
+    </div>
+    <div class="hud-sc" id="A-sc">0 ⭐</div>
+  </div>
+  <div class="maze-wrap"><canvas id="maze-canvas"></canvas></div>
+  <div class="maze-status" id="maze-status">Dùng mũi tên để di chuyển!</div>
+  <div class="dpad-wrap">
+    <div class="dpad-hint">Bấm để di chuyển:</div>
+    <div class="dpad">
+      <div class="dpad-btn up"     id="dp-up"    onpointerdown="tryMove(0,-1)">⬆️</div>
+      <div class="dpad-btn left"   id="dp-left"  onpointerdown="tryMove(-1,0)">⬅️</div>
+      <div class="dpad-btn center">🐼</div>
+      <div class="dpad-btn right"  id="dp-right" onpointerdown="tryMove(1,0)">➡️</div>
+      <div class="dpad-btn down"   id="dp-down"  onpointerdown="tryMove(0,1)">⬇️</div>
+    </div>
+  </div>
+</div>
+
+<!-- GAME B: DIRECTION FOLLOW -->
+<div id="gB" class="scr">
+  <div class="hud">
+    <button class="btn-back" onclick="goStart()">◂</button>
+    <div class="hud-mid">
+      <div class="hud-prog"><div class="hud-prog-fill" id="B-prog"></div></div>
+      <div class="hud-q" id="B-q">Câu 1/10</div>
+    </div>
+    <div class="hud-sc" id="B-sc">0 ⭐</div>
+  </div>
+  <div class="scenario-card" id="sc-card">
+    <div class="sc-scene" id="sc-scene"></div>
+    <div class="sc-q" id="sc-q"></div>
+  </div>
+  <div class="b-map-wrap"><canvas id="b-map-canvas"></canvas></div>
+  <div class="b-opts" id="b-opts"></div>
+  <div class="b-fb" id="b-fb"></div>
+  <button class="btn-next" id="B-nx" onclick="nextB()">Tiếp theo →</button>
+</div>
+
+<!-- RESULT -->
+<div id="result" class="scr">
+  <div class="res-ico" id="res-ico"></div>
+  <div class="res-h1" id="res-h1"></div>
+  <div class="res-sub" id="res-sub"></div>
+  <div class="res-score"><div class="res-big" id="res-big"></div><div class="res-lbl">Điểm số</div></div>
+  <div class="res-btns">
+    <button class="rb p" onclick="startGame()">Chơi lại 🔁</button>
+    <button class="rb s" onclick="goStart()">Trang chủ</button>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   MAZE ENGINE
+   Uses a recursive backtracker to generate perfect mazes
+   ============================================================ */
+const $ = id => document.getElementById(id);
+const pick = a => a[Math.floor(Math.random()*a.length)];
+const shuffle = a => {const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;};
+const rnd = (a,b) => a + Math.floor(Math.random()*(b-a+1));
+
+let gameMode='A', difficulty='easy', score=0, qNum=0, TOTAL=0;
+
+function setMode(m,btn){
+  gameMode=m;
+  ['mA','mB'].forEach(id=>{const el=$(id);if(el)el.classList.remove('on');});
+  btn.classList.add('on');
+}
+function setDiff(d,btn){
+  difficulty=d;
+  ['d1','d2','d3'].forEach(id=>{const el=$(id);if(el)el.classList.remove('on');});
+  btn.classList.add('on');
+}
+function show(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));$(id).classList.add('on');}
+function goStart(){show('start');}
+function startGame(){score=0;qNum=0;gameMode==='A'?startA():startB();}
+
+/* ============================================================
+   MAZE GENERATOR (recursive backtracker)
+   Grid of cells; each cell has walls: {N,S,E,W}
+   ============================================================ */
+function generateMaze(cols,rows){
+  // cells[r][c] = {n:bool,s:bool,e:bool,w:bool} true = wall present
+  const cells=Array.from({length:rows},()=>Array.from({length:cols},()=>({n:true,s:true,e:true,w:true,visited:false})));
+  function carve(c,r){
+    cells[r][c].visited=true;
+    const dirs=shuffle([[0,-1,'n','s'],[0,1,'s','n'],[1,0,'e','w'],[-1,0,'w','e']]);
+    for(const[dc,dr,wa,wb] of dirs){
+      const nc=c+dc,nr=r+dr;
+      if(nc<0||nc>=cols||nr<0||nr>=rows||cells[nr][nc].visited)continue;
+      cells[r][c][wa]=false; cells[nr][nc][wb]=false;
+      carve(nc,nr);
+    }
+  }
+  carve(0,0);
+  return cells;
+}
+
+/* ============================================================
+   GAME A: MAZE NAVIGATION
+   ============================================================ */
+const LEVELS_A = [
+  {cols:5,rows:5},  // easy 1
+  {cols:6,rows:6},  // easy 2
+  {cols:7,rows:7},  // med 1
+  {cols:8,rows:8},  // med 2
+  {cols:9,rows:9},  // hard 1
+  {cols:11,rows:11},// hard 2
+];
+
+let MA = { cells:[], cols:0, rows:0, px:0, py:0, ex:0, ey:0, steps:0, levelIdx:0 };
+let canvasA, ctxA;
+
+function startA(){
+  TOTAL = difficulty==='easy'?2:difficulty==='med'?4:6;
+  qNum=0;
+  show('gA');
+  canvasA = $('maze-canvas');
+  ctxA = canvasA.getContext('2d');
+  loadLevelA();
+}
+
+function levelIdxForQ(){
+  if(difficulty==='easy') return qNum;
+  if(difficulty==='med')  return 2+qNum;
+  return 4+qNum;
+}
+
+function loadLevelA(){
+  if(qNum>=TOTAL){endGame();return;}
+  $('A-prog').style.width=((qNum/TOTAL)*100)+'%';
+  $('A-q').textContent=`Màn ${qNum+1}/${TOTAL}`;
+  $('A-sc').textContent=score+' ⭐';
+  $('maze-status').textContent='Dẫn 🐼 đến 🌟 nhé!';$('maze-status').className='maze-status';
+
+  const lev = LEVELS_A[Math.min(levelIdxForQ(), LEVELS_A.length-1)];
+  MA.cols=lev.cols; MA.rows=lev.rows;
+  MA.cells = generateMaze(lev.cols, lev.rows);
+  MA.px=0; MA.py=0;
+  // exit: bottom-right, open south wall of that cell
+  MA.ex=lev.cols-1; MA.ey=lev.rows-1;
+  MA.cells[MA.ey][MA.ex].s=false;
+  MA.steps=0;
+
+  sizeAndDrawMaze();
+}
+
+function sizeAndDrawMaze(){
+  const wrap = $('gA').querySelector('.maze-wrap');
+  const maxW = Math.min(wrap.clientWidth-16, 380);
+  const maxH = Math.min(wrap.clientHeight-8, window.innerHeight*0.46);
+  const cellSize = Math.floor(Math.min(maxW/MA.cols, maxH/MA.rows));
+  const W = cellSize*MA.cols, H = cellSize*MA.rows;
+  canvasA.width=W; canvasA.height=H;
+  drawMaze(cellSize);
+}
+
+function drawMaze(cellSize){
+  const ctx=ctxA, W=canvasA.width, H=canvasA.height;
+  const CS=cellSize||Math.floor(W/MA.cols);
+
+  // background
+  ctx.fillStyle='#0D1B2E'; ctx.fillRect(0,0,W,H);
+
+  // draw floor tiles
+  for(let r=0;r<MA.rows;r++) for(let c=0;c<MA.cols;c++){
+    ctx.fillStyle=(r+c)%2===0?'#0F2030':'#0E1E2C';
+    ctx.fillRect(c*CS,r*CS,CS,CS);
+  }
+
+  // draw walls
+  const wCol='#1E3A5F', wW=Math.max(2,CS*.12);
+  ctx.strokeStyle=wCol; ctx.lineWidth=wW; ctx.lineCap='square';
+  for(let r=0;r<MA.rows;r++) for(let c=0;c<MA.cols;c++){
+    const cell=MA.cells[r][c];
+    const x=c*CS,y=r*CS;
+    if(cell.n){ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+CS,y);ctx.stroke();}
+    if(cell.s&&!(c===MA.ex&&r===MA.ey)){ctx.beginPath();ctx.moveTo(x,y+CS);ctx.lineTo(x+CS,y+CS);ctx.stroke();}
+    if(cell.w){ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x,y+CS);ctx.stroke();}
+    if(cell.e){ctx.beginPath();ctx.moveTo(x+CS,y);ctx.lineTo(x+CS,y+CS);ctx.stroke();}
+  }
+
+  // border
+  ctx.strokeStyle='#2A4A70'; ctx.lineWidth=wW*1.5;
+  ctx.strokeRect(wW*.75,wW*.75,W-wW*1.5,H-wW*1.5);
+
+  // exit glow
+  const ex=MA.ex*CS, ey=MA.ey*CS;
+  const grd=ctx.createRadialGradient(ex+CS/2,ey+CS,0,ex+CS/2,ey+CS,CS*.8);
+  grd.addColorStop(0,'rgba(252,211,77,.5)'); grd.addColorStop(1,'transparent');
+  ctx.fillStyle=grd; ctx.fillRect(ex,ey,CS,CS+10);
+
+  // star (exit)
+  ctx.font=`${Math.round(CS*.7)}px serif`;
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('⭐',ex+CS/2,ey+CS*.52);
+
+  // player
+  ctx.font=`${Math.round(CS*.72)}px serif`;
+  ctx.fillText('🐼', MA.px*CS+CS/2, MA.py*CS+CS*.52);
+
+  // direction hint arrows along path cells
+  if(CS>28){
+    ctx.font=`${Math.round(CS*.22)}px Nunito`;
+    ctx.fillStyle='rgba(56,189,248,.25)';
+    ctx.textAlign='center';ctx.textBaseline='middle';
+  }
+}
+
+function tryMove(dx,dy){
+  if(MA.px===MA.ex&&MA.py===MA.ey) return; // already won
+  const nx=MA.px+dx, ny=MA.py+dy;
+  if(nx<0||nx>=MA.cols||ny<0||ny>=MA.rows) return;
+
+  const cell=MA.cells[MA.py][MA.px];
+  // check wall in direction
+  const wallMap={'-1,0':'w','1,0':'e','0,-1':'n','0,1':'s'};
+  const wall=wallMap[`${dx},${dy}`];
+  if(cell[wall]){
+    // hit wall — flash
+    $('maze-status').textContent='Có tường! Chọn hướng khác nhé 😊';
+    $('maze-status').className='maze-status err';
+    const btn=$(dx<0?'dp-left':dx>0?'dp-right':dy<0?'dp-up':'dp-down');
+    if(btn){btn.classList.add('pressed');setTimeout(()=>btn.classList.remove('pressed'),200);}
+    setTimeout(()=>{$('maze-status').textContent='';$('maze-status').className='maze-status';},800);
+    return;
+  }
+
+  MA.px=nx; MA.py=ny; MA.steps++;
+
+  // show direction label
+  const dirLabels={'-1,0':'Sang trái ⬅️','1,0':'Sang phải ➡️','0,-1':'Lên trên ⬆️','0,1':'Xuống dưới ⬇️'};
+  $('maze-status').textContent=dirLabels[`${dx},${dy}`];
+  $('maze-status').className='maze-status';
+
+  const CS=Math.floor(canvasA.width/MA.cols);
+  drawMaze(CS);
+
+  // check win
+  if(MA.px===MA.ex&&MA.py===MA.ey){
+    score++;qNum++;
+    $('A-sc').textContent=score+' ⭐';
+    $('maze-status').textContent=`🎉 Tuyệt vời! Chỉ ${MA.steps} bước!`;
+    $('maze-status').className='maze-status ok';
+    confetti();
+    setTimeout(()=>loadLevelA(),1600);
+  }
+}
+
+// Keyboard support
+window.addEventListener('keydown',e=>{
+  if(!$('gA').classList.contains('on'))return;
+  const map={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]};
+  if(map[e.key]){e.preventDefault();tryMove(...map[e.key]);}
+});
+
+// Swipe support
+let swipeStart=null;
+$('maze-canvas').addEventListener('pointerdown',e=>{swipeStart={x:e.clientX,y:e.clientY};},{passive:true});
+$('maze-canvas').addEventListener('pointerup',e=>{
+  if(!swipeStart)return;
+  const dx=e.clientX-swipeStart.x, dy=e.clientY-swipeStart.y;
+  if(Math.abs(dx)<20&&Math.abs(dy)<20)return;
+  if(Math.abs(dx)>Math.abs(dy)) tryMove(dx>0?1:-1,0);
+  else tryMove(0,dy>0?1:-1);
+  swipeStart=null;
+},{passive:true});
+
+/* ============================================================
+   GAME B: DIRECTION FOLLOWING (map + question)
+   ============================================================ */
+const B_SCENARIOS = [
+  // Each has: scene emoji, situation, a mini-map description, question, 4 options with correct flag
+  {
+    scene:'🏠', sit:'Bé đang đứng trước nhà.',
+    q:'Con đường nào đến <span>siêu thị 🛒</span> ở bên phải nhà?',
+    opts:[{ico:'➡️',txt:'Rẽ phải',ok:true},{ico:'⬅️',txt:'Rẽ trái',ok:false},{ico:'⬆️',txt:'Đi thẳng',ok:false},{ico:'⬇️',txt:'Quay lại',ok:false}],
+    mapFn:'rightOfHouse'
+  },
+  {
+    scene:'🌳', sit:'Bé đứng dưới gốc cây to.',
+    q:'Cái <span>tổ chim 🐦</span> ở <span>trên</span> cây. Con nhìn lên đâu?',
+    opts:[{ico:'⬆️',txt:'Nhìn lên',ok:true},{ico:'⬇️',txt:'Nhìn xuống',ok:false},{ico:'⬅️',txt:'Nhìn trái',ok:false},{ico:'➡️',txt:'Nhìn phải',ok:false}],
+    mapFn:'birdInTree'
+  },
+  {
+    scene:'🏫', sit:'Bé đứng trong lớp học.',
+    q:'Cửa sổ ở <span>bên trái</span> bàn giáo viên. Cửa sổ ở đâu?',
+    opts:[{ico:'⬅️',txt:'Bên trái',ok:true},{ico:'➡️',txt:'Bên phải',ok:false},{ico:'⬆️',txt:'Phía trên',ok:false},{ico:'⬇️',txt:'Phía dưới',ok:false}],
+    mapFn:'classroomLeft'
+  },
+  {
+    scene:'🚗', sit:'Xe đang chạy trên đường.',
+    q:'Bảng hiệu <span>bệnh viện 🏥</span> ở <span>bên phải</span> đường. Con quẹo đâu?',
+    opts:[{ico:'➡️',txt:'Quẹo phải',ok:true},{ico:'⬅️',txt:'Quẹo trái',ok:false},{ico:'⬆️',txt:'Đi thẳng',ok:false},{ico:'⬇️',txt:'Quay đầu',ok:false}],
+    mapFn:'hospitalRight'
+  },
+  {
+    scene:'🛁', sit:'Bé đang đứng ở phòng tắm.',
+    q:'Khăn tắm 🛁 treo ở <span>phía trên</span> bồn tắm. Con lấy khăn ở đâu?',
+    opts:[{ico:'⬆️',txt:'Phía trên',ok:true},{ico:'⬇️',txt:'Phía dưới',ok:false},{ico:'⬅️',txt:'Bên trái',ok:false},{ico:'➡️',txt:'Bên phải',ok:false}],
+    mapFn:'towelAbove'
+  },
+  {
+    scene:'🌊', sit:'Bé đứng trên bãi biển nhìn ra biển.',
+    q:'Ngọn hải đăng 🗼 ở <span>bên trái</span> bé. Con nhìn đâu để thấy hải đăng?',
+    opts:[{ico:'⬅️',txt:'Nhìn trái',ok:true},{ico:'➡️',txt:'Nhìn phải',ok:false},{ico:'⬆️',txt:'Nhìn lên',ok:false},{ico:'⬇️',txt:'Nhìn xuống',ok:false}],
+    mapFn:'lighthouseLeft'
+  },
+  {
+    scene:'🐝', sit:'Con ong đang bay trong vườn.',
+    q:'Bông hoa 🌺 ở <span>phía dưới</span> con ong. Con ong bay đâu?',
+    opts:[{ico:'⬇️',txt:'Xuống dưới',ok:true},{ico:'⬆️',txt:'Lên trên',ok:false},{ico:'⬅️',txt:'Sang trái',ok:false},{ico:'➡️',txt:'Sang phải',ok:false}],
+    mapFn:'flowerBelow'
+  },
+  {
+    scene:'🚀', sit:'Tên lửa đang trong vũ trụ.',
+    q:'Trái đất 🌍 ở <span>phía dưới</span> tên lửa. Tên lửa bay <span>ngược lại</span> về đâu?',
+    opts:[{ico:'⬇️',txt:'Về phía dưới',ok:true},{ico:'⬆️',txt:'Lên cao hơn',ok:false},{ico:'⬅️',txt:'Sang trái',ok:false},{ico:'➡️',txt:'Sang phải',ok:false}],
+    mapFn:'rocketDown'
+  },
+  {
+    scene:'🏔️', sit:'Leo núi — bé đang ở lưng chừng núi.',
+    q:'Đỉnh núi ⛰️ ở <span>phía trên</span>. Con cần đi đâu để lên đỉnh?',
+    opts:[{ico:'⬆️',txt:'Lên trên',ok:true},{ico:'⬇️',txt:'Xuống dưới',ok:false},{ico:'⬅️',txt:'Sang trái',ok:false},{ico:'➡️',txt:'Sang phải',ok:false}],
+    mapFn:'mountainTop'
+  },
+  {
+    scene:'🎪', sit:'Bé đứng trước rạp xiếc.',
+    q:'Lối vào 🎟️ ở <span>bên phải</span> rạp. Con đi đâu để mua vé?',
+    opts:[{ico:'➡️',txt:'Sang phải',ok:true},{ico:'⬅️',txt:'Sang trái',ok:false},{ico:'⬆️',txt:'Đi thẳng',ok:false},{ico:'⬇️',txt:'Quay lại',ok:false}],
+    mapFn:'circusRight'
+  },
+  {
+    scene:'🐟', sit:'Cá đang bơi trong bể cá.',
+    q:'Thức ăn 🍤 đang rơi từ <span>phía trên</span> mặt nước. Cá bơi đâu để ăn?',
+    opts:[{ico:'⬆️',txt:'Bơi lên trên',ok:true},{ico:'⬇️',txt:'Bơi xuống',ok:false},{ico:'⬅️',txt:'Bơi trái',ok:false},{ico:'➡️',txt:'Bơi phải',ok:false}],
+    mapFn:'fishUp'
+  },
+  {
+    scene:'🌙', sit:'Bé nhìn lên bầu trời ban đêm.',
+    q:'Ngôi sao ⭐ ở <span>bên phải</span> mặt trăng. Con nhìn đâu để thấy ngôi sao?',
+    opts:[{ico:'➡️',txt:'Bên phải',ok:true},{ico:'⬅️',txt:'Bên trái',ok:false},{ico:'⬆️',txt:'Phía trên',ok:false},{ico:'⬇️',txt:'Phía dưới',ok:false}],
+    mapFn:'starRight'
+  },
+];
+
+// Mini-map drawing functions for each scenario
+const MAP_DRAWERS = {
+  rightOfHouse:(ctx,W,H)=>{
+    drawMapBg(ctx,W,H);
+    drawMapItem(ctx,W*.25,H*.5,'🏠',W*.22);
+    drawMapItem(ctx,W*.72,H*.5,'🛒',W*.2);
+    drawArrow(ctx,W*.25,H*.5,W*.7,H*.5,'right',W);
+    drawMapLabel(ctx,'Bên phải →',W*.72,H*.78,W);
+  },
+  birdInTree:(ctx,W,H)=>{
+    drawMapBg(ctx,W,H);
+    drawMapItem(ctx,W*.5,H*.75,'🌳',W*.25);
+    drawMapItem(ctx,W*.5,H*.22,'🐦',W*.18);
+    drawArrow(ctx,W*.5,H*.7,W*.5,H*.28,'up',W);
+    drawMapLabel(ctx,'↑ Phía trên',W*.5,H*.88,W);
+  },
+  classroomLeft:(ctx,W,H)=>{
+    drawMapBg(ctx,W,H);
+    drawMapItem(ctx,W*.62,H*.5,'📖',W*.2);
+    drawMapItem(ctx,W*.2,H*.5,'🪟',W*.18);
+    drawArrow(ctx,W*.55,H*.5,W*.28,H*.5,'left',W);
+    drawMapLabel(ctx,'← Bên trái',W*.2,H*.78,W);
+  },
+  hospitalRight:(ctx,W,H)=>{
+    drawMapBg(ctx,W,H);
+    // road
+    ctx.fillStyle='rgba(255,255,255,.06)';ctx.fillRect(W*.3,0,W*.4,H);
+    drawMapItem(ctx,W*.5,H*.25,'🚗',W*.18);
+    drawMapItem(ctx,W*.8,H*.5,'🏥',W*.2);
+    drawArrow(ctx,W*.5,H*.25,W*.75,H*.5,'right',W);
+    drawMapLabel(ctx,'→ Bên phải',W*.8,H*.8,W);
+  },
+  towelAbove:(ctx,W,H)=>{
+    drawMapBg(ctx,W,H);
+    drawMapItem(ctx,W*.5,H*.68,'🛁',W*.28);
+    drawMapItem(ctx,W*.5,H*.2,'🪣',W*.18);
+    drawArrow(ctx,W*.5,H*.55,W*.5,H*.28,'up',W);
+    drawMapLabel(ctx,'↑ Phía trên',W*.5,H*.88,W);
+  },
+  lighthouseLeft:(ctx,W,H)=>{
+    drawMapBg(ctx,W,H,'sea');
+    drawMapItem(ctx,W*.5,H*.55,'🧒',W*.18);
+    drawMapItem(ctx,W*.15,H*.38,'🗼',W*.2);
+    drawArrow(ctx,W*.45,H*.5,W*.22,H*.43,'left',W);
+    drawMapLabel(ctx,'← Bên trái',W*.15,H*.78,W);
+  },
+  flowerBelow:(ctx,W,H)=>{
+    drawMapBg(ctx,W,H,'garden');
+    drawMapItem(ctx,W*.5,H*.28,'🐝',W*.2);
+    drawMapItem(ctx,W*.5,H*.72,'🌺',W*.2);
+    drawArrow(ctx,W*.5,H*.38,W*.5,H*.65,'down',W);
+    drawMapLabel(ctx,'↓ Phía dưới',W*.5,H*.9,W);
+  },
+  rocketDown:(ctx,W,H)=>{
+    drawMapBg(ctx,W,H,'space');
+    drawMapItem(ctx,W*.5,H*.22,'🚀',W*.2);
+    drawMapItem(ctx,W*.5,H*.72,'🌍',W*.22);
+    drawArrow(ctx,W*.5,H*.35,W*.5,H*.62,'down',W);
+    drawMapLabel(ctx,'↓ Phía dưới',W*.5,H*.9,W);
+  },
+  mountainTop:(ctx,W,H)=>{
+    drawMapBg(ctx,W,H,'mountain');
+    drawMapItem(ctx,W*.5,H*.75,'🧗',W*.18);
+    drawMapItem(ctx,W*.5,H*.2,'⛰️',W*.22);
+    drawArrow(ctx,W*.5,H*.65,W*.5,H*.3,'up',W);
+    drawMapLabel(ctx,'↑ Phía trên',W*.5,H*.9,W);
+  },
+  circusRight:(ctx,W,H)=>{
+    drawMapBg(ctx,W,H);
+    drawMapItem(ctx,W*.3,H*.5,'🎪',W*.24);
+    drawMapItem(ctx,W*.78,H*.5,'🎟️',W*.18);
+    drawArrow(ctx,W*.44,H*.5,W*.72,H*.5,'right',W);
+    drawMapLabel(ctx,'→ Bên phải',W*.78,H*.8,W);
+  },
+  fishUp:(ctx,W,H)=>{
+    drawMapBg(ctx,W,H,'water');
+    drawMapItem(ctx,W*.5,H*.7,'🐟',W*.2);
+    drawMapItem(ctx,W*.5,H*.2,'🍤',W*.18);
+    drawArrow(ctx,W*.5,H*.6,W*.5,H*.3,'up',W);
+    drawMapLabel(ctx,'↑ Bơi lên',W*.5,H*.9,W);
+  },
+  starRight:(ctx,W,H)=>{
+    drawMapBg(ctx,W,H,'night');
+    drawMapItem(ctx,W*.32,H*.5,'🌙',W*.22);
+    drawMapItem(ctx,W*.72,H*.5,'⭐',W*.18);
+    drawArrow(ctx,W*.45,H*.5,W*.65,H*.5,'right',W);
+    drawMapLabel(ctx,'→ Bên phải',W*.72,H*.78,W);
+  },
+};
+
+function drawMapBg(ctx,W,H,type=''){
+  const grad=ctx.createLinearGradient(0,0,0,H);
+  if(type==='sea'){grad.addColorStop(0,'#0A3D6B');grad.addColorStop(1,'#1A7AB0');}
+  else if(type==='space'){grad.addColorStop(0,'#050A14');grad.addColorStop(1,'#0A1628');}
+  else if(type==='garden'){grad.addColorStop(0,'#0D2010');grad.addColorStop(1,'#173015');}
+  else if(type==='water'){grad.addColorStop(0,'#0A2840');grad.addColorStop(1,'#1060A0');}
+  else if(type==='night'){grad.addColorStop(0,'#050818');grad.addColorStop(1,'#0A1030');}
+  else if(type==='mountain'){grad.addColorStop(0,'#1A1A2E');grad.addColorStop(1,'#3A3A5C');}
+  else{grad.addColorStop(0,'#0D1B2E');grad.addColorStop(1,'#142135');}
+  ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);
+  // subtle grid
+  ctx.strokeStyle='rgba(255,255,255,.04)';ctx.lineWidth=1;
+  for(let x=0;x<W;x+=W/5){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=0;y<H;y+=H/5){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+}
+function drawMapItem(ctx,x,y,emoji,size){
+  ctx.font=`${Math.round(size)}px serif`;
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(emoji,x,y);
+}
+function drawArrow(ctx,x1,y1,x2,y2,dir,W){
+  const isHoriz=(dir==='left'||dir==='right');
+  ctx.strokeStyle='rgba(252,211,77,.6)';ctx.lineWidth=Math.max(2,W*.015);
+  ctx.setLineDash([W*.04,W*.025]);ctx.lineCap='round';
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  ctx.setLineDash([]);
+  // arrowhead
+  const hs=W*.04;
+  ctx.fillStyle='rgba(252,211,77,.8)';
+  ctx.beginPath();
+  if(dir==='right'){ctx.moveTo(x2,y2);ctx.lineTo(x2-hs,y2-hs*.6);ctx.lineTo(x2-hs,y2+hs*.6);}
+  else if(dir==='left'){ctx.moveTo(x2,y2);ctx.lineTo(x2+hs,y2-hs*.6);ctx.lineTo(x2+hs,y2+hs*.6);}
+  else if(dir==='up'){ctx.moveTo(x2,y2);ctx.lineTo(x2-hs*.6,y2+hs);ctx.lineTo(x2+hs*.6,y2+hs);}
+  else{ctx.moveTo(x2,y2);ctx.lineTo(x2-hs*.6,y2-hs);ctx.lineTo(x2+hs*.6,y2-hs);}
+  ctx.closePath();ctx.fill();
+}
+function drawMapLabel(ctx,text,x,y,W){
+  ctx.font=`bold ${Math.round(W*.065)}px Nunito`;
+  ctx.fillStyle='rgba(252,211,77,.85)';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(text,x,y);
+}
+
+let bPool=[], bAnswered=false;
+function startB(){
+  TOTAL=Math.min(10,B_SCENARIOS.length);
+  qNum=0;bAnswered=false;
+  bPool=shuffle([...B_SCENARIOS]);
+  show('gB');nextB();
+}
+
+function nextB(){
+  if(qNum>=TOTAL){endGame();return;}
+  bAnswered=false;
+  $('B-nx').style.display='none';
+  $('b-fb').textContent='';$('b-fb').className='b-fb';
+  $('B-prog').style.width=((qNum/TOTAL)*100)+'%';
+  $('B-q').textContent=`Câu ${qNum+1}/${TOTAL}`;
+  $('B-sc').textContent=score+' ⭐';
+
+  const sc=bPool[qNum];
+  $('sc-scene').textContent=sc.scene;
+  $('sc-q').innerHTML=`<strong>${sc.sit}</strong><br>${sc.q}`;
+
+  // draw map
+  const mc=$('b-map-canvas');
+  const wrap=$('gB').querySelector('.b-map-wrap');
+  const sz=Math.min(wrap.clientWidth-16,280,wrap.clientHeight-8);
+  mc.width=sz;mc.height=sz;
+  const drawFn=MAP_DRAWERS[sc.mapFn];
+  if(drawFn){const ctx=mc.getContext('2d');ctx.clearRect(0,0,sz,sz);drawFn(ctx,sz,sz);}
+
+  // render options
+  const opts=$('b-opts');opts.innerHTML='';
+  const shuffledOpts=shuffle([...sc.opts]);
+  shuffledOpts.forEach(opt=>{
+    const btn=document.createElement('div');btn.className='b-opt';
+    btn.innerHTML=`<span class="b-opt-ico">${opt.ico}</span><span>${opt.txt}</span>`;
+    btn.addEventListener('pointerdown',e=>{e.preventDefault();selectB(opt,btn);},{passive:false});
+    opts.appendChild(btn);
+  });
+}
+
+function selectB(opt,btn){
+  if(bAnswered)return;
+  const ok=opt.ok;
+  if(ok){
+    bAnswered=true;
+    btn.classList.add('correct');
+    document.querySelectorAll('.b-opt').forEach(b=>{if(b!==btn)b.classList.add('dimmed');});
+    score++;qNum++;
+    $('B-sc').textContent=score+' ⭐';
+    $('b-fb').textContent='Đúng rồi! Định hướng chính xác! 🎉';$('b-fb').className='b-fb ok';
+    confetti();
+    setTimeout(()=>$('B-nx').style.display='block',350);
+  } else {
+    btn.classList.add('wrong');
+    $('b-fb').textContent='Chưa đúng! Nhìn lại hướng nhé 😊';$('b-fb').className='b-fb err';
+    setTimeout(()=>{btn.classList.remove('wrong');$('b-fb').textContent='';$('b-fb').className='b-fb';},900);
+  }
+}
+
+/* ============================================================
+   CONFETTI + RESULT
+   ============================================================ */
+const CC=['#FCD34D','#4ADE80','#38BDF8','#C084FC','#FB923C','#F9A8D4','#2DD4BF'];
+function confetti(){
+  for(let i=0;i<30;i++){
+    const el=document.createElement('div');el.className='cp';
+    const sz=5+Math.random()*9;
+    el.style.cssText=`width:${sz}px;height:${sz}px;background:${CC[Math.floor(Math.random()*CC.length)]};left:${10+Math.random()*80}%;top:${5+Math.random()*60}%;border-radius:${Math.random()>.5?'50%':'3px'};animation-duration:${.7+Math.random()*.9}s;animation-delay:${Math.random()*.1}s;`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),2000);
+  }
+}
+
+function endGame(){
+  show('result');
+  const pct=score/TOTAL;
+  let ico,h1,sub;
+  if(pct>=.9){ico='🏆';h1='Định hướng siêu đỉnh!';sub='Con biết trái phải trên dưới rất giỏi!';}
+  else if(pct>=.7){ico='🌟';h1='Giỏi lắm!';sub='Con định hướng không gian rất tốt!';}
+  else if(pct>=.5){ico='😊';h1='Cố gắng tốt!';sub='Luyện thêm sẽ giỏi hơn nhé!';}
+  else{ico='💪';h1='Tiếp tục cố nhé!';sub:'Hãy chú ý hướng trái phải mỗi ngày!';}
+  $('res-ico').textContent=ico;$('res-h1').textContent=h1;$('res-sub').textContent=sub;
+  $('res-big').textContent=score+' / '+TOTAL;
+  confetti();
+}
+
+/* prevent iOS double-tap zoom */
+document.addEventListener('touchend',e=>{
+  if(e.target.closest('.dpad-btn,.go-btn,.mcard,.dpill,.btn-next,.rb,.btn-back,.b-opt'))e.preventDefault();
+},{passive:false});
+</script>
+</body>
+</html>

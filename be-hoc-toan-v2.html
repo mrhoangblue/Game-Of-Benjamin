@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>🌟 Bé Học Toán Tư Duy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#FEF9F0;--card:#FFFFFF;
+  --pr:#FF6B35;--pr-d:#C94A18;--pr-l:#FFE5D8;
+  --bl:#3A8EE6;--bl-d:#1A6DC4;--bl-l:#D6EAFF;
+  --gn:#44BE5A;--gn-d:#2A9440;--gn-l:#D6F5DC;
+  --pu:#8B52E8;--pu-d:#6636C0;--pu-l:#EAD9FF;
+  --am:#E8A020;--am-d:#B87A10;--am-l:#FFF0C8;
+  --rd:#E84444;--rd-l:#FFD9D9;
+  --tx:#1E1E2E;--tx2:#6B6B80;
+  --r:18px;--r-sm:12px;
+  --sh:0 4px 24px rgba(0,0,0,.10);--sh-sm:0 2px 10px rgba(0,0,0,.07);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none;}
+html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Nunito',system-ui,sans-serif;color:var(--tx);}
+.scr{display:none;position:fixed;inset:0;flex-direction:column;overflow:hidden;}
+.scr.on{display:flex;}
+
+/* HOME */
+#home{background:radial-gradient(ellipse at 20% 10%,#FFF0E6 0%,#FEF9F0 50%,#EBF5FF 100%);align-items:center;justify-content:center;gap:1.4rem;padding:1.5rem 1.2rem;}
+.home-hero{text-align:center;}
+.home-hero .emo{font-size:3rem;line-height:1;}
+.home-hero h1{font-size:1.9rem;font-weight:900;color:var(--pr);letter-spacing:-.5px;margin-top:6px;}
+.home-hero p{font-size:.88rem;color:var(--tx2);margin-top:4px;font-weight:600;}
+.game-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;width:100%;max-width:540px;}
+.gc{background:var(--card);border-radius:var(--r);padding:1.1rem .8rem;text-align:center;box-shadow:var(--sh);cursor:pointer;border-bottom:4px solid transparent;transition:transform .1s;}
+.gc:active{transform:scale(.95);}
+.gc .ico{font-size:2rem;margin-bottom:5px;}
+.gc h3{font-size:.95rem;font-weight:800;}
+.gc p{font-size:.7rem;color:var(--tx2);margin-top:2px;font-weight:600;}
+.gc.a{border-color:var(--pr);}.gc.b{border-color:var(--bl);}.gc.c{border-color:var(--gn);}.gc.d{border-color:var(--pu);}.gc.e{border-color:var(--am);}.gc.f{border-color:#E84444;}
+
+/* SHELL */
+.top-bar{display:flex;align-items:center;gap:8px;padding:.7rem 1rem .55rem;background:var(--card);box-shadow:0 2px 8px rgba(0,0,0,.06);flex-shrink:0;}
+.btn-back{font-size:1.4rem;background:var(--bg);border:none;cursor:pointer;border-radius:10px;padding:4px 10px;color:var(--tx2);font-weight:800;}
+.btn-back:active{background:#e8e8e8;}
+.g-title{flex:1;text-align:center;font-size:1rem;font-weight:800;}
+.chip{background:var(--gn-l);color:var(--gn-d);font-size:.82rem;font-weight:800;padding:4px 12px;border-radius:20px;white-space:nowrap;}
+.rng-bar{display:flex;justify-content:center;gap:8px;padding:.45rem 1rem;background:var(--card);border-bottom:2px solid var(--bg);flex-shrink:0;}
+.rb{padding:5px 22px;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;border-radius:20px;border:2px solid #ddd;background:#fff;color:var(--tx2);cursor:pointer;}
+.rb.on{background:var(--pr);color:#fff;border-color:var(--pr);}
+.g-body{flex:1;display:flex;flex-direction:column;align-items:center;padding:1rem;gap:.65rem;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.g-instr{font-size:.8rem;font-weight:700;color:var(--tx2);text-align:center;}
+
+/* SHAPES BOX */
+.sbox{background:#fff;border-radius:var(--r);padding:8px;display:flex;flex-wrap:wrap;gap:3px;align-content:flex-start;justify-content:center;box-shadow:var(--sh-sm);min-height:48px;min-width:60px;}
+
+/* DECOMP */
+.d-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;}
+.d-part{display:flex;flex-direction:column;align-items:center;gap:5px;}
+.d-lbl{font-size:.7rem;font-weight:800;color:var(--tx2);letter-spacing:.4px;text-transform:uppercase;}
+.d-op{font-size:1.8rem;font-weight:900;color:var(--tx2);align-self:center;margin-top:18px;}
+.num-badge{background:var(--pr-l);color:var(--pr-d);border-radius:var(--r-sm);padding:4px 14px;font-size:1.4rem;font-weight:900;}
+
+/* ANSWER BOX */
+.ans-box{background:var(--bl-l);border:3px solid var(--bl);border-radius:var(--r-sm);width:68px;height:68px;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:900;color:var(--bl);}
+.ans-box.ok{background:var(--gn-l);border-color:var(--gn);color:var(--gn);}
+.ans-box.err{background:var(--rd-l);border-color:var(--rd);color:var(--rd);}
+
+/* KEYPAD */
+.kpad{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;width:100%;max-width:380px;}
+.kb{aspect-ratio:1;font-family:'Nunito',sans-serif;font-size:1.3rem;font-weight:800;border:2px solid #e2e2e2;border-radius:var(--r-sm);background:#fff;color:var(--tx);cursor:pointer;box-shadow:var(--sh-sm);}
+.kb:active{transform:scale(.9);background:#f0f0f0;}
+.kb.del{font-size:1rem;color:var(--tx2);}
+
+/* FEEDBACK */
+.fb{text-align:center;font-size:1rem;font-weight:800;min-height:26px;color:transparent;}
+.fb.ok{color:var(--gn);}.fb.err{color:var(--rd);}
+.stars{text-align:center;font-size:1.4rem;min-height:26px;}
+
+/* BUTTONS */
+.btn-check,.btn-next{width:100%;max-width:380px;padding:14px;font-family:'Nunito',sans-serif;font-size:1.05rem;font-weight:900;border:none;border-radius:var(--r);cursor:pointer;}
+.btn-check{background:var(--bl);color:#fff;box-shadow:0 4px 0 var(--bl-d);}
+.btn-check:active{transform:translateY(2px);box-shadow:0 2px 0 var(--bl-d);}
+.btn-next{background:var(--gn);color:#fff;box-shadow:0 4px 0 var(--gn-d);display:none;}
+.btn-next:active{transform:translateY(2px);box-shadow:0 2px 0 var(--gn-d);}
+
+/* G1 DRAG */
+.drag-task{background:#fff;border-radius:var(--r);padding:10px 16px;text-align:center;box-shadow:var(--sh-sm);font-size:.88rem;font-weight:700;color:var(--tx);width:100%;max-width:460px;line-height:1.5;}
+.drag-pool{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;background:#fff;border-radius:var(--r);padding:10px;box-shadow:var(--sh-sm);width:100%;max-width:460px;min-height:64px;}
+.dsh{width:42px;height:42px;display:flex;align-items:center;justify-content:center;border:2px solid #e0e0e0;border-radius:10px;cursor:grab;background:#fafafa;transition:border-color .15s,background .15s;}
+.dsh.dragging-src{opacity:.25;}
+.dsh.in1{border-color:var(--pu);background:var(--pu-l);}
+.dsh.in2{border-color:var(--am);background:var(--am-l);}
+.drag-zones{display:flex;gap:10px;width:100%;max-width:460px;}
+.dzone{flex:1;border-radius:var(--r);border:3px dashed #ccc;padding:8px 6px;min-height:96px;display:flex;flex-direction:column;align-items:center;gap:6px;transition:border-color .2s,background .2s;}
+.dzone.z1{border-color:var(--pu);}.dzone.z2{border-color:var(--am);}
+.dzone.drag-over{border-style:solid;}.dzone.z1.drag-over{background:#f4eeff;}.dzone.z2.drag-over{background:#fff8e6;}
+.dzone-lbl{font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.4px;}
+.dzone.z1 .dzone-lbl{color:var(--pu);}.dzone.z2 .dzone-lbl{color:var(--am);}
+.dzone-target{font-size:.72rem;font-weight:700;color:var(--tx2);}
+.dzone-shapes{display:flex;flex-wrap:wrap;gap:3px;justify-content:center;}
+.dzone-cnt{font-size:1.6rem;font-weight:900;}
+.dzone.z1 .dzone-cnt{color:var(--pu);}.dzone.z2 .dzone-cnt{color:var(--am);}
+#drag-clone{position:fixed;pointer-events:none;z-index:9999;opacity:.88;transform:scale(1.28);width:44px;height:44px;display:none;align-items:center;justify-content:center;border-radius:10px;background:#fff;box-shadow:0 8px 28px rgba(0,0,0,.22);}
+
+/* G3 */
+.total-display{display:flex;flex-direction:column;align-items:center;gap:6px;}
+.total-num{font-size:2.4rem;font-weight:900;color:var(--pr);}
+.total-sub{font-size:.78rem;font-weight:700;color:var(--tx2);}
+.m-grid{display:flex;flex-direction:column;gap:9px;width:100%;max-width:440px;}
+.m-opt{display:flex;align-items:center;gap:8px;justify-content:center;background:#fff;border:3px solid #e0e0e0;border-radius:var(--r);padding:9px 12px;cursor:pointer;}
+.m-opt:active{transform:scale(.97);}
+.m-opt.sel{border-color:var(--bl);background:var(--bl-l);}.m-opt.ok{border-color:var(--gn);background:var(--gn-l);}.m-opt.err{border-color:var(--rd);background:var(--rd-l);}
+.m-opt .eq-label{font-size:.9rem;font-weight:800;color:var(--tx2);margin-left:auto;background:var(--bg);border-radius:8px;padding:2px 8px;}
+
+/* G4 */
+.task-box{background:#fff;border-radius:var(--r);padding:10px 16px;text-align:center;box-shadow:var(--sh-sm);font-size:.88rem;font-weight:700;color:var(--tx);width:100%;max-width:440px;}
+.pool-area{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;background:#fff;border-radius:var(--r);padding:10px;box-shadow:var(--sh-sm);width:100%;max-width:440px;min-height:56px;}
+.sh-btn{background:none;border:3px solid #e8e8e8;border-radius:12px;cursor:pointer;padding:3px;display:flex;align-items:center;justify-content:center;}
+.sh-btn:active{transform:scale(.88);}
+.sh-btn.in1{border-color:var(--pu);background:var(--pu-l);}.sh-btn.in2{border-color:var(--am);background:var(--am-l);}
+.grp-row{display:flex;gap:10px;width:100%;max-width:440px;}
+.grp-box{flex:1;background:#fff;border-radius:var(--r);border:3px dashed #ddd;padding:8px;display:flex;flex-direction:column;align-items:center;gap:5px;min-height:80px;}
+.grp-box.g1{border-color:var(--pu);}.grp-box.g2{border-color:var(--am);}
+.grp-lbl{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.4px;}
+.grp-lbl.g1{color:var(--pu);}.grp-lbl.g2{color:var(--am);}
+.grp-shapes{display:flex;flex-wrap:wrap;gap:2px;justify-content:center;}
+.grp-cnt{font-size:1.5rem;font-weight:900;}
+.grp-cnt.g1{color:var(--pu);}.grp-cnt.g2{color:var(--am);}
+
+/* G5 */
+.cmp-row{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;}
+.cmp-box{display:flex;flex-direction:column;align-items:center;gap:6px;}
+.op-row{display:flex;gap:10px;justify-content:center;}
+.op-btn{width:64px;height:64px;font-family:'Nunito',sans-serif;font-size:1.9rem;font-weight:900;border:3px solid #ddd;border-radius:var(--r-sm);background:#fff;color:var(--tx);cursor:pointer;box-shadow:var(--sh-sm);}
+.op-btn:active{transform:scale(.9);}
+.op-btn.sel{border-color:var(--bl);background:var(--bl-l);color:var(--bl);}.op-btn.ok{border-color:var(--gn);background:var(--gn-l);color:var(--gn-d);}.op-btn.err{border-color:var(--rd);background:var(--rd-l);color:var(--rd);}
+
+/* G6 CONG TRU */
+.ct-mode-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+.ct-mode-btn{padding:6px 14px;font-family:'Nunito',sans-serif;font-size:.78rem;font-weight:800;border-radius:20px;border:2px solid #ddd;background:#fff;color:var(--tx2);cursor:pointer;}
+.ct-mode-btn.on{background:var(--bl);color:#fff;border-color:var(--bl);}
+.ct-display{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;background:#fff;border-radius:var(--r);padding:16px 20px;box-shadow:var(--sh);width:100%;max-width:440px;}
+.ct-num{font-size:3.4rem;font-weight:900;color:var(--tx);line-height:1;}
+.ct-op{font-size:2.8rem;font-weight:900;line-height:1;}
+.ct-op.plus{color:var(--gn);}.ct-op.minus{color:var(--rd);}
+.ct-eq{font-size:2.8rem;font-weight:900;color:var(--tx2);line-height:1;}
+.ct-vis{display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;justify-content:center;width:100%;max-width:440px;}
+.ct-vis-group{display:flex;flex-direction:column;align-items:center;gap:4px;}
+.ct-vis-label{font-size:.72rem;font-weight:700;color:var(--tx2);}
+
+/* LANDSCAPE */
+@media(orientation:landscape)and(max-height:600px){
+  .home-hero .emo{font-size:2rem;}.home-hero h1{font-size:1.4rem;}
+  .game-grid{grid-template-columns:repeat(3,1fr);max-width:620px;}
+  .top-bar{padding:.4rem 1rem;}.rng-bar{padding:.3rem 1rem;}
+  .g-body{flex-direction:row;flex-wrap:wrap;align-content:flex-start;justify-content:center;}
+  .kpad{max-width:280px;gap:5px;}.btn-check,.btn-next{max-width:280px;padding:10px;}
+  .ct-num{font-size:2.4rem;}.ct-op,.ct-eq{font-size:2rem;}
+}
+@media(min-width:700px){.g-body{padding:1.2rem 2rem;}}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div id="home" class="scr on">
+  <div class="home-hero">
+    <div class="emo">🌟</div>
+    <h1>Bé Học Toán Tư Duy</h1>
+    <p>Chọn trò chơi để bắt đầu nào!</p>
+  </div>
+  <div class="game-grid">
+    <div class="gc a" onclick="startGame(1)"><div class="ico">🖐️</div><h3>Tách Số</h3><p>Kéo thả hình vào nhóm</p></div>
+    <div class="gc b" onclick="startGame(2)"><div class="ico">➕</div><h3>Gộp Số</h3><p>Tìm tổng hai nhóm</p></div>
+    <div class="gc c" onclick="startGame(3)"><div class="ico">🔗</div><h3>Nối Số</h3><p>Chọn cặp tách đúng</p></div>
+    <div class="gc d" onclick="startGame(4)"><div class="ico">🗂️</div><h3>Đếm &amp; Xếp</h3><p>Chia hình vào nhóm</p></div>
+    <div class="gc e" onclick="startGame(5)"><div class="ico">⚖️</div><h3>So Sánh Số</h3><p>Điền dấu &gt; &lt; =</p></div>
+    <div class="gc f" onclick="startGame(6)"><div class="ico">🧮</div><h3>Cộng &amp; Trừ</h3><p>Tính nhanh kết quả</p></div>
+  </div>
+</div>
+
+<!-- drag clone -->
+<div id="drag-clone" style="display:none"></div>
+
+<!-- G1: TÁCH SỐ KÉO THẢ -->
+<div id="g1" class="scr">
+  <div class="top-bar">
+    <button class="btn-back" onclick="goHome()">◂</button>
+    <span class="g-title">🖐️ Tách Số – Kéo Thả</span>
+    <span class="chip" id="sc1">0 / 0</span>
+  </div>
+  <div class="rng-bar">
+    <button class="rb on" onclick="setRng(1,10,this)">Phạm vi 10</button>
+    <button class="rb"    onclick="setRng(1,20,this)">Phạm vi 20</button>
+  </div>
+  <div class="g-body">
+    <p class="g-instr">Kéo hình vào đúng nhóm — hoặc bấm để chuyển nhóm!</p>
+    <div class="drag-task" id="g1-task"></div>
+    <div class="drag-pool" id="g1-pool"></div>
+    <div class="drag-zones">
+      <div class="dzone z1" id="dz1" data-zone="1">
+        <span class="dzone-lbl">Nhóm 1</span>
+        <span class="dzone-target" id="dz1-t"></span>
+        <div class="dzone-shapes" id="dz1-sh"></div>
+        <span class="dzone-cnt" id="dz1-n">0</span>
+      </div>
+      <div class="dzone z2" id="dz2" data-zone="2">
+        <span class="dzone-lbl">Nhóm 2</span>
+        <span class="dzone-target" id="dz2-t"></span>
+        <div class="dzone-shapes" id="dz2-sh"></div>
+        <span class="dzone-cnt" id="dz2-n">0</span>
+      </div>
+    </div>
+    <div class="stars" id="g1-stars"></div>
+    <div class="fb" id="g1-fb"></div>
+    <button class="btn-next" id="g1-nxt" onclick="nxtG1()" style="display:none">Câu tiếp theo →</button>
+  </div>
+</div>
+
+<!-- G2: GỘP SỐ -->
+<div id="g2" class="scr">
+  <div class="top-bar">
+    <button class="btn-back" onclick="goHome()">◂</button>
+    <span class="g-title">➕ Gộp Số</span>
+    <span class="chip" id="sc2">0 / 0</span>
+  </div>
+  <div class="rng-bar">
+    <button class="rb on" onclick="setRng(2,10,this)">Phạm vi 10</button>
+    <button class="rb"    onclick="setRng(2,20,this)">Phạm vi 20</button>
+  </div>
+  <div class="g-body">
+    <p class="g-instr">Cộng hai nhóm lại, điền <span style="color:var(--bl)">tổng</span> vào ô!</p>
+    <div class="d-row" id="g2-decomp"></div>
+    <div class="stars" id="g2-stars"></div>
+    <div class="fb" id="g2-fb"></div>
+    <div class="kpad" id="g2-kpad"></div>
+    <button class="btn-check" id="g2-chk" onclick="chkG2()">Kiểm tra ✓</button>
+    <button class="btn-next"  id="g2-nxt" onclick="nxtG2()">Câu tiếp theo →</button>
+  </div>
+</div>
+
+<!-- G3: NỐI SỐ -->
+<div id="g3" class="scr">
+  <div class="top-bar">
+    <button class="btn-back" onclick="goHome()">◂</button>
+    <span class="g-title">🔗 Nối Số</span>
+    <span class="chip" id="sc3">0 / 0</span>
+  </div>
+  <div class="rng-bar">
+    <button class="rb on" onclick="setRng(3,10,this)">Phạm vi 10</button>
+    <button class="rb"    onclick="setRng(3,20,this)">Phạm vi 20</button>
+  </div>
+  <div class="g-body">
+    <p class="g-instr">Chọn cặp tách số <span style="color:var(--gn)">đúng</span>!</p>
+    <div class="total-display" id="g3-total"></div>
+    <div class="stars" id="g3-stars"></div>
+    <div class="fb" id="g3-fb"></div>
+    <div class="m-grid" id="g3-opts"></div>
+    <button class="btn-next" id="g3-nxt" onclick="nxtG3()" style="display:none;margin-top:6px">Câu tiếp theo →</button>
+  </div>
+</div>
+
+<!-- G4: ĐẾM & XẾP -->
+<div id="g4" class="scr">
+  <div class="top-bar">
+    <button class="btn-back" onclick="goHome()">◂</button>
+    <span class="g-title">🗂️ Đếm &amp; Xếp</span>
+    <span class="chip" id="sc4">0 / 0</span>
+  </div>
+  <div class="rng-bar">
+    <button class="rb on" onclick="setRng(4,10,this)">Phạm vi 10</button>
+    <button class="rb"    onclick="setRng(4,20,this)">Phạm vi 20</button>
+  </div>
+  <div class="g-body">
+    <p class="g-instr">Bấm hình để xếp vào nhóm. Bấm lại để chuyển!</p>
+    <div class="task-box" id="g4-task"></div>
+    <div class="pool-area" id="g4-pool"></div>
+    <div class="grp-row">
+      <div class="grp-box g1">
+        <span class="grp-lbl g1">Nhóm 1</span>
+        <div class="grp-shapes" id="g4-g1sh"></div>
+        <span class="grp-cnt g1" id="g4-g1n">0</span>
+      </div>
+      <div class="grp-box g2">
+        <span class="grp-lbl g2">Nhóm 2</span>
+        <div class="grp-shapes" id="g4-g2sh"></div>
+        <span class="grp-cnt g2" id="g4-g2n">0</span>
+      </div>
+    </div>
+    <div class="stars" id="g4-stars"></div>
+    <div class="fb" id="g4-fb"></div>
+    <button class="btn-next" id="g4-nxt" onclick="nxtG4()" style="display:none">Câu tiếp theo →</button>
+  </div>
+</div>
+
+<!-- G5: SO SÁNH -->
+<div id="g5" class="scr">
+  <div class="top-bar">
+    <button class="btn-back" onclick="goHome()">◂</button>
+    <span class="g-title">⚖️ So Sánh Số</span>
+    <span class="chip" id="sc5">0 / 0</span>
+  </div>
+  <div class="rng-bar">
+    <button class="rb on" onclick="setRng(5,10,this)">Phạm vi 10</button>
+    <button class="rb"    onclick="setRng(5,20,this)">Phạm vi 20</button>
+  </div>
+  <div class="g-body">
+    <p class="g-instr">Điền dấu <span style="color:var(--pr)">›</span> <span style="color:var(--bl)">‹</span> hoặc <span style="color:var(--gn)">═</span>!</p>
+    <div class="cmp-row" id="g5-cmp"></div>
+    <div class="op-row">
+      <button class="op-btn" id="op-gt" onclick="selOp('>')">›</button>
+      <button class="op-btn" id="op-eq" onclick="selOp('=')" style="font-size:1.4rem">═</button>
+      <button class="op-btn" id="op-lt" onclick="selOp('<')">‹</button>
+    </div>
+    <div class="stars" id="g5-stars"></div>
+    <div class="fb" id="g5-fb"></div>
+    <button class="btn-check" id="g5-chk" onclick="chkG5()">Kiểm tra ✓</button>
+    <button class="btn-next"  id="g5-nxt" onclick="nxtG5()" style="display:none">Câu tiếp theo →</button>
+  </div>
+</div>
+
+<!-- G6: CỘNG & TRỪ -->
+<div id="g6" class="scr">
+  <div class="top-bar">
+    <button class="btn-back" onclick="goHome()">◂</button>
+    <span class="g-title">🧮 Cộng &amp; Trừ</span>
+    <span class="chip" id="sc6">0 / 0</span>
+  </div>
+  <div class="rng-bar">
+    <button class="rb on" onclick="setRng(6,10,this)">Phạm vi 10</button>
+    <button class="rb"    onclick="setRng(6,20,this)">Phạm vi 20</button>
+  </div>
+  <div class="g-body">
+    <div class="ct-mode-row">
+      <button class="ct-mode-btn on" onclick="setCTMode('both',this)">Cộng &amp; Trừ</button>
+      <button class="ct-mode-btn"    onclick="setCTMode('add',this)">Chỉ Cộng ➕</button>
+      <button class="ct-mode-btn"    onclick="setCTMode('sub',this)">Chỉ Trừ ➖</button>
+    </div>
+    <div class="ct-display" id="g6-display"></div>
+    <div class="ct-vis" id="g6-vis"></div>
+    <div class="stars" id="g6-stars"></div>
+    <div class="fb" id="g6-fb"></div>
+    <div class="kpad" id="g6-kpad"></div>
+    <button class="btn-check" id="g6-chk" onclick="chkG6()">Kiểm tra ✓</button>
+    <button class="btn-next"  id="g6-nxt" onclick="nxtG6()" style="display:none">Câu tiếp theo →</button>
+  </div>
+</div>
+
+<script>
+/* ===== HELPERS ===== */
+const SHP=['circle','square','triangle','rect','diamond'];
+const CLR=['#3A8EE6','#44BE5A','#FF6B35','#8B52E8','#E8A020'];
+const NAME=['Tròn','Vuông','Tam giác','Chữ nhật','Thoi'];
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=arr=>arr[Math.floor(Math.random()*arr.length)];
+const $=id=>document.getElementById(id);
+
+function svg(sh,cl,sz=18){
+  const s=sz,h=Math.round(s*.86),w2=s/2;
+  const W=sh==='rect'?Math.round(s*1.55):s,H=sh==='triangle'?h:s;
+  const body={
+    circle:`<circle cx="${w2}" cy="${w2}" r="${w2-1}" fill="${cl}"/>`,
+    square:`<rect x="1" y="1" width="${s-2}" height="${s-2}" rx="3" fill="${cl}"/>`,
+    triangle:`<polygon points="${w2},2 ${s-2},${h-1} 2,${h-1}" fill="${cl}"/>`,
+    rect:`<rect x="1" y="1" width="${W-2}" height="${s-2}" rx="3" fill="${cl}"/>`,
+    diamond:`<polygon points="${w2},2 ${s-2},${w2} ${w2},${s-2} 2,${w2}" fill="${cl}"/>`
+  };
+  return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" style="display:inline-block;vertical-align:middle">${body[sh]||body.circle}</svg>`;
+}
+
+function sbox(n,sh,cl,sz=16,mw=160){
+  let h=`<div class="sbox" style="max-width:${mw}px">`;
+  for(let i=0;i<n;i++)h+=svg(sh,cl,sz);
+  return h+'</div>';
+}
+
+const KIN={};
+function buildKpad(kpId,aid){
+  const kp=$(kpId);kp.innerHTML='';KIN[aid]='';
+  for(let i=1;i<=9;i++)addKey(kp,String(i),aid);
+  addKey(kp,'0',aid);addKey(kp,'⌫',aid,true);
+}
+function addKey(kp,k,aid,del=false){
+  const b=document.createElement('button');
+  b.className='kb'+(del?' del':'');b.textContent=k;
+  b.addEventListener('pointerdown',e=>{e.preventDefault();pressK(k,aid);});
+  kp.appendChild(b);
+}
+function pressK(k,aid){
+  if(k==='⌫')KIN[aid]=(KIN[aid]||'').slice(0,-1);
+  else{if((KIN[aid]||'').length>=2)return;KIN[aid]=(KIN[aid]||'')+k;}
+  const el=$(aid);if(el){el.textContent=KIN[aid]||'?';el.className='ans-box';}
+}
+
+function fb(id,msg,t=''){const e=$(id);e.textContent=msg;e.className='fb '+(t||'');}
+function stars(id,ok){$(id).textContent=ok?'⭐⭐⭐':'💪 Cố lên nào!';}
+const SC={1:{c:0,t:0},2:{c:0,t:0},3:{c:0,t:0},4:{c:0,t:0},5:{c:0,t:0},6:{c:0,t:0}};
+function updSc(g,ok){SC[g].t++;if(ok)SC[g].c++;$('sc'+g).textContent=SC[g].c+' / '+SC[g].t;}
+const RNG={1:10,2:10,3:10,4:10,5:10,6:10};
+function setRng(g,v,btn){
+  RNG[g]=v;
+  btn.closest('.rng-bar').querySelectorAll('.rb').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  [nxtG1,nxtG2,nxtG3,nxtG4,nxtG5,nxtG6][g-1]();
+}
+function goHome(){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));$('home').classList.add('on');}
+function startGame(n){
+  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
+  $('g'+n).classList.add('on');
+  [nxtG1,nxtG2,nxtG3,nxtG4,nxtG5,nxtG6][n-1]();
+}
+
+/* ===== G1: TÁCH SỐ KÉO THẢ ===== */
+let G1={},DRAG={active:false,idx:-1,zone:null};
+
+function nxtG1(){
+  const max=RNG[1],si=rnd(0,4),sh=SHP[si],cl=CLR[si];
+  const tot=rnd(2,max),t1=rnd(1,tot-1),t2=tot-t1;
+  G1={sh,cl,tot,t1,t2,state:new Array(tot).fill(0),done:false};
+  $('g1-task').innerHTML=`Tách <strong>${tot}</strong> hình ${NAME[si]} thành:<br><span style="color:var(--pu)">Nhóm 1: ${t1} hình</span> &nbsp;+&nbsp; <span style="color:var(--am)">Nhóm 2: ${t2} hình</span>`;
+  $('dz1-t').textContent='Cần: '+t1+' hình';
+  $('dz2-t').textContent='Cần: '+t2+' hình';
+  let ph='';
+  for(let i=0;i<tot;i++) ph+=`<div class="dsh" id="dsh${i}" data-idx="${i}">${svg(sh,cl,24)}</div>`;
+  $('g1-pool').innerHTML=ph;
+  for(let i=0;i<tot;i++){
+    const el=$('dsh'+i);
+    el.addEventListener('pointerdown',e=>onDS(e,i),{passive:false});
+    el.addEventListener('click',()=>tapSh(i));
+  }
+  renderG1();
+  fb('g1-fb','');$('g1-stars').textContent='';$('g1-nxt').style.display='none';
+}
+
+function renderG1(){
+  const {sh,cl,state,t1,t2}=G1;
+  const c1=state.filter(x=>x===1).length,c2=state.filter(x=>x===2).length;
+  $('dz1-n').textContent=c1;$('dz2-n').textContent=c2;
+  let s1='',s2='';
+  state.forEach(s=>{if(s===1)s1+=svg(sh,'#8B52E8',20);if(s===2)s2+=svg(sh,'#E8A020',20);});
+  $('dz1-sh').innerHTML=s1;$('dz2-sh').innerHTML=s2;
+  state.forEach((st,i)=>{
+    const el=$('dsh'+i);if(!el)return;
+    el.className='dsh'+(st===1?' in1':st===2?' in2':'');
+    el.innerHTML=svg(sh,st===1?'#8B52E8':st===2?'#E8A020':cl,24);
+  });
+  if(!G1.done&&!state.includes(0)){
+    const ok=c1===t1&&c2===t2;
+    G1.done=true;
+    fb('g1-fb',ok?'Tuyệt vời! Chia đúng rồi! 🎉':'Chưa đúng! Cần '+t1+' và '+t2+'.',ok?'ok':'err');
+    stars('g1-stars',ok);updSc(1,ok);$('g1-nxt').style.display='block';
+  }
+}
+
+function tapSh(idx){
+  if(G1.done)return;
+  G1.state[idx]=(G1.state[idx]+1)%3;
+  renderG1();
+}
+
+function onDS(e,idx){
+  if(G1.done)return;
+  e.preventDefault();
+  DRAG={active:true,idx,zone:null};
+  const clone=$('drag-clone');
+  clone.innerHTML=svg(G1.sh,G1.cl,28);
+  clone.style.display='flex';
+  mvClone(e);
+  $('dsh'+idx).classList.add('dragging-src');
+  document.addEventListener('pointermove',onDM,{passive:false});
+  document.addEventListener('pointerup',onDU);
+  document.addEventListener('pointercancel',onDU);
+}
+function onDM(e){
+  if(!DRAG.active)return;
+  e.preventDefault();
+  mvClone(e);
+  const c=$('drag-clone');c.style.display='none';
+  const u=document.elementFromPoint(e.clientX,e.clientY);
+  c.style.display='flex';
+  const z=u?.closest('[data-zone]');
+  DRAG.zone=z?z.dataset.zone:null;
+  $('dz1').classList.toggle('drag-over',DRAG.zone==='1');
+  $('dz2').classList.toggle('drag-over',DRAG.zone==='2');
+}
+function onDU(){
+  document.removeEventListener('pointermove',onDM);
+  document.removeEventListener('pointerup',onDU);
+  document.removeEventListener('pointercancel',onDU);
+  $('drag-clone').style.display='none';
+  $('dz1').classList.remove('drag-over');$('dz2').classList.remove('drag-over');
+  const src=$('dsh'+DRAG.idx);if(src)src.classList.remove('dragging-src');
+  if(DRAG.zone&&!G1.done){G1.state[DRAG.idx]=parseInt(DRAG.zone);renderG1();}
+  DRAG.active=false;
+}
+function mvClone(e){
+  const c=$('drag-clone');
+  c.style.left=(e.clientX-22)+'px';c.style.top=(e.clientY-22)+'px';
+}
+
+/* ===== G2: GỘP SỐ ===== */
+let G2={};
+function nxtG2(){
+  const max=RNG[2],si=rnd(0,4),sh=SHP[si],cl=CLR[si];
+  const p1=rnd(1,max-1),p2=rnd(1,Math.max(1,max-p1)),tot=p1+p2;
+  G2={sh,cl,p1,p2,tot};KIN['g2a']='';
+  let h='';
+  h+=`<div class="d-part"><span class="d-lbl">Nhóm 1</span>${sbox(p1,sh,cl,16,140)}<div class="num-badge">${p1}</div></div>`;
+  h+=`<span class="d-op">+</span>`;
+  h+=`<div class="d-part"><span class="d-lbl">Nhóm 2</span>${sbox(p2,sh,cl,16,140)}<div class="num-badge">${p2}</div></div>`;
+  h+=`<span class="d-op">=</span>`;
+  h+=`<div class="d-part"><span class="d-lbl">Tổng</span><div class="ans-box" id="g2a">?</div></div>`;
+  $('g2-decomp').innerHTML=h;
+  fb('g2-fb','');$('g2-stars').textContent='';
+  $('g2-chk').style.display='block';$('g2-nxt').style.display='none';
+  buildKpad('g2-kpad','g2a');
+}
+function chkG2(){
+  const v=parseInt(KIN['g2a']||'');
+  if(isNaN(v)){fb('g2-fb','Hãy nhập số vào ô nhé! 😊','err');return;}
+  const ok=v===G2.tot;
+  const el=$('g2a');el.className='ans-box '+(ok?'ok':'err');if(!ok)el.textContent=G2.tot;
+  fb('g2-fb',ok?'Xuất sắc! Đúng rồi! 🎉':'Chưa đúng! Đáp án là '+G2.tot+'.',ok?'ok':'err');
+  stars('g2-stars',ok);updSc(2,ok);$('g2-chk').style.display='none';$('g2-nxt').style.display='block';
+}
+
+/* ===== G3: NỐI SỐ ===== */
+let G3={};
+function nxtG3(){
+  const max=RNG[3],si=rnd(0,4),sh=SHP[si],cl=CLR[si];
+  const tot=rnd(3,max),cp1=rnd(1,tot-1),cp2=tot-cp1;
+  const opts=[[cp1,cp2]];let t=0;
+  while(opts.length<4&&t++<400){
+    const a=rnd(1,Math.max(1,max-1)),b=rnd(1,Math.max(1,max-1));
+    if(a+b!==tot&&!opts.some(o=>o[0]===a&&o[1]===b))opts.push([a,b]);
+  }
+  for(let i=opts.length-1;i>0;i--){const j=rnd(0,i);[opts[i],opts[j]]=[opts[j],opts[i]];}
+  const ci=opts.findIndex(o=>o[0]===cp1&&o[1]===cp2);
+  G3={sh,cl,tot,opts,ci};
+  $('g3-total').innerHTML=`${sbox(tot,sh,cl,20,220)}<div class="total-num">${tot}</div><div class="total-sub">Tách số này thành 2 nhóm:</div>`;
+  $('g3-opts').innerHTML=opts.map((op,i)=>`<div class="m-opt" id="g3o${i}" onclick="selG3(${i})">${sbox(op[0],sh,cl,13,110)}<span style="font-size:1.1rem;font-weight:900;color:#bbb">+</span>${sbox(op[1],sh,cl,13,110)}<span class="eq-label">${op[0]} + ${op[1]}</span></div>`).join('');
+  fb('g3-fb','');$('g3-stars').textContent='';$('g3-nxt').style.display='none';
+}
+function selG3(idx){
+  if($('g3-nxt').style.display==='block')return;
+  const ok=idx===G3.ci;
+  for(let i=0;i<G3.opts.length;i++){
+    const el=$('g3o'+i);
+    el.className='m-opt'+(i===idx?(ok?' ok':' err'):i===G3.ci?' ok':'');
+  }
+  fb('g3-fb',ok?'Đúng rồi! Giỏi quá! 🎉':'Chưa đúng! Đây là đáp án đúng.',ok?'ok':'err');
+  stars('g3-stars',ok);updSc(3,ok);$('g3-nxt').style.display='block';
+}
+
+/* ===== G4: ĐẾM & XẾP ===== */
+let G4={};
+function nxtG4(){
+  const max=RNG[4],si=rnd(0,4),sh=SHP[si],cl=CLR[si];
+  const tot=rnd(3,max),t1=rnd(1,tot-1),t2=tot-t1;
+  G4={sh,cl,tot,t1,t2,state:new Array(tot).fill(0),done:false};
+  $('g4-task').innerHTML=`Chia <strong>${tot}</strong> hình ${NAME[si]} thành:<br><span style="color:var(--pu)">Nhóm 1: ${t1} hình</span> &nbsp;+&nbsp; <span style="color:var(--am)">Nhóm 2: ${t2} hình</span>`;
+  let ph='';
+  for(let i=0;i<tot;i++) ph+=`<button class="sh-btn" id="g4s${i}" onclick="tapG4(${i})">${svg(sh,cl,26)}</button>`;
+  $('g4-pool').innerHTML=ph;
+  $('g4-g1sh').innerHTML='';$('g4-g2sh').innerHTML='';$('g4-g1n').textContent='0';$('g4-g2n').textContent='0';
+  fb('g4-fb','');$('g4-stars').textContent='';$('g4-nxt').style.display='none';
+}
+function tapG4(idx){
+  if(G4.done)return;
+  G4.state[idx]=(G4.state[idx]+1)%3;
+  const s=G4.state[idx];
+  const btn=$('g4s'+idx);
+  btn.className='sh-btn'+(s===1?' in1':s===2?' in2':'');
+  btn.innerHTML=svg(G4.sh,s===1?'#8B52E8':s===2?'#E8A020':G4.cl,26);
+  const c1=G4.state.filter(x=>x===1).length,c2=G4.state.filter(x=>x===2).length;
+  $('g4-g1n').textContent=c1;$('g4-g2n').textContent=c2;
+  let s1='',s2='';
+  G4.state.forEach(st=>{if(st===1)s1+=svg(G4.sh,'#8B52E8',18);if(st===2)s2+=svg(G4.sh,'#E8A020',18);});
+  $('g4-g1sh').innerHTML=s1;$('g4-g2sh').innerHTML=s2;
+  if(!G4.state.includes(0)){
+    const ok=c1===G4.t1&&c2===G4.t2;G4.done=true;
+    fb('g4-fb',ok?'Tuyệt vời! Chia đúng rồi! 🎉':'Chưa đúng! Cần '+G4.t1+' và '+G4.t2+'.',ok?'ok':'err');
+    stars('g4-stars',ok);updSc(4,ok);$('g4-nxt').style.display='block';
+  }
+}
+
+/* ===== G5: SO SÁNH ===== */
+let G5={op:null};
+function nxtG5(){
+  const max=RNG[5],si1=rnd(0,4),si2=rnd(0,4);
+  const n1=rnd(1,max),n2=rnd(1,max);
+  const cor=n1>n2?'>':n1<n2?'<':'=';
+  G5={n1,n2,si1,si2,cor,op:null};
+  let h='';
+  h+=`<div class="cmp-box"><span class="d-lbl">Nhóm 1</span>${sbox(n1,SHP[si1],CLR[si1],16,140)}<div class="num-badge">${n1}</div></div>`;
+  h+=`<div class="ans-box" id="g5-mid" style="font-size:1.8rem">?</div>`;
+  h+=`<div class="cmp-box"><span class="d-lbl">Nhóm 2</span>${sbox(n2,SHP[si2],CLR[si2],16,140)}<div class="num-badge">${n2}</div></div>`;
+  $('g5-cmp').innerHTML=h;
+  ['op-gt','op-eq','op-lt'].forEach(id=>$(id).className='op-btn');
+  fb('g5-fb','');$('g5-stars').textContent='';
+  $('g5-chk').style.display='block';$('g5-nxt').style.display='none';
+}
+function selOp(op){
+  if($('g5-nxt').style.display==='block')return;
+  G5.op=op;
+  $('op-gt').className='op-btn'+(op==='>'?' sel':'');
+  $('op-eq').className='op-btn'+(op==='='?' sel':'');
+  $('op-lt').className='op-btn'+(op==='<'?' sel':'');
+  $('g5-mid').textContent=op;$('g5-mid').className='ans-box';
+}
+function chkG5(){
+  if(!G5.op){fb('g5-fb','Hãy chọn dấu nhé! 😊','err');return;}
+  const ok=G5.op===G5.cor;
+  $('g5-mid').className='ans-box '+(ok?'ok':'err');$('g5-mid').textContent=G5.cor;
+  $('op-gt').className='op-btn'+(G5.cor==='>'?' ok':G5.op==='>'&&!ok?' err':'');
+  $('op-eq').className='op-btn'+(G5.cor==='='?' ok':G5.op==='='&&!ok?' err':'');
+  $('op-lt').className='op-btn'+(G5.cor==='<'?' ok':G5.op==='<'&&!ok?' err':'');
+  fb('g5-fb',ok?'Đúng rồi! Giỏi lắm! 🎉':'Chưa đúng! Đáp án là "'+G5.cor+'".',ok?'ok':'err');
+  stars('g5-stars',ok);updSc(5,ok);$('g5-chk').style.display='none';$('g5-nxt').style.display='block';
+}
+
+/* ===== G6: CỘNG & TRỪ ===== */
+let G6={},ctMode='both';
+function setCTMode(m,btn){
+  ctMode=m;
+  document.querySelectorAll('.ct-mode-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');nxtG6();
+}
+function nxtG6(){
+  const max=RNG[6];
+  let a,b,op,ans,tries=0;
+  do{
+    op=ctMode==='add'?'+':ctMode==='sub'?'-':(Math.random()<.5?'+':'-');
+    if(op==='+'){a=rnd(1,max-1);b=rnd(1,max-a);ans=a+b;}
+    else{a=rnd(2,max);b=rnd(1,a-1);ans=a-b;}
+    tries++;
+  }while((ans<0||ans>max)&&tries<100);
+
+  G6={a,b,op,ans};KIN['g6a']='';
+  const opCls=op==='+'?'plus':'minus';
+  $('g6-display').innerHTML=`<span class="ct-num">${a}</span><span class="ct-op ${opCls}">${op}</span><span class="ct-num">${b}</span><span class="ct-eq">=</span><div class="ans-box" id="g6a">?</div>`;
+
+  const si=rnd(0,4),sh=SHP[si],cl=CLR[si],si2=rnd(0,4);
+  let visH='';
+  if(op==='+'){
+    visH+=`<div class="ct-vis-group">${sbox(a,sh,cl,14,130)}<span class="ct-vis-label" style="color:var(--gn)">${a}</span></div>`;
+    visH+=`<span style="font-size:1.6rem;font-weight:900;color:var(--gn);align-self:center">+</span>`;
+    visH+=`<div class="ct-vis-group">${sbox(b,SHP[si2],CLR[si2],14,130)}<span class="ct-vis-label" style="color:var(--gn)">${b}</span></div>`;
+  } else {
+    let bx=`<div class="sbox" style="max-width:210px">`;
+    for(let i=0;i<a;i++) bx+=(i<b?`<span style="opacity:.18;display:inline-block">`:``)+svg(sh,cl,14)+(i<b?`</span>`:'');
+    bx+='</div>';
+    visH+=`<div class="ct-vis-group">${bx}<span class="ct-vis-label" style="color:var(--rd)">${a} bớt đi ${b}</span></div>`;
+  }
+  $('g6-vis').innerHTML=visH;
+  fb('g6-fb','');$('g6-stars').textContent='';
+  $('g6-chk').style.display='block';$('g6-nxt').style.display='none';
+  buildKpad('g6-kpad','g6a');
+}
+function chkG6(){
+  const v=parseInt(KIN['g6a']||'');
+  if(isNaN(v)){fb('g6-fb','Hãy nhập số vào ô nhé! 😊','err');return;}
+  const ok=v===G6.ans;
+  const el=$('g6a');el.className='ans-box '+(ok?'ok':'err');if(!ok)el.textContent=G6.ans;
+  fb('g6-fb',ok?'Đúng rồi! Giỏi lắm! 🎉':'Chưa đúng! Đáp án là '+G6.ans+'.',ok?'ok':'err');
+  stars('g6-stars',ok);updSc(6,ok);$('g6-chk').style.display='none';$('g6-nxt').style.display='block';
+}
+
+/* prevent iOS double-tap zoom */
+document.querySelectorAll('button,.gc,.m-opt').forEach(el=>{
+  el.addEventListener('touchend',e=>e.preventDefault(),{passive:false});
+});
+</script>
+</body>
+</html>

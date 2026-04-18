@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>🔍 Tìm Vật Khác Nhau</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0D1B2A;--card:#1B2A3B;--card2:#243447;
+  --y:#FFD166;--g:#06D6A0;--r:#EF476F;--b:#118AB2;--p:#9B5DE5;--o:#FF9F1C;
+  --white:#EEF2F7;--muted:#6C8099;
+  --rad:22px;--radsm:14px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none;}
+html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Nunito',system-ui,sans-serif;color:var(--white);}
+
+/* animated star bg */
+body::before{content:'';position:fixed;inset:0;
+  background-image:radial-gradient(1.5px 1.5px at 15% 20%,rgba(255,255,255,.18) 0%,transparent 100%),
+    radial-gradient(1px 1px at 40% 70%,rgba(255,255,255,.12) 0%,transparent 100%),
+    radial-gradient(2px 2px at 75% 15%,rgba(255,255,255,.15) 0%,transparent 100%),
+    radial-gradient(1px 1px at 85% 55%,rgba(255,255,255,.1) 0%,transparent 100%),
+    radial-gradient(1.5px 1.5px at 55% 90%,rgba(255,255,255,.14) 0%,transparent 100%);
+  pointer-events:none;}
+
+/* SCREENS */
+.scr{display:none;position:fixed;inset:0;flex-direction:column;align-items:center;}
+.scr.on{display:flex;}
+
+/* ===== START ===== */
+#start{justify-content:center;gap:1.6rem;padding:2rem 1.4rem;}
+.s-blob{width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,var(--b),var(--p));display:flex;align-items:center;justify-content:center;font-size:4rem;box-shadow:0 0 40px rgba(17,138,178,.5);animation:blobPulse 3s ease-in-out infinite;}
+@keyframes blobPulse{0%,100%{transform:scale(1);box-shadow:0 0 40px rgba(17,138,178,.5);}50%{transform:scale(1.06);box-shadow:0 0 60px rgba(17,138,178,.7);}};
+.s-title{text-align:center;}
+.s-title h1{font-size:2.2rem;font-weight:900;color:var(--y);letter-spacing:-.5px;}
+.s-title p{font-size:.95rem;color:var(--muted);margin-top:5px;font-weight:700;}
+.cat-label{font-size:.75rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+.cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;max-width:380px;}
+.cat-btn{padding:10px 14px;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;border-radius:30px;border:2px solid rgba(255,255,255,.12);background:rgba(255,255,255,.07);color:var(--white);cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .15s;}
+.cat-btn.on{border-color:var(--y);background:rgba(255,209,102,.15);color:var(--y);}
+.cat-btn:active{transform:scale(.95);}
+.go-btn{padding:18px 52px;font-family:'Nunito',sans-serif;font-size:1.25rem;font-weight:900;border:none;border-radius:40px;background:linear-gradient(135deg,var(--y),var(--o));color:#0D1B2A;cursor:pointer;box-shadow:0 8px 28px rgba(255,209,102,.4);transition:transform .12s;}
+.go-btn:active{transform:scale(.94);}
+
+/* ===== GAME ===== */
+#game{justify-content:space-between;padding:0;}
+
+/* HUD */
+.hud{width:100%;display:flex;align-items:center;gap:10px;padding:.8rem 1.2rem .4rem;flex-shrink:0;}
+.btn-back{font-size:1.2rem;background:rgba(255,255,255,.1);border:none;border-radius:12px;padding:6px 12px;color:var(--white);cursor:pointer;font-weight:800;}
+.hud-prog{flex:1;height:10px;background:rgba(255,255,255,.08);border-radius:10px;overflow:hidden;}
+.hud-prog-bar{height:100%;background:linear-gradient(90deg,var(--g),var(--b));border-radius:10px;transition:width .4s ease;}
+.hud-score{font-size:1.1rem;font-weight:900;color:var(--y);white-space:nowrap;}
+
+/* QUESTION HEADER */
+.q-header{text-align:center;padding:.3rem 1rem;flex-shrink:0;}
+.q-cat{font-size:.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;}
+.q-text{font-size:1.1rem;font-weight:900;color:var(--white);margin-top:3px;}
+.q-text span{color:var(--y);}
+
+/* ITEMS GRID */
+.items-area{flex:1;display:flex;align-items:center;justify-content:center;padding:.5rem 1rem;width:100%;}
+.items-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%;max-width:440px;}
+.item-card{border-radius:var(--rad);background:var(--card);border:3px solid rgba(255,255,255,.08);cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+  padding:1.2rem .8rem;aspect-ratio:.9;position:relative;overflow:hidden;
+  transition:transform .12s,border-color .15s,background .15s;box-shadow:0 4px 16px rgba(0,0,0,.25);}
+.item-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.04),transparent);border-radius:inherit;}
+.item-card:active{transform:scale(.93);}
+.item-card .item-ico{font-size:3.2rem;line-height:1;transition:transform .2s;}
+.item-card .item-lbl{font-size:.75rem;font-weight:800;color:var(--muted);text-align:center;}
+
+/* card states */
+.item-card.correct{border-color:var(--g);background:rgba(6,214,160,.12);animation:cardCorrect .5s ease;}
+@keyframes cardCorrect{0%{transform:scale(1);}40%{transform:scale(1.1);}70%{transform:scale(.97);}100%{transform:scale(1);}};
+.item-card.wrong{border-color:var(--r);background:rgba(239,71,111,.1);animation:cardWrong .4s ease;}
+@keyframes cardWrong{0%,100%{transform:translateX(0);}25%{transform:translateX(-10px);}75%{transform:translateX(10px);}};
+.item-card.reveal{border-color:var(--g);background:rgba(6,214,160,.12);}
+.item-card.dim{opacity:.35;pointer-events:none;}
+
+/* TICK / CROSS overlay */
+.item-card .overlay{position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:900;opacity:0;transition:opacity .25s;}
+.item-card.correct .overlay,.item-card.reveal .overlay{opacity:1;background:var(--g);color:#0D1B2A;}
+.item-card.wrong .overlay{opacity:1;background:var(--r);color:#fff;}
+
+/* REASON BANNER */
+.reason{width:100%;padding:.5rem 1.2rem;flex-shrink:0;text-align:center;}
+.reason-box{background:var(--card2);border-radius:var(--radsm);padding:.7rem 1rem;display:inline-block;max-width:440px;width:100%;}
+.reason-box .r-ico{font-size:1.3rem;margin-bottom:2px;}
+.reason-box p{font-size:.82rem;font-weight:700;color:var(--white);line-height:1.4;}
+.reason-box .r-why{font-size:.72rem;color:var(--muted);margin-top:3px;}
+
+/* NEXT BTN */
+.next-area{width:100%;padding:.6rem 1.2rem .9rem;flex-shrink:0;display:flex;justify-content:center;}
+.btn-next{padding:14px 48px;font-family:'Nunito',sans-serif;font-size:1.05rem;font-weight:900;border:none;border-radius:30px;background:linear-gradient(135deg,var(--g),var(--b));color:#fff;cursor:pointer;box-shadow:0 6px 20px rgba(6,214,160,.35);display:none;transition:transform .1s;}
+.btn-next:active{transform:scale(.95);}
+
+/* CONFETTI */
+.cp{position:fixed;width:9px;height:9px;border-radius:2px;pointer-events:none;z-index:300;animation:fall linear forwards;}
+@keyframes fall{0%{opacity:1;transform:translateY(0) rotate(0);}100%{opacity:0;transform:translateY(110vh) rotate(800deg);}};
+
+/* ===== RESULT ===== */
+#result{justify-content:center;gap:1.4rem;padding:2rem 1.4rem;text-align:center;}
+.res-ring{width:130px;height:130px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:4.5rem;animation:ringIn .5s ease;}
+@keyframes ringIn{0%{transform:scale(0) rotate(-180deg);}100%{transform:scale(1) rotate(0);}};
+.res-h1{font-size:2rem;font-weight:900;color:var(--y);}
+.res-sub{font-size:.95rem;color:var(--muted);font-weight:700;}
+.stars-row{display:flex;gap:6px;justify-content:center;}
+.s-star{font-size:2.5rem;opacity:.25;transition:opacity .3s,transform .3s;}
+.s-star.lit{opacity:1;transform:scale(1.15);}
+.score-card{background:var(--card);border-radius:var(--rad);padding:1.2rem 2.2rem;border:2px solid rgba(255,255,255,.08);}
+.score-big{font-size:3.2rem;font-weight:900;color:var(--g);}
+.score-lbl{font-size:.82rem;color:var(--muted);font-weight:700;}
+.res-btns{display:flex;gap:12px;}
+.rb{padding:14px 28px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:900;border:none;border-radius:30px;cursor:pointer;}
+.rb.pri{background:linear-gradient(135deg,var(--y),var(--o));color:#0D1B2A;}
+.rb.sec{background:rgba(255,255,255,.1);color:var(--white);border:2px solid rgba(255,255,255,.18);}
+.rb:active{transform:scale(.95);}
+
+/* LANDSCAPE */
+@media(orientation:landscape)and(max-height:520px){
+  .items-grid{grid-template-columns:repeat(4,1fr);max-width:600px;}
+  .item-card{aspect-ratio:auto;padding:.8rem .5rem;min-height:90px;}
+  .item-card .item-ico{font-size:2.4rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- START -->
+<div id="start" class="scr on">
+  <div class="s-blob">🔍</div>
+  <div class="s-title">
+    <h1>Tìm Vật Khác!</h1>
+    <p>Chọn hình không cùng nhóm với các hình còn lại</p>
+  </div>
+  <div class="cat-label">Chủ đề muốn luyện:</div>
+  <div class="cat-grid" id="cat-grid"></div>
+  <button class="go-btn" onclick="startGame()">Bắt đầu! 🚀</button>
+</div>
+
+<!-- GAME -->
+<div id="game" class="scr">
+  <div class="hud">
+    <button class="btn-back" onclick="goStart()">◂</button>
+    <div class="hud-prog"><div class="hud-prog-bar" id="prog-bar"></div></div>
+    <div class="hud-score" id="hud-score">0 ⭐</div>
+  </div>
+  <div class="q-header">
+    <div class="q-cat" id="q-cat"></div>
+    <div class="q-text" id="q-text"></div>
+  </div>
+  <div class="items-area"><div class="items-grid" id="items-grid"></div></div>
+  <div class="reason" id="reason-area" style="visibility:hidden">
+    <div class="reason-box">
+      <div class="r-ico" id="r-ico"></div>
+      <p id="r-msg"></p>
+      <div class="r-why" id="r-why"></div>
+    </div>
+  </div>
+  <div class="next-area">
+    <button class="btn-next" id="btn-next" onclick="nextQ()">Câu tiếp theo →</button>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="result" class="scr">
+  <div class="res-ring" id="res-ring"></div>
+  <div class="res-h1" id="res-h1"></div>
+  <div class="res-sub" id="res-sub"></div>
+  <div class="stars-row" id="stars-row"></div>
+  <div class="score-card"><div class="score-big" id="score-big"></div><div class="score-lbl">Điểm số</div></div>
+  <div class="res-btns">
+    <button class="rb pri" onclick="startGame()">Chơi lại 🔁</button>
+    <button class="rb sec" onclick="goStart()">Trang chủ</button>
+  </div>
+</div>
+
+<script>
+/* ===== DATA ===== */
+const CATS = {
+  animals: {
+    label:'🐾 Động vật', color:'#06D6A0',
+    q: [
+      {items:[{e:'🐶',n:'Chó'},{e:'🐱',n:'Mèo'},{e:'🐸',n:'Ếch'},{e:'🍎',n:'Táo'}],odd:3,reason:'🍎 Táo là thực vật',why:'Ba con kia đều là động vật'},
+      {items:[{e:'🦁',n:'Sư tử'},{e:'🐯',n:'Hổ'},{e:'🐘',n:'Voi'},{e:'🐠',n:'Cá'}],odd:3,reason:'🐠 Cá sống dưới nước',why:'Ba con kia sống trên cạn'},
+      {items:[{e:'🦋',n:'Bướm'},{e:'🐦',n:'Chim'},{e:'🦅',n:'Đại bàng'},{e:'🐢',n:'Rùa'}],odd:3,reason:'🐢 Rùa không biết bay',why:'Ba con kia đều có thể bay'},
+      {items:[{e:'🐮',n:'Bò'},{e:'🐷',n:'Heo'},{e:'🐔',n:'Gà'},{e:'🦊',n:'Cáo'}],odd:3,reason:'🦊 Cáo là động vật hoang dã',why:'Ba con kia là vật nuôi trong nhà'},
+      {items:[{e:'🐬',n:'Cá heo'},{e:'🦈',n:'Cá mập'},{e:'🐙',n:'Bạch tuộc'},{e:'🐘',n:'Voi'}],odd:3,reason:'🐘 Voi sống trên cạn',why:'Ba con kia sống dưới nước'},
+      {items:[{e:'🦁',n:'Sư tử'},{e:'🐯',n:'Hổ'},{e:'🐻',n:'Gấu'},{e:'🐹',n:'Chuột hamster'}],odd:3,reason:'🐹 Chuột hamster là vật nuôi',why:'Ba con kia là thú hoang dã nguy hiểm'},
+      {items:[{e:'🦜',n:'Vẹt'},{e:'🦚',n:'Công'},{e:'🦩',n:'Hồng hạc'},{e:'🐊',n:'Cá sấu'}],odd:3,reason:'🐊 Cá sấu là bò sát',why:'Ba con kia đều là loài chim'},
+    ]
+  },
+  food: {
+    label:'🍎 Thực phẩm', color:'#FFD166',
+    q: [
+      {items:[{e:'🍎',n:'Táo'},{e:'🍌',n:'Chuối'},{e:'🍇',n:'Nho'},{e:'🥕',n:'Cà rốt'}],odd:3,reason:'🥕 Cà rốt là rau củ',why:'Ba loại kia đều là trái cây'},
+      {items:[{e:'🍕',n:'Pizza'},{e:'🍔',n:'Burger'},{e:'🌮',n:'Taco'},{e:'🍓',n:'Dâu tây'}],odd:3,reason:'🍓 Dâu tây là trái cây',why:'Ba loại kia đều là đồ ăn nhanh'},
+      {items:[{e:'🥦',n:'Bông cải'},{e:'🥕',n:'Cà rốt'},{e:'🌽',n:'Bắp'},{e:'🍰',n:'Bánh kem'}],odd:3,reason:'🍰 Bánh kem là đồ ngọt',why:'Ba loại kia đều là rau củ'},
+      {items:[{e:'🍊',n:'Cam'},{e:'🍋',n:'Chanh'},{e:'🍈',n:'Dưa lưới'},{e:'🍇',n:'Nho'}],odd:3,reason:'🍈 Dưa lưới vị ngọt',why:'Ba loại kia đều có vị chua'},
+      {items:[{e:'🍦',n:'Kem'},{e:'🍩',n:'Bánh donut'},{e:'🍫',n:'Sô-cô-la'},{e:'🥦',n:'Bông cải'}],odd:3,reason:'🥦 Bông cải là rau',why:'Ba loại kia đều là đồ ngọt'},
+      {items:[{e:'🥚',n:'Trứng'},{e:'🥛',n:'Sữa'},{e:'🧀',n:'Phô mai'},{e:'🍞',n:'Bánh mì'}],odd:3,reason:'🍞 Bánh mì là ngũ cốc',why:'Ba loại kia đến từ động vật'},
+      {items:[{e:'🍜',n:'Mì'},{e:'🍚',n:'Cơm'},{e:'🍝',n:'Pasta'},{e:'🍎',n:'Táo'}],odd:3,reason:'🍎 Táo là trái cây',why:'Ba loại kia đều là món bột/tinh bột'},
+    ]
+  },
+  vehicles: {
+    label:'🚗 Phương tiện', color:'#118AB2',
+    q: [
+      {items:[{e:'🚗',n:'Ô tô'},{e:'🚌',n:'Xe buýt'},{e:'🚂',n:'Tàu hỏa'},{e:'✈️',n:'Máy bay'}],odd:3,reason:'✈️ Máy bay bay trên trời',why:'Ba loại kia đi trên đường'},
+      {items:[{e:'🚢',n:'Tàu thủy'},{e:'🛥️',n:'Ca nô'},{e:'⛵',n:'Thuyền buồm'},{e:'🚁',n:'Trực thăng'}],odd:3,reason:'🚁 Trực thăng bay trên không',why:'Ba loại kia di chuyển trên nước'},
+      {items:[{e:'🚲',n:'Xe đạp'},{e:'🛵',n:'Xe máy'},{e:'🚗',n:'Ô tô'},{e:'🚀',n:'Tên lửa'}],odd:3,reason:'🚀 Tên lửa bay vào vũ trụ',why:'Ba loại kia đi trên đường phố'},
+      {items:[{e:'🚒',n:'Xe cứu hỏa'},{e:'🚑',n:'Xe cứu thương'},{e:'🚓',n:'Xe cảnh sát'},{e:'🛳️',n:'Du thuyền'}],odd:3,reason:'🛳️ Du thuyền đi trên biển',why:'Ba loại kia đều là xe khẩn cấp'},
+      {items:[{e:'🚁',n:'Trực thăng'},{e:'✈️',n:'Máy bay'},{e:'🛩️',n:'Phi cơ nhỏ'},{e:'🚂',n:'Tàu hỏa'}],odd:3,reason:'🚂 Tàu hỏa đi trên đất',why:'Ba loại kia đều bay trên không'},
+    ]
+  },
+  nature: {
+    label:'🌿 Thiên nhiên', color:'#9B5DE5',
+    q: [
+      {items:[{e:'🌹',n:'Hoa hồng'},{e:'🌻',n:'Hướng dương'},{e:'🌷',n:'Tulip'},{e:'🌵',n:'Xương rồng'}],odd:3,reason:'🌵 Xương rồng không có hoa đẹp',why:'Ba loại kia đều là hoa đẹp'},
+      {items:[{e:'☀️',n:'Mặt trời'},{e:'🌙',n:'Mặt trăng'},{e:'⭐',n:'Ngôi sao'},{e:'🌧️',n:'Mưa'}],odd:3,reason:'🌧️ Mưa là hiện tượng thời tiết',why:'Ba loại kia là thiên thể trên bầu trời'},
+      {items:[{e:'🌊',n:'Sóng biển'},{e:'🏔️',n:'Núi'},{e:'🌋',n:'Núi lửa'},{e:'🌪️',n:'Lốc xoáy'}],odd:3,reason:'🌪️ Lốc xoáy là hiện tượng thời tiết',why:'Ba loại kia là địa hình'},
+      {items:[{e:'🌸',n:'Hoa anh đào'},{e:'🍁',n:'Lá phong'},{e:'🍂',n:'Lá thu'},{e:'🌿',n:'Cỏ xanh'}],odd:3,reason:'🌿 Cỏ xanh là mùa xuân',why:'Ba loại kia gợi nhớ mùa thu'},
+      {items:[{e:'🌈',n:'Cầu vồng'},{e:'⚡',n:'Sấm sét'},{e:'❄️',n:'Tuyết'},{e:'🌳',n:'Cây xanh'}],odd:3,reason:'🌳 Cây xanh không phải thời tiết',why:'Ba loại kia đều là hiện tượng thời tiết'},
+    ]
+  },
+  shapes: {
+    label:'🔷 Hình & Màu', color:'#EF476F',
+    q: [
+      {items:[{e:'🔴',n:'Đỏ tròn'},{e:'🟡',n:'Vàng tròn'},{e:'🔵',n:'Xanh tròn'},{e:'🟩',n:'Xanh vuông'}],odd:3,reason:'🟩 Hình vuông xanh',why:'Ba hình kia đều là hình tròn'},
+      {items:[{e:'🟥',n:'Đỏ vuông'},{e:'🟧',n:'Cam vuông'},{e:'🟨',n:'Vàng vuông'},{e:'🔵',n:'Xanh tròn'}],odd:3,reason:'🔵 Hình tròn xanh',why:'Ba hình kia đều là hình vuông'},
+      {items:[{e:'🔴',n:'Đỏ'},{e:'🟥',n:'Đỏ đậm'},{e:'❤️',n:'Tim đỏ'},{e:'🔵',n:'Xanh'}],odd:3,reason:'🔵 Màu xanh',why:'Ba hình kia đều màu đỏ'},
+      {items:[{e:'⭐',n:'Sao vàng'},{e:'🌟',n:'Sao lấp lánh'},{e:'💫',n:'Sao xoay'},{e:'🔶',n:'Thoi cam'}],odd:3,reason:'🔶 Hình thoi',why:'Ba hình kia đều là ngôi sao'},
+      {items:[{e:'🟢',n:'Xanh tròn'},{e:'🟩',n:'Xanh vuông'},{e:'💚',n:'Xanh tim'},{e:'🔴',n:'Đỏ tròn'}],odd:3,reason:'🔴 Màu đỏ',why:'Ba hình kia đều màu xanh lá'},
+    ]
+  },
+  professions: {
+    label:'👩‍⚕️ Nghề nghiệp', color:'#FF9F1C',
+    q: [
+      {items:[{e:'👨‍⚕️',n:'Bác sĩ'},{e:'👩‍⚕️',n:'Y tá'},{e:'💊',n:'Thuốc'},{e:'👨‍🍳',n:'Đầu bếp'}],odd:3,reason:'👨‍🍳 Đầu bếp nấu ăn',why:'Ba người kia làm việc trong bệnh viện'},
+      {items:[{e:'👮',n:'Cảnh sát'},{e:'👨‍🚒',n:'Lính cứu hỏa'},{e:'🧑‍⚕️',n:'Cứu thương'},{e:'👨‍🎨',n:'Họa sĩ'}],odd:3,reason:'👨‍🎨 Họa sĩ vẽ tranh',why:'Ba người kia đều là nghề cứu hộ'},
+      {items:[{e:'👨‍🏫',n:'Thầy giáo'},{e:'👩‍🏫',n:'Cô giáo'},{e:'📚',n:'Sách'},{e:'👨‍🍳',n:'Đầu bếp'}],odd:3,reason:'👨‍🍳 Đầu bếp không dạy học',why:'Ba người/vật kia đều liên quan đến việc học'},
+      {items:[{e:'👨‍🌾',n:'Nông dân'},{e:'🌾',n:'Lúa mì'},{e:'🚜',n:'Máy cày'},{e:'✈️',n:'Máy bay'}],odd:3,reason:'✈️ Máy bay không liên quan đến nông nghiệp',why:'Ba hình kia đều liên quan đến nông trại'},
+    ]
+  }
+};
+
+/* ===== STATE ===== */
+let selectedCats = new Set(['animals','food','vehicles']);
+let score=0, qNum=0, total=10, pool=[], answered=false;
+
+/* ===== INIT CATEGORIES ===== */
+function initCats(){
+  const g=document.getElementById('cat-grid');
+  g.innerHTML='';
+  Object.entries(CATS).forEach(([key,cat])=>{
+    const b=document.createElement('button');
+    b.className='cat-btn'+(selectedCats.has(key)?' on':'');
+    b.innerHTML=`${cat.label}`;
+    b.style.borderColor=selectedCats.has(key)?cat.color:'';
+    b.style.background=selectedCats.has(key)?`rgba(${hexToRgb(cat.color)},.15)`:'';
+    b.style.color=selectedCats.has(key)?cat.color:'';
+    b.onclick=()=>toggleCat(key,b,cat.color);
+    g.appendChild(b);
+  });
+}
+function hexToRgb(h){const r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);return`${r},${g},${b}`;}
+function toggleCat(key,btn,col){
+  if(selectedCats.has(key)){if(selectedCats.size<=1)return;selectedCats.delete(key);btn.classList.remove('on');btn.style.borderColor='';btn.style.background='';btn.style.color='';}
+  else{selectedCats.add(key);btn.classList.add('on');btn.style.borderColor=col;btn.style.background=`rgba(${hexToRgb(col)},.15)`;btn.style.color=col;}
+}
+
+/* ===== HELPERS ===== */
+const $=id=>document.getElementById(id);
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;};
+function show(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));$(id).classList.add('on');}
+
+/* ===== GAME FLOW ===== */
+function startGame(){
+  score=0; qNum=0; answered=false;
+  // build shuffled pool from selected cats
+  pool=[];
+  selectedCats.forEach(k=>{CATS[k].q.forEach(q=>pool.push({...q,catKey:k}));});
+  pool=shuffle(pool);
+  show('game');
+  nextQ();
+}
+
+function goStart(){show('start');initCats();}
+
+function nextQ(){
+  if(qNum>=total){endGame();return;}
+  answered=false;
+  $('btn-next').style.display='none';
+  $('reason-area').style.visibility='hidden';
+
+  const q=pool[qNum%pool.length];
+  const cat=CATS[q.catKey];
+
+  // Update HUD
+  $('prog-bar').style.width=((qNum/total)*100)+'%';
+  $('hud-score').textContent=score+' ⭐';
+  $('q-cat').textContent=cat.label;
+  $('q-text').innerHTML=`Hình nào <span>không cùng nhóm</span>?`;
+
+  // Shuffle items but remember which position is the odd one
+  const items=shuffle(q.items.map((it,i)=>({...it,isOdd:i===q.odd})));
+  const grid=$('items-grid');
+  grid.innerHTML='';
+
+  items.forEach((item,i)=>{
+    const card=document.createElement('div');
+    card.className='item-card';
+    card.innerHTML=`
+      <div class="overlay">${item.isOdd?'✓':'✗'}</div>
+      <div class="item-ico">${item.e}</div>
+      <div class="item-lbl">${item.n}</div>`;
+    card.addEventListener('pointerdown',e=>{e.preventDefault();selectItem(item,card,items,q);},{passive:false});
+    grid.appendChild(card);
+  });
+}
+
+function selectItem(item,card,items,q){
+  if(answered)return;
+  answered=true;
+
+  const correct=item.isOdd;
+  const cards=document.querySelectorAll('.item-card');
+
+  if(correct){
+    card.classList.add('correct');
+    cards.forEach(c=>{if(c!==card)c.classList.add('dim');});
+    score++;
+    confetti();
+  }else{
+    card.classList.add('wrong');
+    // reveal correct after short delay
+    setTimeout(()=>{
+      cards.forEach(c=>{
+        const hasOdd=c.querySelector('.item-ico').textContent===items.find(x=>x.isOdd).e;
+        if(hasOdd)c.classList.add('reveal');
+        else if(c!==card)c.classList.add('dim');
+      });
+    },600);
+  }
+
+  // show reason
+  setTimeout(()=>{
+    $('r-ico').textContent=correct?'💡':'🙈';
+    $('r-msg').textContent=q.reason;
+    $('r-why').textContent=q.why;
+    $('reason-area').style.visibility='visible';
+    $('hud-score').textContent=score+' ⭐';
+    qNum++;
+    $('prog-bar').style.width=((qNum/total)*100)+'%';
+    $('btn-next').style.display='block';
+  },correct?600:1200);
+}
+
+/* ===== CONFETTI ===== */
+const CC=['#FFD166','#06D6A0','#EF476F','#118AB2','#9B5DE5','#FF9F1C'];
+function confetti(){
+  for(let i=0;i<30;i++){
+    const el=document.createElement('div');
+    el.className='cp';
+    const sz=6+Math.random()*8;
+    el.style.cssText=`width:${sz}px;height:${sz}px;background:${CC[Math.floor(Math.random()*CC.length)]};left:${20+Math.random()*60}%;top:${15+Math.random()*50}%;border-radius:${Math.random()>.5?'50%':'3px'};animation-duration:${.8+Math.random()*.8}s;animation-delay:${Math.random()*.2}s;`;
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),1800);
+  }
+}
+
+/* ===== END GAME ===== */
+function endGame(){
+  show('result');
+  const pct=score/total;
+  let icon,h1,sub;
+  if(pct>=.9){icon='🏆';h1='Siêu giỏi!';sub='Con phân biệt cực kỳ tốt!';}
+  else if(pct>=.7){icon='🌟';h1='Giỏi lắm!';sub='Con đã quan sát rất tốt!';}
+  else if(pct>=.5){icon='😊';h1='Cố gắng lắm!';sub='Luyện thêm sẽ giỏi hơn nhé!';}
+  else{icon='💪';h1='Tiếp tục nhé!';sub='Quan sát kỹ hơn là được thôi!';}
+  $('res-ring').textContent=icon;
+  $('res-ring').style.background=pct>=.7?'linear-gradient(135deg,#FFD166,#FF9F1C)':'linear-gradient(135deg,#118AB2,#9B5DE5)';
+  $('res-h1').textContent=h1;
+  $('res-sub').textContent=sub;
+  $('score-big').textContent=score+' / '+total;
+
+  // stars
+  const sr=$('stars-row');sr.innerHTML='';
+  const numStars=pct>=.9?3:pct>=.6?2:pct>=.3?1:0;
+  for(let i=0;i<3;i++){
+    const s=document.createElement('div');s.className='s-star';s.textContent='⭐';
+    sr.appendChild(s);
+    if(i<numStars)setTimeout(()=>{s.classList.add('lit');if(i===0)confetti();},300+i*300);
+  }
+}
+
+/* ===== INIT ===== */
+initCats();
+document.addEventListener('touchend',e=>{
+  if(e.target.closest('.item-card,.go-btn,.cat-btn,.btn-next,.rb,.btn-back'))e.preventDefault();
+},{passive:false});
+</script>
+</body>
+</html>

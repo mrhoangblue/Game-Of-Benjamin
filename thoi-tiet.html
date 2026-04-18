@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>🌤️ Thời Tiết & Trang Phục</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --rad:22px;--radsm:14px;
+  --white:#F0F6FF;--muted:#7A8FA8;--tx:#1A2540;
+  /* season palettes */
+  --sun-bg:#FFF9E6;--sun-card:#FFFBF0;--sun-a:#F59E0B;--sun-b:#FB923C;--sun-c:#FDE68A;
+  --rain-bg:#EEF4FF;--rain-card:#F5F9FF;--rain-a:#3B82F6;--rain-b:#60A5FA;--rain-c:#BFDBFE;
+  --cold-bg:#E8F4FF;--cold-card:#F0F8FF;--cold-a:#0EA5E9;--cold-b:#38BDF8;--cold-c:#BAE6FD;
+  --snow-bg:#F0F7FF;--snow-card:#F8FBFF;--snow-a:#6366F1;--snow-b:#818CF8;--snow-c:#C7D2FE;
+  --spring-bg:#F0FDF4;--spring-card:#F7FFF9;--spring-a:#10B981;--spring-b:#34D399;--spring-c:#A7F3D0;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none;}
+html,body{height:100%;overflow:hidden;font-family:'Nunito',system-ui,sans-serif;color:var(--tx);transition:background .6s;}
+body{background:var(--sun-bg);}
+
+/* ---- BG WEATHER FX ---- */
+.wx-layer{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0;}
+.wx-drop{position:absolute;width:2px;border-radius:2px;animation:rainFall linear infinite;}
+@keyframes rainFall{0%{transform:translateY(-20px) rotate(15deg);opacity:0;}10%{opacity:.7;}90%{opacity:.7;}100%{transform:translateY(110vh) rotate(15deg);opacity:0;}}
+.wx-snow{position:absolute;border-radius:50%;animation:snowFall linear infinite;}
+@keyframes snowFall{0%{transform:translateY(-10px) translateX(0);opacity:0;}10%{opacity:.9;}50%{transform:translateY(50vh) translateX(20px);}90%{opacity:.8;}100%{transform:translateY(110vh) translateX(-10px);opacity:0;}}
+.wx-sun-ray{position:absolute;top:-60px;left:50%;width:4px;border-radius:4px;transform-origin:bottom center;animation:sunRay 3s ease-in-out infinite;}
+@keyframes sunRay{0%,100%{opacity:.3;transform:scaleY(.7);}50%{opacity:.7;transform:scaleY(1.1);}}
+.wx-leaf{position:absolute;font-size:1.2rem;animation:leafFall linear infinite;}
+@keyframes leafFall{0%{transform:translateY(-20px) rotate(0);opacity:0;}15%{opacity:1;}100%{transform:translateY(110vh) rotate(720deg);opacity:0;}}
+
+/* ---- SCREENS ---- */
+.scr{display:none;position:fixed;inset:0;flex-direction:column;align-items:center;z-index:1;}
+.scr.on{display:flex;}
+
+/* ====== START ====== */
+#start{justify-content:center;gap:1.3rem;padding:1.8rem 1.2rem;}
+.s-sky{display:flex;justify-content:center;gap:10px;font-size:3rem;line-height:1;}
+.s-sky span{animation:skyFloat 2.5s ease-in-out infinite;}
+.s-sky span:nth-child(2){animation-delay:.4s;}
+.s-sky span:nth-child(3){animation-delay:.8s;}
+.s-sky span:nth-child(4){animation-delay:1.2s;}
+@keyframes skyFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+.s-title h1{font-size:2.1rem;font-weight:900;text-align:center;color:var(--sun-a);}
+.s-title p{text-align:center;font-size:.88rem;color:var(--muted);margin-top:4px;font-weight:700;}
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;width:100%;max-width:400px;}
+.mode-card{background:var(--sun-card);border-radius:var(--rad);padding:14px 10px;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  border:2.5px solid #e5e7eb;cursor:pointer;transition:all .15s;box-shadow:0 3px 12px rgba(0,0,0,.07);}
+.mode-card:active{transform:scale(.94);}
+.mode-card.on{border-color:var(--sun-a);background:#FFFBF0;box-shadow:0 4px 16px rgba(245,158,11,.2);}
+.mode-card .mc-ico{font-size:2.2rem;line-height:1;}
+.mode-card h3{font-size:.88rem;font-weight:900;color:var(--tx);}
+.mode-card p{font-size:.67rem;color:var(--muted);font-weight:700;text-align:center;line-height:1.3;}
+.go-btn{padding:16px 52px;font-family:'Nunito',sans-serif;font-size:1.2rem;font-weight:900;
+  border:none;border-radius:40px;background:linear-gradient(135deg,#F59E0B,#FB923C);
+  color:#fff;cursor:pointer;box-shadow:0 8px 24px rgba(245,158,11,.4);transition:transform .12s;}
+.go-btn:active{transform:scale(.94);}
+
+/* ====== HUD ====== */
+.hud{width:100%;display:flex;align-items:center;gap:10px;padding:.75rem 1.2rem .3rem;flex-shrink:0;}
+.btn-back{font-size:1.2rem;background:rgba(0,0,0,.08);border:none;border-radius:11px;
+  padding:6px 12px;color:var(--tx);cursor:pointer;font-weight:800;}
+.hud-mid{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.hud-prog{width:100%;height:8px;background:rgba(0,0,0,.08);border-radius:8px;overflow:hidden;}
+.hud-prog-fill{height:100%;border-radius:8px;transition:width .5s ease;}
+.hud-meta{font-size:.7rem;font-weight:800;color:var(--muted);}
+.hud-score{font-size:1.1rem;font-weight:900;white-space:nowrap;}
+
+/* ====== GAME 1: GHÉP TRANG PHỤC ====== */
+#g1{justify-content:space-between;}
+
+.wx-scene{flex-shrink:0;width:100%;padding:.4rem 1rem;display:flex;flex-direction:column;align-items:center;gap:6px;}
+.wx-big{font-size:4.5rem;line-height:1;filter:drop-shadow(0 4px 12px rgba(0,0,0,.12));
+  animation:wxBob 2.5s ease-in-out infinite;}
+@keyframes wxBob{0%,100%{transform:scale(1);}50%{transform:scale(1.07);}}
+.wx-name{font-size:1.2rem;font-weight:900;}
+.wx-desc{font-size:.78rem;font-weight:700;color:var(--muted);text-align:center;}
+.wx-temp{font-size:.82rem;font-weight:800;padding:4px 14px;border-radius:20px;background:rgba(0,0,0,.07);}
+
+.g1-instr{font-size:.8rem;font-weight:700;color:var(--muted);text-align:center;flex-shrink:0;padding:0 1rem;}
+
+.clothes-pool{flex-shrink:0;width:100%;padding:0 1rem;}
+.clothes-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:440px;margin:0 auto;}
+.cloth-btn{border-radius:var(--radsm);border:2.5px solid #e5e7eb;background:#fff;
+  cursor:pointer;padding:8px 4px;display:flex;flex-direction:column;align-items:center;gap:4px;
+  transition:transform .1s,border-color .15s,background .15s;box-shadow:0 2px 8px rgba(0,0,0,.07);
+  aspect-ratio:.85;position:relative;overflow:hidden;}
+.cloth-btn:active{transform:scale(.9);}
+.cloth-btn .ce{font-size:2.1rem;line-height:1;}
+.cloth-btn .ct{font-size:.62rem;font-weight:800;color:var(--muted);text-align:center;line-height:1.2;}
+.cloth-btn .cbadge{position:absolute;top:4px;right:4px;width:18px;height:18px;border-radius:50%;
+  display:none;align-items:center;justify-content:center;font-size:.6rem;font-weight:900;color:#fff;}
+.cloth-btn.correct{border-color:#10B981;background:#F0FDF4;animation:clothOk .4s ease;}
+.cloth-btn.correct .cbadge{display:flex;background:#10B981;}
+@keyframes clothOk{0%{transform:scale(1);}40%{transform:scale(1.15);}100%{transform:scale(1);}}
+.cloth-btn.wrong{border-color:#EF4444;background:#FEF2F2;animation:clothErr .38s ease;}
+.cloth-btn.wrong .cbadge{display:flex;background:#EF4444;}
+@keyframes clothErr{0%,100%{transform:translateX(0);}25%{transform:translateX(-8px);}75%{transform:translateX(8px);}}
+.cloth-btn.dimmed{opacity:.25;pointer-events:none;}
+
+.g1-fb{text-align:center;font-size:.92rem;font-weight:900;min-height:24px;color:transparent;flex-shrink:0;}
+.g1-fb.ok{color:#10B981;}.g1-fb.err{color:#EF4444;}
+.btn-next{padding:12px 40px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:900;
+  border:none;border-radius:30px;color:#fff;cursor:pointer;display:none;
+  box-shadow:0 5px 16px rgba(0,0,0,.18);transition:transform .1s;flex-shrink:0;}
+.btn-next:active{transform:scale(.95);}
+
+/* ====== GAME 2: MÙNG MÙA ====== */
+#g2{justify-content:space-between;}
+
+.season-banner{flex-shrink:0;width:100%;padding:.4rem 1rem .2rem;text-align:center;}
+.sb-inner{display:inline-flex;align-items:center;gap:10px;background:rgba(0,0,0,.06);
+  border-radius:30px;padding:8px 18px;}
+.sb-ico{font-size:2.4rem;line-height:1;}
+.sb-text h3{font-size:1.1rem;font-weight:900;color:var(--tx);}
+.sb-text p{font-size:.72rem;font-weight:700;color:var(--muted);}
+
+.sort-task{font-size:.82rem;font-weight:700;color:var(--muted);text-align:center;
+  flex-shrink:0;padding:0 1rem;}
+.sort-task span{font-weight:900;}
+
+/* drag pool for season sort */
+.s2-pool{flex-shrink:0;width:100%;padding:0 1rem;}
+.s2-pool-inner{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;
+  background:#fff;border-radius:var(--rad);padding:10px;
+  box-shadow:0 3px 12px rgba(0,0,0,.08);max-width:460px;margin:0 auto;min-height:58px;}
+.drag-item{font-size:1.9rem;padding:7px;border:2px solid #e5e7eb;border-radius:12px;
+  background:#fff;cursor:grab;touch-action:none;box-shadow:0 2px 6px rgba(0,0,0,.07);
+  transition:border-color .12s,opacity .15s;}
+.drag-item:active{transform:scale(.92);}
+.drag-item.dragging{opacity:.2;}
+
+.seasons-row{flex-shrink:0;display:flex;gap:8px;width:100%;padding:0 1rem;}
+.season-zone{flex:1;border-radius:var(--radsm);border:2.5px dashed #d1d5db;padding:7px 5px;
+  display:flex;flex-direction:column;align-items:center;gap:4px;min-height:90px;transition:border-color .2s,background .2s;}
+.season-zone.hi{border-color:#3B82F6;background:#EFF6FF;border-style:solid;}
+.season-zone.ok{border-color:#10B981;background:#F0FDF4;}
+.season-zone .sz-ico{font-size:1.8rem;line-height:1;}
+.season-zone .sz-name{font-size:.62rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+.season-zone .sz-items{display:flex;flex-wrap:wrap;gap:2px;justify-content:center;font-size:1.2rem;min-height:24px;}
+.season-zone .sz-cnt{font-size:1.1rem;font-weight:900;color:var(--muted);}
+
+.s2-fb{text-align:center;font-size:.9rem;font-weight:900;min-height:22px;color:transparent;flex-shrink:0;}
+.s2-fb.ok{color:#10B981;}.s2-fb.err{color:#EF4444;}
+
+#dc{position:fixed;pointer-events:none;z-index:9999;display:none;
+  font-size:2.2rem;background:rgba(255,255,255,.9);border-radius:12px;padding:6px;
+  box-shadow:0 8px 24px rgba(0,0,0,.2);transform:scale(1.2);}
+
+/* ====== RESULT ====== */
+#result{justify-content:center;gap:1.3rem;padding:2rem 1.4rem;text-align:center;background:var(--sun-bg);}
+.res-ico{font-size:5rem;animation:resIn .5s cubic-bezier(.34,1.56,.64,1) both;}
+@keyframes resIn{0%{transform:scale(0) rotate(-20deg);}100%{transform:scale(1) rotate(0);}}
+.res-h1{font-size:2rem;font-weight:900;color:var(--sun-a);}
+.res-sub{font-size:.9rem;color:var(--muted);font-weight:700;}
+.res-score-box{background:#fff;border-radius:var(--rad);padding:1.1rem 2.4rem;
+  border:2px solid #e5e7eb;box-shadow:0 4px 16px rgba(0,0,0,.08);}
+.res-big{font-size:3.4rem;font-weight:900;color:#10B981;}
+.res-lbl{font-size:.78rem;color:var(--muted);font-weight:700;}
+.res-btns{display:flex;gap:12px;}
+.rb{padding:13px 26px;font-family:'Nunito',sans-serif;font-size:.92rem;font-weight:900;border:none;border-radius:30px;cursor:pointer;transition:transform .1s;}
+.rb:active{transform:scale(.95);}
+.rb.p{background:linear-gradient(135deg,#F59E0B,#FB923C);color:#fff;}
+.rb.s{background:rgba(0,0,0,.08);color:var(--tx);border:2px solid #e5e7eb;}
+
+/* CONFETTI */
+.cp{position:fixed;pointer-events:none;z-index:999;border-radius:3px;animation:cpFall linear forwards;}
+@keyframes cpFall{0%{opacity:1;transform:translateY(0) rotate(0);}100%{opacity:0;transform:translateY(115vh) rotate(900deg);}}
+
+/* LANDSCAPE */
+@media(orientation:landscape)and(max-height:520px){
+  .wx-big{font-size:3rem;}.wx-name{font-size:1rem;}
+  .clothes-grid{grid-template-columns:repeat(8,1fr);max-width:600px;}
+  .cloth-btn{aspect-ratio:auto;padding:5px;min-height:60px;}.cloth-btn .ce{font-size:1.6rem;}
+  .seasons-row{gap:5px;}.season-zone{min-height:70px;}
+  .s2-pool-inner{min-height:44px;}
+}
+</style>
+</head>
+<body>
+<div id="dc"></div>
+
+<!-- START -->
+<div id="start" class="scr on">
+  <div class="s-sky"><span>☀️</span><span>🌧️</span><span>❄️</span><span>🌸</span></div>
+  <div class="s-title">
+    <h1>Thời Tiết & Trang Phục</h1>
+    <p>Chọn đồ phù hợp với thời tiết và mùa!</p>
+  </div>
+  <div class="mode-grid">
+    <div class="mode-card on" id="m1" onclick="setMode(1,this)">
+      <div class="mc-ico">👚</div>
+      <h3>Ghép Trang Phục</h3>
+      <p>Chọn đồ phù hợp với thời tiết hôm nay</p>
+    </div>
+    <div class="mode-card" id="m2" onclick="setMode(2,this)">
+      <div class="mc-ico">🌸</div>
+      <h3>Xếp Theo Mùa</h3>
+      <p>Kéo thả đồ vật vào đúng mùa trong năm</p>
+    </div>
+  </div>
+  <button class="go-btn" onclick="startGame()">Bắt đầu! 🚀</button>
+</div>
+
+<!-- GAME 1: GHÉP TRANG PHỤC -->
+<div id="g1" class="scr">
+  <div class="hud">
+    <button class="btn-back" onclick="goStart()">◂</button>
+    <div class="hud-mid">
+      <div class="hud-prog"><div class="hud-prog-fill" id="g1-prog"></div></div>
+      <div class="hud-meta" id="g1-meta">Câu 1/10</div>
+    </div>
+    <div class="hud-score" id="g1-sc">0 ⭐</div>
+  </div>
+  <div class="wx-scene">
+    <div class="wx-big" id="wx-ico"></div>
+    <div class="wx-name" id="wx-name"></div>
+    <div class="wx-desc" id="wx-desc"></div>
+    <div class="wx-temp" id="wx-temp"></div>
+  </div>
+  <div class="g1-instr">Chọn <strong>tất cả</strong> trang phục phù hợp với thời tiết này!</div>
+  <div class="clothes-pool"><div class="clothes-grid" id="clothes-grid"></div></div>
+  <div class="g1-fb" id="g1-fb"></div>
+  <button class="btn-next" id="g1-nx" onclick="nextG1()">Câu tiếp theo →</button>
+</div>
+
+<!-- GAME 2: XẾP THEO MÙA -->
+<div id="g2" class="scr">
+  <div class="hud">
+    <button class="btn-back" onclick="goStart()">◂</button>
+    <div class="hud-mid">
+      <div class="hud-prog"><div class="hud-prog-fill" id="g2-prog"></div></div>
+      <div class="hud-meta" id="g2-meta">Câu 1/8</div>
+    </div>
+    <div class="hud-score" id="g2-sc">0 ⭐</div>
+  </div>
+  <div class="season-banner"><div class="sb-inner" id="sb-inner"></div></div>
+  <div class="sort-task" id="sort-task"></div>
+  <div class="s2-pool"><div class="s2-pool-inner" id="s2-pool"></div></div>
+  <div class="seasons-row" id="seasons-row"></div>
+  <div class="s2-fb" id="s2-fb"></div>
+  <button class="btn-next" id="g2-nx" onclick="nextG2()" style="margin-bottom:.6rem;background:linear-gradient(135deg,#10B981,#0EA5E9);">Câu tiếp →</button>
+</div>
+
+<!-- RESULT -->
+<div id="result" class="scr">
+  <div class="res-ico" id="res-ico"></div>
+  <div class="res-h1" id="res-h1"></div>
+  <div class="res-sub" id="res-sub"></div>
+  <div class="res-score-box"><div class="res-big" id="res-big"></div><div class="res-lbl">Điểm số</div></div>
+  <div class="res-btns">
+    <button class="rb p" onclick="startGame()">Chơi lại 🔁</button>
+    <button class="rb s" onclick="goStart()">Trang chủ</button>
+  </div>
+</div>
+
+<div class="wx-layer" id="wx-layer"></div>
+
+<script>
+/* ============================================================
+   DATA
+   ============================================================ */
+const WEATHERS = [
+  {id:'sunny',ico:'☀️',name:'Trời nắng đẹp',desc:'Nắng vàng rực rỡ, không có mây',temp:'30–35°C',
+   correct:['👙','🩳','👒','🕶️','🩴'],
+   wrong:['🧥','🧣','🧤','☂️','🥾'],
+   bg:'#FFF9E6',accent:'#F59E0B',prog:'#FB923C',fx:'sun'},
+  {id:'rainy',ico:'🌧️',name:'Trời mưa to',desc:'Mưa rào, sấm sét, đường ướt',temp:'22–26°C',
+   correct:['☂️','🧥','🥾','🧤'],
+   wrong:['👒','🕶️','👙','🩴','🩳'],
+   bg:'#EEF4FF',accent:'#3B82F6',prog:'#60A5FA',fx:'rain'},
+  {id:'cold',ico:'🌨️',name:'Trời lạnh buốt',desc:'Gió lạnh, nhiệt độ thấp, rét cắt da',temp:'5–12°C',
+   correct:['🧥','🧣','🧤','🥾','🎩'],
+   wrong:['👙','🩳','🩴','🕶️','👒'],
+   bg:'#E8F4FF',accent:'#0EA5E9',prog:'#38BDF8',fx:'cold'},
+  {id:'snow',ico:'❄️',name:'Trời có tuyết',desc:'Tuyết rơi trắng xóa, rất lạnh',temp:'-5–3°C',
+   correct:['🧥','🧣','🧤','🥾','🎿'],
+   wrong:['👙','🩳','🩴','👒','🕶️'],
+   bg:'#F0F7FF',accent:'#6366F1',prog:'#818CF8',fx:'snow'},
+  {id:'windy',ico:'💨',name:'Có gió mạnh',desc:'Gió lớn thổi liên tục, bụi mù',temp:'18–24°C',
+   correct:['🧥','🧣','👒','🥾'],
+   wrong:['👙','🩳','🕶️','🩴'],
+   bg:'#F0FDF4',accent:'#10B981',prog:'#34D399',fx:'wind'},
+  {id:'spring',ico:'🌸',name:'Mùa xuân ấm áp',desc:'Hoa nở rộ, gió nhẹ dễ chịu',temp:'20–25°C',
+   correct:['👗','🧣','👟','🌂'],
+   wrong:['🧤','🎿','👙','🧥'],
+   bg:'#F0FDF4',accent:'#10B981',prog:'#34D399',fx:'spring'},
+  {id:'autumn',ico:'🍂',name:'Mùa thu se lạnh',desc:'Lá vàng rụng, trời se lạnh',temp:'15–20°C',
+   correct:['🧥','🧣','👟','🎩'],
+   wrong:['👙','🩳','🩴','🎿'],
+   bg:'#FFF7ED',accent:'#F97316',prog:'#FB923C',fx:'autumn'},
+  {id:'hot',ico:'🌡️',name:'Nắng猛 猛nóng',desc:'Ngày hè oi bức, nhiệt độ cao',temp:'36–40°C',
+   correct:['🩳','👒','🕶️','🩴','💧'],
+   wrong:['🧥','🧣','🧤','🥾'],
+   bg:'#FFF9E6',accent:'#EF4444',prog:'#F87171',fx:'sun'},
+];
+
+const ALL_CLOTHES = ['👙','🩳','👒','🕶️','🩴','🧥','🧣','🧤','☂️','🥾','👗','👟','🌂','🎩','🎿','💧'];
+const CLOTH_NAMES = {
+  '👙':'Áo tắm','🩳':'Quần đùi','👒':'Mũ rộng vành','🕶️':'Kính râm','🩴':'Dép lê',
+  '🧥':'Áo khoác','🧣':'Khăn quàng','🧤':'Găng tay','☂️':'Ô dù','🥾':'Bốt','👗':'Váy',
+  '👟':'Giày thể thao','🌂':'Ô nhỏ','🎩':'Mũ phớt','🎿':'Ván trượt tuyết','💧':'Nước uống'
+};
+
+const SEASONS = [
+  {id:'spring',ico:'🌸',name:'Mùa Xuân',color:'#10B981'},
+  {id:'summer',ico:'☀️',name:'Mùa Hè',color:'#F59E0B'},
+  {id:'autumn',ico:'🍂',name:'Mùa Thu',color:'#F97316'},
+  {id:'winter',ico:'❄️',name:'Mùa Đông',color:'#6366F1'},
+];
+
+/* Each G2 question: show a mix of items, drop to correct season */
+const G2_QS = [
+  {task:'Kéo đồ vào đúng mùa trong năm!',
+   items:[
+     {e:'🌸',n:'Hoa anh đào',s:'spring'},{e:'🌻',n:'Hướng dương',s:'summer'},
+     {e:'🍁',n:'Lá phong đỏ',s:'autumn'},{e:'⛄',n:'Người tuyết',s:'winter'},
+     {e:'🐣',n:'Gà con nở',s:'spring'},{e:'🏖️',n:'Bãi biển',s:'summer'},
+   ]},
+  {task:'Những thứ này thuộc mùa nào?',
+   items:[
+     {e:'🧣',n:'Khăn quàng',s:'winter'},{e:'👙',n:'Áo tắm',s:'summer'},
+     {e:'🌷',n:'Hoa tulip',s:'spring'},{e:'🍂',n:'Lá rụng',s:'autumn'},
+     {e:'☃️',n:'Xây người tuyết',s:'winter'},{e:'🍦',n:'Kem mát lạnh',s:'summer'},
+   ]},
+  {task:'Xếp đồ vật vào đúng mùa!',
+   items:[
+     {e:'❄️',n:'Tuyết rơi',s:'winter'},{e:'🏄',n:'Lướt sóng',s:'summer'},
+     {e:'🌱',n:'Cây nảy mầm',s:'spring'},{e:'🎃',n:'Bí ngô Halloween',s:'autumn'},
+     {e:'🧤',n:'Găng tay',s:'winter'},{e:'☀️',n:'Nắng chói chang',s:'summer'},
+   ]},
+  {task:'Con biết mùa nào có những thứ này không?',
+   items:[
+     {e:'🌺',n:'Hoa nở rộ',s:'spring'},{e:'🏕️',n:'Cắm trại',s:'summer'},
+     {e:'🍎',n:'Thu hoạch táo',s:'autumn'},{e:'🎿',n:'Trượt tuyết',s:'winter'},
+     {e:'🐝',n:'Ong bay',s:'spring'},{e:'🌊',n:'Đi bơi',s:'summer'},
+   ]},
+  {task:'Trang phục này mặc vào mùa nào?',
+   items:[
+     {e:'🧥',n:'Áo khoác dày',s:'winter'},{e:'👗',n:'Váy mỏng',s:'summer'},
+     {e:'🌂',n:'Ô nhỏ',s:'spring'},{e:'👟',n:'Giày nhẹ',s:'autumn'},
+     {e:'🥾',n:'Bốt da',s:'winter'},{e:'🩳',n:'Quần đùi',s:'summer'},
+   ]},
+  {task:'Thiên nhiên mùa nào đây?',
+   items:[
+     {e:'🌿',n:'Cỏ xanh mướt',s:'spring'},{e:'🥵',n:'Nóng bức',s:'summer'},
+     {e:'🍃',n:'Lá vàng ráo',s:'autumn'},{e:'🌬️',n:'Gió lạnh buốt',s:'winter'},
+     {e:'🐛',n:'Sâu bướm',s:'spring'},{e:'🌅',n:'Hoàng hôn đẹp',s:'autumn'},
+   ]},
+  {task:'Hoạt động nào vào mùa nào?',
+   items:[
+     {e:'⛷️',n:'Trượt tuyết',s:'winter'},{e:'🏊',n:'Bơi lội',s:'summer'},
+     {e:'🌸',n:'Ngắm hoa',s:'spring'},{e:'🎑',n:'Ngắm lá đỏ',s:'autumn'},
+     {e:'🔥',n:'Sưởi lửa',s:'winter'},{e:'🤿',n:'Lặn biển',s:'summer'},
+   ]},
+  {task:'Đồ ăn nào của mùa nào?',
+   items:[
+     {e:'🍓',n:'Dâu tây',s:'spring'},{e:'🍉',n:'Dưa hấu',s:'summer'},
+     {e:'🍎',n:'Quả táo đỏ',s:'autumn'},{e:'🍊',n:'Quít ngọt',s:'winter'},
+     {e:'🌽',n:'Ngô nướng',s:'summer'},{e:'🍁',n:'Xi-rô cây phong',s:'autumn'},
+   ]},
+];
+
+/* ============================================================
+   STATE
+   ============================================================ */
+const $=id=>document.getElementById(id);
+const shuffle=a=>{const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;};
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+
+let gameMode=1, score=0, qNum=0, TOTAL=0, answered=false, wxPool=[], g2Pool=[];
+let selectedClothes=new Set();
+
+function setMode(m,btn){
+  gameMode=m;
+  document.querySelectorAll('.mode-card').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+}
+function goStart(){clearFX();show('start');}
+
+/* ============================================================
+   WEATHER FX
+   ============================================================ */
+function clearFX(){$('wx-layer').innerHTML='';}
+function spawnFX(type,accent){
+  clearFX();
+  const layer=$('wx-layer');
+  if(type==='rain'){
+    for(let i=0;i<28;i++){
+      const d=document.createElement('div');d.className='wx-drop';
+      d.style.cssText=`left:${Math.random()*100}%;height:${14+Math.random()*12}px;background:${accent||'#3B82F6'};opacity:${.3+Math.random()*.4};animation-duration:${.6+Math.random()*.5}s;animation-delay:${Math.random()*1.5}s;top:-20px;`;
+      layer.appendChild(d);
+    }
+  } else if(type==='snow'){
+    for(let i=0;i<22;i++){
+      const s=document.createElement('div');s.className='wx-snow';
+      const sz=4+Math.random()*8;
+      s.style.cssText=`left:${Math.random()*100}%;width:${sz}px;height:${sz}px;background:#fff;opacity:${.5+Math.random()*.4};animation-duration:${2+Math.random()*2}s;animation-delay:${Math.random()*3}s;top:-10px;`;
+      layer.appendChild(s);
+    }
+  } else if(type==='sun'){
+    const sun=document.createElement('div');
+    sun.style.cssText=`position:absolute;top:-40px;left:50%;width:80px;height:80px;background:radial-gradient(circle,rgba(251,191,36,.3),transparent 70%);border-radius:50%;transform:translateX(-50%);animation:sunGlow 3s ease-in-out infinite;`;
+    layer.appendChild(sun);
+    for(let i=0;i<8;i++){
+      const r=document.createElement('div');r.className='wx-sun-ray';
+      const angle=i*45;const len=40+Math.random()*20;
+      r.style.cssText=`position:absolute;top:30px;left:calc(50% - 2px);width:4px;height:${len}px;background:rgba(251,191,36,.25);border-radius:4px;transform-origin:top center;transform:rotate(${angle}deg);animation-delay:${i*.15}s;`;
+      layer.appendChild(r);
+    }
+  } else if(type==='autumn'){
+    const leaves=['🍂','🍁','🍃'];
+    for(let i=0;i<12;i++){
+      const l=document.createElement('div');l.className='wx-leaf';
+      l.textContent=pick(leaves);
+      l.style.cssText=`left:${Math.random()*100}%;animation-duration:${3+Math.random()*3}s;animation-delay:${Math.random()*4}s;top:-20px;opacity:.7;`;
+      layer.appendChild(l);
+    }
+  } else if(type==='spring'){
+    const flowers=['🌸','🌺','🌼'];
+    for(let i=0;i<10;i++){
+      const f=document.createElement('div');f.className='wx-leaf';
+      f.textContent=pick(flowers);
+      f.style.cssText=`left:${Math.random()*100}%;animation-duration:${4+Math.random()*3}s;animation-delay:${Math.random()*5}s;top:-20px;opacity:.6;`;
+      layer.appendChild(f);
+    }
+  }
+}
+
+/* body bg */
+function setBg(color){document.body.style.background=color;}
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+function show(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));$(id).classList.add('on');}
+
+function startGame(){
+  score=0;qNum=0;answered=false;
+  if(gameMode===1){
+    TOTAL=8;wxPool=shuffle([...WEATHERS]);
+    show('g1');nextG1();
+  } else {
+    TOTAL=8;g2Pool=shuffle([...G2_QS]);
+    show('g2');nextG2();
+  }
+}
+
+/* ============================================================
+   GAME 1: GHÉP TRANG PHỤC
+   ============================================================ */
+let currentWX=null, correctSet=new Set();
+
+function nextG1(){
+  if(qNum>=TOTAL){endGame();return;}
+  answered=false;selectedClothes.clear();
+  $('g1-nx').style.display='none';
+  $('g1-fb').textContent='';$('g1-fb').className='g1-fb';
+  $('g1-prog').style.width=((qNum/TOTAL)*100)+'%';
+  $('g1-meta').textContent=`Câu ${qNum+1}/${TOTAL}`;
+  $('g1-sc').textContent=score+' ⭐';
+
+  currentWX=wxPool[qNum%wxPool.length];
+  correctSet=new Set(currentWX.correct);
+
+  // set bg & fx
+  setBg(currentWX.bg);
+  $('g1-prog').style.background=`linear-gradient(90deg,${currentWX.accent},${currentWX.prog})`;
+  $('g1-sc').style.color=currentWX.accent;
+  spawnFX(currentWX.fx,currentWX.accent);
+
+  // scene
+  $('wx-ico').textContent=currentWX.ico;
+  $('wx-name').textContent=currentWX.name;$('wx-name').style.color=currentWX.accent;
+  $('wx-desc').textContent=currentWX.desc;
+  $('wx-temp').textContent=`🌡️ ${currentWX.temp}`;
+
+  // build clothes options: correct + wrong mixed, limit to 8
+  const pool=shuffle([...currentWX.correct,...currentWX.wrong.slice(0,8-currentWX.correct.length)]).slice(0,8);
+  const grid=$('clothes-grid');grid.innerHTML='';
+  pool.forEach(e=>{
+    const btn=document.createElement('div');btn.className='cloth-btn';
+    btn.innerHTML=`<div class="cbadge" id="cb-${e}">✓</div><div class="ce">${e}</div><div class="ct">${CLOTH_NAMES[e]||e}</div>`;
+    btn.addEventListener('pointerdown',ev=>{ev.preventDefault();tapCloth(e,btn);},{passive:false});
+    grid.appendChild(btn);
+  });
+}
+
+function tapCloth(e,btn){
+  if(answered)return;
+  const isCorrect=correctSet.has(e);
+  if(isCorrect){
+    if(btn.classList.contains('correct'))return; // already selected
+    btn.classList.add('correct');
+    btn.querySelector('.cbadge').textContent='✓';
+    selectedClothes.add(e);
+    // check if all correct picked
+    const allPicked=[...correctSet].every(c=>selectedClothes.has(c));
+    if(allPicked){
+      answered=true;score++;qNum++;
+      $('g1-sc').textContent=score+' ⭐';
+      $('g1-fb').textContent='Chọn đúng hết rồi! Tuyệt vời! 🎉';$('g1-fb').className='g1-fb ok';
+      confetti();
+      setTimeout(()=>$('g1-nx').style.display='block',400);
+    } else {
+      $('g1-fb').textContent=`Đúng! Còn ${correctSet.size-selectedClothes.size} đồ nữa...`;
+      $('g1-fb').className='g1-fb ok';
+    }
+  } else {
+    btn.classList.add('wrong');
+    btn.querySelector('.cbadge').textContent='✗';
+    $('g1-fb').textContent='Cái này không phù hợp! Thử lại 😊';$('g1-fb').className='g1-fb err';
+    setTimeout(()=>{btn.classList.remove('wrong');btn.querySelector('.cbadge').textContent='✗';},800);
+  }
+}
+
+/* ============================================================
+   GAME 2: SORT BY SEASON
+   ============================================================ */
+let G2={items:[],placed:{},done:false};
+let DRAG={on:false,idx:-1,zone:null};
+
+function nextG2(){
+  if(qNum>=TOTAL){endGame();return;}
+  answered=false;G2.placed={};G2.done=false;
+  $('g2-nx').style.display='none';
+  $('s2-fb').textContent='';$('s2-fb').className='s2-fb';
+  $('g2-prog').style.width=((qNum/TOTAL)*100)+'%';
+  $('g2-meta').textContent=`Câu ${qNum+1}/${TOTAL}`;
+  $('g2-sc').textContent=score+' ⭐';
+
+  const q=g2Pool[qNum%g2Pool.length];
+  G2.items=shuffle([...q.items]);
+  $('sort-task').innerHTML=`<strong>Nhiệm vụ:</strong> ${q.task}`;
+
+  // banner (show general header)
+  $('sb-inner').innerHTML=`<div class="sb-ico">🌍</div><div class="sb-text"><h3>4 Mùa Trong Năm</h3><p>Kéo thả đồ vật vào đúng mùa!</p></div>`;
+  setBg('#F8FAFC');spawnFX('autumn','#F97316');
+
+  // render pool
+  const pool=$('s2-pool');pool.innerHTML='';
+  G2.items.forEach((it,i)=>{
+    const d=document.createElement('div');d.className='drag-item';d.id=`di${i}`;d.textContent=it.e;
+    d.title=it.n;
+    d.addEventListener('pointerdown',e=>{e.preventDefault();startDrag(e,i);},{passive:false});
+    pool.appendChild(d);
+  });
+
+  // render season zones
+  const sr=$('seasons-row');sr.innerHTML='';
+  SEASONS.forEach(s=>{
+    const z=document.createElement('div');z.className='season-zone';z.dataset.zone=s.id;z.id=`sz-${s.id}`;
+    z.style.borderColor=s.color+'66';
+    z.innerHTML=`<div class="sz-ico">${s.ico}</div><div class="sz-name" style="color:${s.color}">${s.name}</div><div class="sz-items" id="szit-${s.id}"></div><div class="sz-cnt" id="szcnt-${s.id}" style="color:${s.color}">0</div>`;
+    sr.appendChild(z);
+  });
+}
+
+/* DRAG ENGINE */
+function startDrag(e,idx){
+  if(G2.placed[idx]!==undefined)return;
+  DRAG={on:true,idx,zone:null};
+  const it=G2.items[idx];
+  const dc=$('dc');dc.textContent=it.e;dc.style.display='block';
+  moveClone(e);
+  $('di'+idx).classList.add('dragging');
+  window.addEventListener('pointermove',onDM,{passive:false});
+  window.addEventListener('pointerup',onDU);
+  window.addEventListener('pointercancel',onDU);
+}
+function onDM(e){
+  if(!DRAG.on)return;e.preventDefault();
+  moveClone(e);
+  const dc=$('dc');dc.style.display='none';
+  const u=document.elementFromPoint(e.clientX,e.clientY);
+  dc.style.display='block';
+  const z=u?.closest('[data-zone]');
+  DRAG.zone=z?z.dataset.zone:null;
+  document.querySelectorAll('.season-zone').forEach(el=>el.classList.toggle('hi',el.dataset.zone===DRAG.zone));
+}
+function onDU(){
+  window.removeEventListener('pointermove',onDM);
+  window.removeEventListener('pointerup',onDU);
+  window.removeEventListener('pointercancel',onDU);
+  $('dc').style.display='none';
+  document.querySelectorAll('.season-zone').forEach(el=>el.classList.remove('hi'));
+  const src=$('di'+DRAG.idx);if(src)src.classList.remove('dragging');
+  if(DRAG.zone&&G2.placed[DRAG.idx]===undefined){
+    placeSeason(DRAG.idx,DRAG.zone);
+  }
+  DRAG.on=false;
+}
+function moveClone(e){const dc=$('dc');dc.style.left=(e.clientX-24)+'px';dc.style.top=(e.clientY-24)+'px';}
+
+function placeSeason(idx,zoneId){
+  G2.placed[idx]=zoneId;
+  const it=G2.items[idx];
+  const src=$('di'+idx);if(src)src.style.display='none';
+
+  // add to zone display
+  const zItems=$('szit-'+zoneId);if(zItems)zItems.innerHTML+=`<span title="${it.n}">${it.e}</span>`;
+  const zCnt=$('szcnt-'+zoneId);
+  if(zCnt)zCnt.textContent=Object.values(G2.placed).filter(z=>z===zoneId).length;
+
+  // check done
+  if(Object.keys(G2.placed).length===G2.items.length){
+    G2.done=true;
+    let correct=0;
+    G2.items.forEach((it,i)=>{if(G2.placed[i]===it.s)correct++;});
+    const allOk=correct===G2.items.length;
+    if(allOk){score++;confetti();}
+    qNum++;
+    $('g2-sc').textContent=score+' ⭐';
+    $('s2-fb').textContent=allOk?`Xếp đúng hết! Tuyệt vời! 🎉`:`${correct}/${G2.items.length} đúng! Cố thêm nhé 😊`;
+    $('s2-fb').className='s2-fb '+(allOk?'ok':'err');
+    setTimeout(()=>$('g2-nx').style.display='block',500);
+  }
+}
+
+/* ============================================================
+   CONFETTI + RESULT
+   ============================================================ */
+const CC=['#F59E0B','#10B981','#3B82F6','#6366F1','#F97316','#F472B6','#34D399'];
+function confetti(){
+  for(let i=0;i<32;i++){
+    const el=document.createElement('div');el.className='cp';
+    const sz=5+Math.random()*9;
+    el.style.cssText=`width:${sz}px;height:${sz}px;background:${CC[Math.floor(Math.random()*CC.length)]};left:${15+Math.random()*70}%;top:${10+Math.random()*55}%;border-radius:${Math.random()>.5?'50%':'3px'};animation-duration:${.7+Math.random()*.9}s;animation-delay:${Math.random()*.12}s;`;
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),2000);
+  }
+}
+
+function endGame(){
+  clearFX();setBg('#FFF9E6');show('result');
+  const pct=score/TOTAL;
+  let ico,h1,sub;
+  if(pct>=.9){ico='🏆';h1='Thời trang số 1!';sub='Con chọn đồ cực kỳ giỏi!';}
+  else if(pct>=.7){ico='⭐';h1='Giỏi lắm!';sub='Con đã hiểu thời tiết tốt rồi!';}
+  else if(pct>=.5){ico='😊';h1='Cố gắng lắm!';sub='Luyện thêm sẽ giỏi hơn nhé!';}
+  else{ico='💪';h1='Tiếp tục nhé!';sub='Quan sát kỹ thời tiết trước khi chọn đồ!';}
+  $('res-ico').textContent=ico;$('res-h1').textContent=h1;$('res-sub').textContent=sub;
+  $('res-big').textContent=score+' / '+TOTAL;
+  confetti();
+}
+
+/* prevent double-tap zoom */
+document.addEventListener('touchend',e=>{
+  if(e.target.closest('.cloth-btn,.go-btn,.mode-card,.btn-next,.rb,.btn-back'))e.preventDefault();
+},{passive:false});
+</script>
+</body>
+</html>
