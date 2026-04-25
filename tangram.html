@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>🧩 Xếp Hình Tangram</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFF8EE;--card:#FFFFFF;--tx:#2D2A3E;--tx2:#9B97B0;
+  --c1:#FF6B6B;--c2:#FFD93D;--c3:#6BCB77;--c4:#4D96FF;--c5:#FF9A3C;--c6:#C77DFF;--c7:#2DD4BF;
+  --shadow:0 6px 24px rgba(0,0,0,.12);--shadow-sm:0 3px 12px rgba(0,0,0,.08);
+  --rad:22px;--radsm:14px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none;}
+html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Nunito',system-ui,sans-serif;color:var(--tx);
+  -webkit-text-size-adjust:100%;}
+
+/* fun dotted bg */
+body::before{content:'';position:fixed;inset:0;pointer-events:none;
+  background-image:radial-gradient(circle,rgba(0,0,0,.05) 1px,transparent 1px);
+  background-size:24px 24px;}
+
+.scr{display:none;position:fixed;inset:0;flex-direction:column;align-items:center;}
+.scr.on{display:flex;}
+
+/* ===== START ===== */
+#start{justify-content:center;gap:1.3rem;padding:1.8rem 1.2rem;overflow-y:auto;}
+
+.s-logo{display:flex;justify-content:center;gap:4px;margin-bottom:.4rem;}
+.s-logo svg{filter:drop-shadow(0 4px 8px rgba(0,0,0,.15));animation:logoPiece 3s ease-in-out infinite;}
+.s-logo svg:nth-child(2){animation-delay:.3s;}
+.s-logo svg:nth-child(3){animation-delay:.6s;}
+@keyframes logoPiece{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+
+.s-title h1{font-family:'Fredoka One',system-ui;font-size:2.4rem;font-weight:400;text-align:center;
+  color:var(--tx);letter-spacing:.5px;}
+.s-title p{text-align:center;font-size:.88rem;color:var(--tx2);margin-top:4px;font-weight:700;}
+
+.level-scroll{display:flex;flex-direction:column;gap:9px;width:100%;max-width:420px;}
+.level-section-title{font-size:.68rem;font-weight:800;color:var(--tx2);text-transform:uppercase;
+  letter-spacing:1px;padding-left:2px;}
+.level-row{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;}
+.level-card{background:var(--card);border-radius:var(--radsm);padding:10px 8px 8px;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  box-shadow:var(--shadow-sm);cursor:pointer;border:3px solid transparent;
+  transition:transform .12s,border-color .15s;touch-action:manipulation;}
+.level-card:active{transform:scale(.93);}
+.level-card.done{border-color:var(--c3);}
+.level-card .lc-preview{width:60px;height:60px;flex-shrink:0;}
+.level-card h4{font-size:.78rem;font-weight:800;text-align:center;color:var(--tx);}
+.level-card .lc-stars{font-size:.75rem;letter-spacing:1px;}
+.level-card .lc-diff{font-size:.58rem;font-weight:800;padding:2px 7px;border-radius:8px;color:#fff;}
+.diff-easy{background:var(--c3);}.diff-med{background:var(--c5);}.diff-hard{background:var(--c1);}
+
+/* ===== HUD ===== */
+.hud{width:100%;display:flex;align-items:center;gap:10px;padding:.7rem 1rem .4rem;flex-shrink:0;
+  background:rgba(255,248,238,.92);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border-bottom:2px solid rgba(0,0,0,.05);}
+.btn-back{font-size:1.1rem;background:rgba(0,0,0,.07);border:none;border-radius:11px;
+  padding:7px 12px;color:var(--tx);cursor:pointer;font-weight:900;touch-action:manipulation;}
+.hud-title{flex:1;font-family:'Fredoka One',system-ui;font-size:1.1rem;text-align:center;letter-spacing:.3px;}
+.btn-hint{font-size:.78rem;font-weight:800;background:rgba(255,154,60,.15);border:2px solid rgba(255,154,60,.3);
+  border-radius:20px;padding:6px 12px;color:var(--c5);cursor:pointer;touch-action:manipulation;white-space:nowrap;}
+.btn-hint:active{background:rgba(255,154,60,.25);}
+
+/* ===== GAME AREA ===== */
+#game{justify-content:space-between;}
+
+/* PUZZLE BOARD */
+.board-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:.4rem .8rem .2rem;gap:6px;width:100%;min-height:0;}
+.board-label{font-size:.68rem;font-weight:800;color:var(--tx2);text-transform:uppercase;letter-spacing:1px;}
+.board-container{position:relative;background:var(--card);border-radius:var(--rad);
+  box-shadow:var(--shadow);border:3px solid rgba(0,0,0,.06);}
+#board-canvas{display:block;border-radius:calc(var(--rad) - 3px);}
+
+/* SUCCESS OVERLAY */
+.success-overlay{position:absolute;inset:0;border-radius:calc(var(--rad) - 3px);
+  background:rgba(107,203,119,.15);display:none;align-items:center;justify-content:center;
+  font-size:3rem;animation:successPop .4s ease;}
+@keyframes successPop{0%{transform:scale(.5);opacity:0;}100%{transform:scale(1);opacity:1;}}
+
+/* PIECES TRAY */
+.tray-wrap{flex-shrink:0;width:100%;padding:0 .8rem .6rem;}
+.tray-label{font-size:.66rem;font-weight:800;color:var(--tx2);text-transform:uppercase;
+  letter-spacing:1px;margin-bottom:5px;text-align:center;}
+.tray{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;
+  background:rgba(0,0,0,.04);border-radius:var(--rad);padding:9px 10px;
+  min-height:72px;align-items:center;}
+.piece-wrap{position:relative;touch-action:none;cursor:grab;flex-shrink:0;
+  transition:transform .1s,opacity .15s;}
+.piece-wrap.placed{opacity:.25;pointer-events:none;}
+.piece-wrap.dragging-src{opacity:.2;}
+
+/* floating drag piece */
+#drag-piece{position:fixed;pointer-events:none;z-index:9999;display:none;
+  transform-origin:center center;}
+
+/* FEEDBACK BAR */
+.fb-bar{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;
+  padding:.2rem 1rem .5rem;min-height:38px;gap:10px;}
+.fb-msg{font-size:.88rem;font-weight:800;color:transparent;flex:1;text-align:center;}
+.fb-msg.ok{color:var(--c3);}.fb-msg.err{color:var(--c1);}.fb-msg.hint{color:var(--c5);}
+.btn-next{padding:9px 28px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:900;
+  border:none;border-radius:30px;background:linear-gradient(135deg,var(--c3),var(--c7));
+  color:#fff;cursor:pointer;display:none;
+  box-shadow:0 4px 14px rgba(107,203,119,.4);transition:transform .1s;touch-action:manipulation;}
+.btn-next:active{transform:scale(.95);}
+
+/* CONFETTI */
+.cp{position:fixed;pointer-events:none;z-index:999;border-radius:3px;animation:cpFall linear forwards;}
+@keyframes cpFall{0%{opacity:1;transform:translateY(0) rotate(0);}100%{opacity:0;transform:translateY(115vh) rotate(900deg);}}
+
+/* RESULT */
+#result{justify-content:center;gap:1.3rem;padding:2rem 1.4rem;text-align:center;}
+.res-ico{font-size:5rem;animation:resIn .5s cubic-bezier(.34,1.56,.64,1) both;}
+@keyframes resIn{0%{transform:scale(0) rotate(-20deg);}100%{transform:scale(1) rotate(0);}}
+.res-h1{font-family:'Fredoka One',system-ui;font-size:2.4rem;letter-spacing:.5px;color:var(--tx);}
+.res-sub{font-size:.9rem;color:var(--tx2);font-weight:700;}
+.res-stars{font-size:2.5rem;letter-spacing:4px;}
+.res-score{background:var(--card);border-radius:var(--rad);padding:1.1rem 2.2rem;
+  box-shadow:var(--shadow-sm);}
+.res-big{font-family:'Fredoka One',system-ui;font-size:3.2rem;color:var(--c3);}
+.res-lbl{font-size:.78rem;color:var(--tx2);font-weight:700;}
+.res-btns{display:flex;gap:12px;}
+.rb{padding:13px 26px;font-family:'Nunito',sans-serif;font-size:.92rem;font-weight:900;
+  border:none;border-radius:30px;cursor:pointer;touch-action:manipulation;transition:transform .1s;}
+.rb:active{transform:scale(.95);}
+.rb.p{background:linear-gradient(135deg,var(--c4),var(--c6));color:#fff;}
+.rb.s{background:rgba(0,0,0,.07);color:var(--tx);border:2px solid rgba(0,0,0,.1);}
+
+@media(orientation:landscape)and(max-height:520px){
+  .board-wrap{padding:.2rem .6rem 0;}.tray{padding:5px;gap:5px;}
+  .hud{padding:.4rem .8rem .3rem;}
+}
+</style>
+</head>
+<body>
+<div id="drag-piece"><canvas id="drag-canvas"></canvas></div>
+
+<!-- ===== START / LEVEL SELECT ===== -->
+<div id="start" class="scr on">
+  <div class="s-logo">
+    <svg width="36" height="36" viewBox="0 0 36 36"><polygon points="0,36 18,0 36,36" fill="#FF6B6B"/></svg>
+    <svg width="36" height="36" viewBox="0 0 36 36"><rect x="2" y="2" width="32" height="32" rx="4" fill="#4D96FF"/></svg>
+    <svg width="36" height="36" viewBox="0 0 36 36"><polygon points="18,0 36,36 0,36" fill="#FFD93D"/></svg>
+  </div>
+  <div class="s-title">
+    <h1>Tangram Nhí</h1>
+    <p>Kéo các mảnh ghép vào đúng vị trí để tạo hình!</p>
+  </div>
+  <div class="level-scroll" id="level-list"></div>
+</div>
+
+<!-- ===== GAME ===== -->
+<div id="game" class="scr">
+  <div class="hud">
+    <button class="btn-back" onclick="goStart()">◂</button>
+    <div class="hud-title" id="hud-title">Ngôi nhà</div>
+    <button class="btn-hint" id="btn-hint" onclick="showHint()">💡 Gợi ý</button>
+  </div>
+  <div class="board-wrap">
+    <div class="board-label" id="board-label">Ghép hình vào khung bên dưới!</div>
+    <div class="board-container" id="board-container">
+      <canvas id="board-canvas"></canvas>
+      <div class="success-overlay" id="success-overlay">🎉</div>
+    </div>
+  </div>
+  <div class="tray-wrap">
+    <div class="tray-label">Các mảnh ghép — kéo vào khung:</div>
+    <div class="tray" id="tray"></div>
+  </div>
+  <div class="fb-bar">
+    <div class="fb-msg" id="fb-msg"></div>
+    <button class="btn-next" id="btn-next" onclick="nextLevel()">Hình tiếp theo →</button>
+  </div>
+</div>
+
+<!-- ===== RESULT ===== -->
+<div id="result" class="scr">
+  <div class="res-ico" id="res-ico"></div>
+  <div class="res-h1" id="res-h1"></div>
+  <div class="res-sub" id="res-sub"></div>
+  <div class="res-stars" id="res-stars"></div>
+  <div class="res-score"><div class="res-big" id="res-big"></div><div class="res-lbl">Hình đã ghép</div></div>
+  <div class="res-btns">
+    <button class="rb p" onclick="goStart()">Chọn hình khác</button>
+    <button class="rb s" onclick="replayLevel()">↺ Chơi lại</button>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   TANGRAM PUZZLE DEFINITIONS
+   Each puzzle defines:
+   - name, emoji, difficulty
+   - boardSize: pixel size of the puzzle grid (internal units)
+   - slots: drop zones [{id, points (polygon in board coords), color, tolerance}]
+   - pieces: draggable shapes [{id, points (relative to piece center), color, label}]
+   - pieceToSlot: mapping piece id → slot id (correct answer)
+   ============================================================ */
+
+// Helper to build polygon points string
+const P = (...pts) => pts; // array of [x,y]
+
+const PUZZLES = [
+  /* ── 1. NGÔI NHÀ ── */
+  {
+    id:'house', name:'Ngôi Nhà', emoji:'🏠', difficulty:'easy',
+    boardSize:200,
+    // Slots drawn on board (board coords, 200×200 grid)
+    slots:[
+      {id:'roof',    pts:[[50,80],[100,20],[150,80]],            color:'#FF6B6B', label:'Mái nhà'},
+      {id:'body',    pts:[[40,80],[160,80],[160,175],[40,175]],  color:'#4D96FF', label:'Thân nhà'},
+      {id:'door',    pts:[[80,130],[120,130],[120,175],[80,175]],color:'#FFD93D', label:'Cửa ra vào'},
+      {id:'winL',    pts:[[50,95],[78,95],[78,125],[50,125]],    color:'#6BCB77', label:'Cửa sổ trái'},
+      {id:'winR',    pts:[[122,95],[150,95],[150,125],[122,125]],color:'#6BCB77', label:'Cửa sổ phải'},
+    ],
+    pieces:[
+      {id:'roof',  pts:[[0,-30],[30,30],[-30,30]],            color:'#FF6B6B', label:'Mái'},
+      {id:'body',  pts:[[-60,-48],[60,-48],[60,48],[-60,48]], color:'#4D96FF', label:'Thân'},
+      {id:'door',  pts:[[-20,-23],[20,-23],[20,23],[-20,23]], color:'#FFD93D', label:'Cửa'},
+      {id:'winL',  pts:[[-14,-15],[14,-15],[14,15],[-14,15]], color:'#6BCB77', label:'Sổ'},
+      {id:'winR',  pts:[[-14,-15],[14,-15],[14,15],[-14,15]], color:'#6BCB77', label:'Sổ'},
+    ],
+  },
+
+  /* ── 2. CÁ VÀNG ── */
+  {
+    id:'fish', name:'Cá Vàng', emoji:'🐠', difficulty:'easy',
+    boardSize:200,
+    slots:[
+      {id:'body',  pts:[[30,70],[140,40],[150,100],[140,160],[30,130]], color:'#FF9A3C', label:'Thân cá'},
+      {id:'tail',  pts:[[140,70],[185,40],[185,160],[140,130]],         color:'#FFD93D', label:'Đuôi cá'},
+      {id:'fin',   pts:[[60,40],[100,20],[110,70],[70,65]],             color:'#FF6B6B', label:'Vây trên'},
+      {id:'eye',   pts:[[55,85],[75,85],[75,105],[55,105]],             color:'#2DD4BF', label:'Mắt cá'},
+    ],
+    pieces:[
+      {id:'body', pts:[[-55,-45],[55,-15],[60,45],[55,75],[-55,30]],  color:'#FF9A3C', label:'Thân'},
+      {id:'tail', pts:[[-23,-45],[23,-45],[23,45],[-23,45]],          color:'#FFD93D', label:'Đuôi'},
+      {id:'fin',  pts:[[-25,-25],[15,-45],[20,15],[-15,10]],          color:'#FF6B6B', label:'Vây'},
+      {id:'eye',  pts:[[-10,-10],[10,-10],[10,10],[-10,10]],          color:'#2DD4BF', label:'Mắt'},
+    ],
+  },
+
+  /* ── 3. NGÔI SAO ── */
+  {
+    id:'star', name:'Ngôi Sao', emoji:'⭐', difficulty:'easy',
+    boardSize:200,
+    slots:[
+      {id:'center', pts:[[65,65],[135,65],[150,100],[135,135],[65,135],[50,100]], color:'#FFD93D', label:'Giữa'},
+      {id:'top',    pts:[[85,20],[115,20],[135,65],[65,65]],                       color:'#FF6B6B', label:'Trên'},
+      {id:'bot',    pts:[[65,135],[135,135],[115,180],[85,180]],                   color:'#FF6B6B', label:'Dưới'},
+      {id:'left',   pts:[[20,75],[65,65],[65,135],[20,125]],                       color:'#C77DFF', label:'Trái'},
+      {id:'right',  pts:[[135,65],[180,75],[180,125],[135,135]],                   color:'#C77DFF', label:'Phải'},
+    ],
+    pieces:[
+      {id:'center', pts:[[-35,-35],[35,-35],[50,0],[35,35],[-35,35],[-50,0]], color:'#FFD93D', label:'Giữa'},
+      {id:'top',    pts:[[-25,-23],[25,-23],[35,23],[-35,23]],                 color:'#FF6B6B', label:'Nhọn'},
+      {id:'bot',    pts:[[-35,-23],[35,-23],[25,23],[-25,23]],                 color:'#FF6B6B', label:'Nhọn'},
+      {id:'left',   pts:[[-23,-35],[23,-35],[23,35],[-23,35]],                 color:'#C77DFF', label:'Bên'},
+      {id:'right',  pts:[[-23,-35],[23,-35],[23,35],[-23,35]],                 color:'#C77DFF', label:'Bên'},
+    ],
+  },
+
+  /* ── 4. CON THUYỀN ── */
+  {
+    id:'boat', name:'Con Thuyền', emoji:'⛵', difficulty:'med',
+    boardSize:200,
+    slots:[
+      {id:'hull',  pts:[[20,130],[180,130],[160,175],[40,175]], color:'#4D96FF', label:'Thân thuyền'},
+      {id:'sail1', pts:[[95,30],[150,130],[95,130]],             color:'#FFFFFF', label:'Buồm lớn'},
+      {id:'sail2', pts:[[95,60],[95,130],[55,130]],              color:'#FF9A3C', label:'Buồm nhỏ'},
+      {id:'mast',  pts:[[91,25],[99,25],[99,135],[91,135]],      color:'#2D2A3E', label:'Cột buồm'},
+    ],
+    pieces:[
+      {id:'hull',  pts:[[-80,-23],[80,-23],[60,23],[-60,23]],  color:'#4D96FF', label:'Thân'},
+      {id:'sail1', pts:[[0,-50],[55,50],[-55,50]],              color:'#f8f8f8', label:'Buồm lớn'},
+      {id:'sail2', pts:[[0,-35],[-40,35],[40,35]],              color:'#FF9A3C', label:'Buồm nhỏ'},
+      {id:'mast',  pts:[[-4,-55],[4,-55],[4,55],[-4,55]],       color:'#2D2A3E', label:'Cột'},
+    ],
+  },
+
+  /* ── 5. CON MÈO ── */
+  {
+    id:'cat', name:'Mặt Mèo', emoji:'🐱', difficulty:'med',
+    boardSize:200,
+    slots:[
+      {id:'face',  pts:[[35,70],[165,70],[165,170],[35,170]],  color:'#FFD93D', label:'Khuôn mặt'},
+      {id:'earL',  pts:[[30,30],[70,30],[70,72],[35,72]],       color:'#FF6B6B', label:'Tai trái'},
+      {id:'earR',  pts:[[130,30],[170,30],[165,72],[130,72]],   color:'#FF6B6B', label:'Tai phải'},
+      {id:'eyeL',  pts:[[55,95],[85,95],[85,120],[55,120]],     color:'#4D96FF', label:'Mắt trái'},
+      {id:'eyeR',  pts:[[115,95],[145,95],[145,120],[115,120]], color:'#4D96FF', label:'Mắt phải'},
+      {id:'nose',  pts:[[88,130],[112,130],[112,150],[88,150]], color:'#FF9A3C', label:'Mũi'},
+    ],
+    pieces:[
+      {id:'face',  pts:[[-65,-50],[65,-50],[65,50],[-65,50]],  color:'#FFD93D', label:'Mặt'},
+      {id:'earL',  pts:[[-20,-21],[20,-21],[18,21],[-18,21]],  color:'#FF6B6B', label:'Tai'},
+      {id:'earR',  pts:[[-18,-21],[18,-21],[20,21],[-20,21]],  color:'#FF6B6B', label:'Tai'},
+      {id:'eyeL',  pts:[[-15,-13],[15,-13],[15,13],[-15,13]],  color:'#4D96FF', label:'Mắt'},
+      {id:'eyeR',  pts:[[-15,-13],[15,-13],[15,13],[-15,13]],  color:'#4D96FF', label:'Mắt'},
+      {id:'nose',  pts:[[-12,-10],[12,-10],[12,10],[-12,10]],  color:'#FF9A3C', label:'Mũi'},
+    ],
+  },
+
+  /* ── 6. TÊN LỬA ── */
+  {
+    id:'rocket', name:'Tên Lửa', emoji:'🚀', difficulty:'med',
+    boardSize:200,
+    slots:[
+      {id:'body',  pts:[[75,40],[125,40],[125,155],[75,155]],  color:'#C77DFF', label:'Thân'},
+      {id:'nose',  pts:[[75,40],[100,10],[125,40]],             color:'#FF6B6B', label:'Mũi'},
+      {id:'finL',  pts:[[40,120],[75,100],[75,160],[40,160]],   color:'#4D96FF', label:'Cánh trái'},
+      {id:'finR',  pts:[[125,100],[160,120],[160,160],[125,160]],color:'#4D96FF', label:'Cánh phải'},
+      {id:'flame', pts:[[85,155],[115,155],[105,185],[95,185]], color:'#FF9A3C', label:'Lửa'},
+    ],
+    pieces:[
+      {id:'body',  pts:[[-25,-58],[25,-58],[25,58],[-25,58]], color:'#C77DFF', label:'Thân'},
+      {id:'nose',  pts:[[-25,-15],[0,-45],[25,-15]],           color:'#FF6B6B', label:'Mũi'},
+      {id:'finL',  pts:[[-18,-30],[18,-10],[18,30],[-18,30]], color:'#4D96FF', label:'Cánh'},
+      {id:'finR',  pts:[[-18,-10],[18,-30],[18,30],[-18,30]], color:'#4D96FF', label:'Cánh'},
+      {id:'flame', pts:[[-15,-15],[15,-15],[10,15],[-10,15]], color:'#FF9A3C', label:'Lửa'},
+    ],
+  },
+
+  /* ── 7. CON BƯỚM ── */
+  {
+    id:'butterfly', name:'Con Bướm', emoji:'🦋', difficulty:'hard',
+    boardSize:200,
+    slots:[
+      {id:'wingTL', pts:[[20,40],[100,50],[85,110],[20,100]],  color:'#FF6B6B', label:'Cánh trên trái'},
+      {id:'wingTR', pts:[[100,50],[180,40],[180,100],[115,110]],color:'#4D96FF', label:'Cánh trên phải'},
+      {id:'wingBL', pts:[[30,110],[85,110],[75,165],[30,160]], color:'#FFD93D', label:'Cánh dưới trái'},
+      {id:'wingBR', pts:[[115,110],[170,110],[170,165],[125,165]],color:'#6BCB77', label:'Cánh dưới phải'},
+      {id:'body',   pts:[[92,45],[108,45],[112,165],[88,165]], color:'#2D2A3E', label:'Thân'},
+    ],
+    pieces:[
+      {id:'wingTL', pts:[[-40,-35],[40,-25],[25,25],[-40,25]], color:'#FF6B6B', label:'Cánh'},
+      {id:'wingTR', pts:[[-40,-25],[40,-35],[40,25],[-25,25]], color:'#4D96FF', label:'Cánh'},
+      {id:'wingBL', pts:[[-28,-28],[28,-28],[18,28],[-28,25]], color:'#FFD93D', label:'Cánh'},
+      {id:'wingBR', pts:[[-28,-28],[28,-28],[28,25],[-18,28]], color:'#6BCB77', label:'Cánh'},
+      {id:'body',   pts:[[-8,-60],[8,-60],[10,60],[-10,60]],   color:'#2D2A3E', label:'Thân'},
+    ],
+  },
+
+  /* ── 8. CON VỊT ── */
+  {
+    id:'duck', name:'Con Vịt', emoji:'🦆', difficulty:'hard',
+    boardSize:200,
+    slots:[
+      {id:'body',  pts:[[30,80],[160,80],[155,160],[35,160]],  color:'#FFD93D', label:'Thân'},
+      {id:'neck',  pts:[[80,40],[115,40],[115,82],[80,82]],    color:'#FFD93D', label:'Cổ'},
+      {id:'head',  pts:[[70,15],[130,15],[130,45],[70,45]],    color:'#FFD93D', label:'Đầu'},
+      {id:'beak',  pts:[[130,22],[158,32],[130,42]],           color:'#FF9A3C', label:'Mỏ'},
+      {id:'wing',  pts:[[55,90],[130,90],[120,140],[45,140]],  color:'#FF6B6B', label:'Cánh'},
+      {id:'eye',   pts:[[95,22],[112,22],[112,38],[95,38]],    color:'#2D2A3E', label:'Mắt'},
+    ],
+    pieces:[
+      {id:'body',  pts:[[-65,-40],[65,-40],[60,40],[-60,40]], color:'#FFD93D', label:'Thân'},
+      {id:'neck',  pts:[[-18,-21],[18,-21],[18,21],[-18,21]], color:'#FFD93D', label:'Cổ'},
+      {id:'head',  pts:[[-30,-15],[30,-15],[30,15],[-30,15]], color:'#FFD93D', label:'Đầu'},
+      {id:'beak',  pts:[[0,-10],[28,0],[0,10]],               color:'#FF9A3C', label:'Mỏ'},
+      {id:'wing',  pts:[[-40,-25],[40,-25],[35,25],[-45,25]], color:'#FF6B6B', label:'Cánh'},
+      {id:'eye',   pts:[[-8,-8],[8,-8],[8,8],[-8,8]],         color:'#2D2A3E', label:'Mắt'},
+    ],
+  },
+];
+
+/* ============================================================
+   STATE
+   ============================================================ */
+const $ = id => document.getElementById(id);
+const rnd = (a,b) => a + Math.floor(Math.random()*(b-a+1));
+const CC = ['#FF6B6B','#FFD93D','#6BCB77','#4D96FF','#FF9A3C','#C77DFF','#2DD4BF'];
+
+let completedLevels = {};
+let currentPuzzle = null;
+let placedPieces = {}; // pieceId → true
+let hintShown = false;
+let score = 0;
+
+function show(id){ document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on')); $(id).classList.add('on'); }
+function goStart(){ show('start'); buildLevelList(); }
+
+/* ============================================================
+   CANVAS DRAWING
+   ============================================================ */
+function drawPolygon(ctx, pts, fill, stroke, strokeW=2, alpha=1){
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.beginPath();
+  pts.forEach(([x,y],i) => i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y));
+  ctx.closePath();
+  if(fill){ ctx.fillStyle=fill; ctx.fill(); }
+  if(stroke){ ctx.strokeStyle=stroke; ctx.lineWidth=strokeW; ctx.stroke(); }
+  ctx.restore();
+}
+
+function drawPieceOnCanvas(canvas, pts, color, sz){
+  const ctx = canvas.getContext('2d');
+  // compute bounding box of pts
+  const xs = pts.map(p=>p[0]), ys = pts.map(p=>p[1]);
+  const minX=Math.min(...xs), maxX=Math.max(...xs);
+  const minY=Math.min(...ys), maxY=Math.max(...ys);
+  const pw=maxX-minX, ph=maxY-minY;
+  const scale = Math.min((sz-8)/pw, (sz-8)/ph);
+  const offX = (sz - pw*scale)/2 - minX*scale;
+  const offY = (sz - ph*scale)/2 - minY*scale;
+  ctx.clearRect(0,0,sz,sz);
+  const scaled = pts.map(([x,y])=>[x*scale+offX, y*scale+offY]);
+  drawPolygon(ctx, scaled, color, 'rgba(0,0,0,.15)', 2);
+}
+
+/* ============================================================
+   BOARD RENDERING
+   ============================================================ */
+let boardScale = 1;
+let boardOffX = 0, boardOffY = 0;
+
+function drawBoard(showHintOverlay=false){
+  const pz = currentPuzzle;
+  const canvas = $('board-canvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+
+  // light grid bg
+  ctx.fillStyle='#FAFAFA'; ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='rgba(0,0,0,.05)'; ctx.lineWidth=1;
+  const step=Math.round(W/8);
+  for(let x=0;x<W;x+=step){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=0;y<H;y+=step){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+
+  // draw slot outlines
+  pz.slots.forEach(slot => {
+    const pts = slot.pts.map(([x,y]) => [x*boardScale+boardOffX, y*boardScale+boardOffY]);
+    const placed = placedPieces[slot.id];
+    if(placed){
+      // filled with piece color
+      const piece = pz.pieces.find(p=>p.id===slot.id);
+      drawPolygon(ctx, pts, piece?piece.color:slot.color, 'rgba(0,0,0,.12)', 2.5);
+      // checkmark
+      const cx = pts.reduce((s,p)=>s+p[0],0)/pts.length;
+      const cy = pts.reduce((s,p)=>s+p[1],0)/pts.length;
+      ctx.save();
+      ctx.font = `bold ${Math.round(W*.06)}px sans-serif`;
+      ctx.fillStyle='rgba(255,255,255,.8)';
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText('✓', cx, cy);
+      ctx.restore();
+    } else {
+      // empty slot — dashed outline
+      if(showHintOverlay){
+        drawPolygon(ctx, pts, slot.color+'44', slot.color, 2.5);
+      } else {
+        drawPolygon(ctx, pts, 'rgba(0,0,0,.03)', 'rgba(0,0,0,.15)', 2, 1);
+        // slot label
+        if(W > 200){
+          const cx = pts.reduce((s,p)=>s+p[0],0)/pts.length;
+          const cy = pts.reduce((s,p)=>s+p[1],0)/pts.length;
+          ctx.save();
+          ctx.font = `700 ${Math.round(W*.038)}px Nunito,sans-serif`;
+          ctx.fillStyle='rgba(0,0,0,.2)';
+          ctx.textAlign='center'; ctx.textBaseline='middle';
+          ctx.fillText(slot.label||'', cx, cy);
+          ctx.restore();
+        }
+      }
+    }
+  });
+}
+
+/* ============================================================
+   LEVEL SELECT
+   ============================================================ */
+function buildLevelList(){
+  const container = $('level-list');
+  container.innerHTML='';
+  const easy = PUZZLES.filter(p=>p.difficulty==='easy');
+  const med  = PUZZLES.filter(p=>p.difficulty==='med');
+  const hard = PUZZLES.filter(p=>p.difficulty==='hard');
+
+  [[easy,'⭐ Dễ'],[med,'⭐⭐ Vừa'],[hard,'⭐⭐⭐ Khó']].forEach(([group,label])=>{
+    if(!group.length) return;
+    const sec = document.createElement('div');
+    sec.innerHTML=`<div class="level-section-title">${label}</div><div class="level-row" id="lr-${label}"></div>`;
+    container.appendChild(sec);
+    const row = sec.querySelector('.level-row');
+    group.forEach(pz=>{
+      const card = document.createElement('div');
+      card.className='level-card'+(completedLevels[pz.id]?' done':'');
+      const stars = completedLevels[pz.id]?'⭐⭐⭐':'○○○';
+      card.innerHTML=`
+        <canvas class="lc-preview" id="prev-${pz.id}" width="60" height="60"></canvas>
+        <h4>${pz.emoji} ${pz.name}</h4>
+        <div class="lc-stars">${stars}</div>
+        <span class="lc-diff diff-${pz.difficulty}">${label.split(' ').pop()}</span>`;
+      card.addEventListener('pointerdown', e=>{e.preventDefault(); loadPuzzle(pz.id);},{passive:false});
+      row.appendChild(card);
+      // draw preview
+      setTimeout(()=>drawPreview(pz),10);
+    });
+  });
+}
+
+function drawPreview(pz){
+  const canvas = $(`prev-${pz.id}`);
+  if(!canvas) return;
+  const ctx=canvas.getContext('2d'), W=60,H=60;
+  ctx.clearRect(0,0,W,H);
+  const scale = Math.min(W,H)*0.85/pz.boardSize;
+  const offX=(W-pz.boardSize*scale)/2, offY=(H-pz.boardSize*scale)/2;
+  pz.slots.forEach(slot=>{
+    const pts=slot.pts.map(([x,y])=>[x*scale+offX,y*scale+offY]);
+    drawPolygon(ctx,pts,slot.color+'cc','rgba(0,0,0,.1)',1);
+  });
+}
+
+/* ============================================================
+   LOAD PUZZLE
+   ============================================================ */
+function loadPuzzle(id){
+  currentPuzzle = PUZZLES.find(p=>p.id===id);
+  if(!currentPuzzle) return;
+  placedPieces = {};
+  hintShown = false;
+  $('fb-msg').textContent=''; $('fb-msg').className='fb-msg';
+  $('btn-next').style.display='none';
+  $('btn-hint').style.display='block';
+  $('success-overlay').style.display='none';
+  $('hud-title').textContent=`${currentPuzzle.emoji} ${currentPuzzle.name}`;
+  $('board-label').textContent='Ghép hình vào khung màu bên dưới!';
+  show('game');
+  sizeBoard();
+  buildTray();
+}
+
+function sizeBoard(){
+  const pz = currentPuzzle;
+  const wrap = $('board-container');
+  const gBody = $('game');
+  const avail = Math.min(
+    gBody.clientWidth - 32,
+    gBody.clientHeight * 0.52,
+    360
+  );
+  const sz = Math.max(200, Math.round(avail));
+  boardScale = sz / pz.boardSize;
+  boardOffX = 0; boardOffY = 0;
+  const canvas = $('board-canvas');
+  canvas.width = sz; canvas.height = sz;
+  wrap.style.width = sz+'px'; wrap.style.height = sz+'px';
+  drawBoard(false);
+}
+
+/* ============================================================
+   TRAY + DRAG
+   ============================================================ */
+const PIECE_SZ = 58; // tray piece canvas size
+
+function buildTray(){
+  const tray = $('tray');
+  tray.innerHTML='';
+  currentPuzzle.pieces.forEach(piece=>{
+    const wrap = document.createElement('div');
+    wrap.className='piece-wrap';
+    wrap.id=`pw-${piece.id}`;
+
+    const cv = document.createElement('canvas');
+    cv.width=PIECE_SZ; cv.height=PIECE_SZ;
+    cv.id=`pc-${piece.id}`;
+    drawPieceOnCanvas(cv, piece.pts, piece.color, PIECE_SZ);
+
+    const lbl = document.createElement('div');
+    lbl.style.cssText='font-size:.58rem;font-weight:800;color:#9B97B0;text-align:center;margin-top:2px;';
+    lbl.textContent=piece.label;
+
+    wrap.appendChild(cv); wrap.appendChild(lbl);
+    wrap.addEventListener('pointerdown', e=>startPieceDrag(e, piece.id), {passive:false});
+    tray.appendChild(wrap);
+  });
+}
+
+/* DRAG STATE */
+let DRAG = {active:false, pieceId:null, startX:0, startY:0};
+
+function startPieceDrag(e, pieceId){
+  e.preventDefault();
+  if(placedPieces[pieceId]) return;
+
+  DRAG = {active:true, pieceId};
+
+  // setup floating piece
+  const dp = $('drag-piece');
+  const dc = $('drag-canvas');
+  dc.width=PIECE_SZ; dc.height=PIECE_SZ;
+  const piece = currentPuzzle.pieces.find(p=>p.id===pieceId);
+  drawPieceOnCanvas(dc, piece.pts, piece.color, PIECE_SZ);
+  dp.style.cssText=`display:block;position:fixed;pointer-events:none;z-index:9999;
+    transform:scale(1.25) translate(-50%,-50%);opacity:.92;
+    filter:drop-shadow(0 6px 16px rgba(0,0,0,.3));`;
+  moveDragPiece(e);
+
+  // dim source
+  const pw = $(`pw-${pieceId}`);
+  if(pw) pw.classList.add('dragging-src');
+
+  window.addEventListener('pointermove', onDragMove, {passive:false});
+  window.addEventListener('pointerup',   onDragEnd);
+  window.addEventListener('pointercancel', onDragEnd);
+}
+
+function onDragMove(e){
+  if(!DRAG.active) return;
+  e.preventDefault();
+  moveDragPiece(e);
+  // highlight nearest slot
+  highlightNearestSlot(e.clientX, e.clientY);
+}
+
+function moveDragPiece(e){
+  const dp = $('drag-piece');
+  dp.style.left = e.clientX + 'px';
+  dp.style.top  = e.clientY + 'px';
+}
+
+function onDragEnd(e){
+  window.removeEventListener('pointermove', onDragMove);
+  window.removeEventListener('pointerup',   onDragEnd);
+  window.removeEventListener('pointercancel', onDragEnd);
+
+  $('drag-piece').style.display='none';
+  clearSlotHighlights();
+
+  const pw = $(`pw-${DRAG.pieceId}`);
+  if(pw) pw.classList.remove('dragging-src');
+
+  if(!DRAG.active) return;
+  DRAG.active = false;
+
+  // check drop over board
+  tryDrop(e.clientX, e.clientY, DRAG.pieceId);
+}
+
+/* ============================================================
+   SLOT DETECTION & DROP
+   ============================================================ */
+function getBoardRect(){
+  return $('board-canvas').getBoundingClientRect();
+}
+
+function pointInPolygon(px, py, pts){
+  let inside = false;
+  for(let i=0, j=pts.length-1; i<pts.length; j=i++){
+    const xi=pts[i][0], yi=pts[i][1], xj=pts[j][0], yj=pts[j][1];
+    const intersect=((yi>py)!==(yj>py))&&(px<(xj-xi)*(py-yi)/(yj-yi)+xi);
+    if(intersect) inside=!inside;
+  }
+  return inside;
+}
+
+function getBoardPts(slot){
+  return slot.pts.map(([x,y])=>[x*boardScale+boardOffX, y*boardScale+boardOffY]);
+}
+
+function clientToBoard(cx, cy){
+  const rect = getBoardRect();
+  return [cx - rect.left, cy - rect.top];
+}
+
+function findSlotAtPoint(cx, cy){
+  const [bx, by] = clientToBoard(cx, cy);
+  const rect = getBoardRect();
+  if(bx<0||by<0||bx>rect.width||by>rect.height) return null;
+
+  return currentPuzzle.slots.find(slot => {
+    if(placedPieces[slot.id]) return false;
+    const pts = getBoardPts(slot);
+    return pointInPolygon(bx, by, pts);
+  }) || null;
+}
+
+function slotCenter(slot){
+  const pts = getBoardPts(slot);
+  const rect = getBoardRect();
+  const cx = pts.reduce((s,p)=>s+p[0],0)/pts.length + rect.left;
+  const cy = pts.reduce((s,p)=>s+p[1],0)/pts.length + rect.top;
+  return {cx,cy};
+}
+
+function highlightNearestSlot(clientX, clientY){
+  // find nearest empty slot
+  clearSlotHighlights();
+  const slot = findSlotAtPoint(clientX, clientY);
+  if(slot){
+    const pts = getBoardPts(slot);
+    const canvas=$('board-canvas'), ctx=canvas.getContext('2d');
+    ctx.save();
+    ctx.beginPath();
+    pts.forEach(([x,y],i)=>i===0?ctx.moveTo(x,y):ctx.lineTo(x,y));
+    ctx.closePath();
+    ctx.fillStyle=slot.color+'66';
+    ctx.strokeStyle=slot.color;
+    ctx.lineWidth=3;
+    ctx.fill(); ctx.stroke();
+    ctx.restore();
+  }
+}
+
+function clearSlotHighlights(){ drawBoard(false); }
+
+function tryDrop(clientX, clientY, pieceId){
+  const slot = findSlotAtPoint(clientX, clientY);
+
+  // check if this piece belongs to this slot
+  // For this puzzle design, pieceId matches slotId
+  const isCorrect = slot && slot.id === pieceId;
+
+  // also try nearest slot if not directly over (more forgiving for kids)
+  let targetSlot = slot;
+  if(!targetSlot){
+    // find closest slot center
+    let minDist=Infinity;
+    const [bx,by]=clientToBoard(clientX,clientY);
+    const rect=getBoardRect();
+    if(bx>=-80&&by>=-80&&bx<=rect.width+80&&by<=rect.height+80){
+      currentPuzzle.slots.forEach(s=>{
+        if(placedPieces[s.id]) return;
+        const pts=getBoardPts(s);
+        const scx=pts.reduce((a,p)=>a+p[0],0)/pts.length;
+        const scy=pts.reduce((a,p)=>a+p[1],0)/pts.length;
+        const d=Math.hypot(bx-scx,by-scy);
+        if(d<minDist&&d<boardScale*40){minDist=d;targetSlot=s;}
+      });
+    }
+  }
+
+  if(!targetSlot){
+    // dropped outside board — bounce back
+    showFb('Thả vào khung màu nhé! 😊','hint');
+    return;
+  }
+
+  if(targetSlot.id === pieceId){
+    // CORRECT
+    placedPieces[pieceId] = true;
+    const pw=$(`pw-${pieceId}`);
+    if(pw) pw.classList.add('placed');
+    drawBoard(false);
+    score++;
+    confettiBurst();
+
+    const total = currentPuzzle.pieces.length;
+    const placed = Object.keys(placedPieces).length;
+    if(placed===total){
+      // ALL PLACED — puzzle complete!
+      completedLevels[currentPuzzle.id]=true;
+      $('success-overlay').style.display='flex';
+      $('btn-hint').style.display='none';
+      showFb('Ghép xong rồi! Tuyệt vời! 🎉🎉','ok');
+      confettiShower();
+      setTimeout(()=>{ $('btn-next').style.display='block'; },600);
+    } else {
+      showFb(`Đúng rồi! Còn ${total-placed} mảnh nữa! 👍`,'ok');
+      setTimeout(()=>showFb('',''),1200);
+    }
+  } else {
+    // WRONG SLOT
+    showFb(`Chưa đúng! Thử mảnh "${targetSlot.label||''}" khác nhé 😊`,'err');
+    setTimeout(()=>showFb('',''),1000);
+  }
+}
+
+/* ============================================================
+   HINT
+   ============================================================ */
+function showHint(){
+  hintShown=true;
+  drawBoard(true);
+  showFb('💡 Các ô màu là nơi đặt mảnh tương ứng!','hint');
+  $('btn-hint').textContent='✓ Đã xem';
+  $('btn-hint').style.opacity='.5';
+  setTimeout(()=>{drawBoard(false);showFb('','');},2500);
+}
+
+/* ============================================================
+   NEXT / REPLAY
+   ============================================================ */
+function nextLevel(){
+  const idx = PUZZLES.findIndex(p=>p.id===currentPuzzle.id);
+  const next = PUZZLES[idx+1];
+  if(next) loadPuzzle(next.id);
+  else { buildLevelList(); show('start'); }
+}
+function replayLevel(){ loadPuzzle(currentPuzzle.id); }
+
+/* ============================================================
+   FEEDBACK
+   ============================================================ */
+function showFb(msg, type){
+  const el=$('fb-msg'); el.textContent=msg; el.className='fb-msg '+(type||'');
+}
+
+/* ============================================================
+   CONFETTI
+   ============================================================ */
+function confettiBurst(){
+  for(let i=0;i<16;i++){
+    const el=document.createElement('div');el.className='cp';
+    const sz=5+Math.random()*8;
+    el.style.cssText=`width:${sz}px;height:${sz}px;background:${CC[Math.floor(Math.random()*CC.length)]};
+      left:${20+Math.random()*60}%;top:${20+Math.random()*50}%;
+      border-radius:${Math.random()>.5?'50%':'3px'};
+      animation-duration:${.6+Math.random()*.7}s;animation-delay:${Math.random()*.1}s;`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),1800);
+  }
+}
+function confettiShower(){
+  for(let i=0;i<50;i++){
+    const el=document.createElement('div');el.className='cp';
+    const sz=5+Math.random()*10;
+    el.style.cssText=`width:${sz}px;height:${sz}px;background:${CC[Math.floor(Math.random()*CC.length)]};
+      left:${Math.random()*100}%;top:${Math.random()*60}%;
+      border-radius:${Math.random()>.5?'50%':'3px'};
+      animation-duration:${.8+Math.random()*1}s;animation-delay:${Math.random()*.4}s;`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),2200);
+  }
+}
+
+/* ============================================================
+   RESIZE HANDLER
+   ============================================================ */
+window.addEventListener('resize',()=>{
+  if(currentPuzzle&&$('game').classList.contains('on')) sizeBoard();
+});
+
+/* INIT */
+buildLevelList();
+</script>
+</body>
+</html>
