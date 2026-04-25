@@ -77,7 +77,7 @@ body{background:var(--sun-bg);}
 .wx-big{font-size:4.5rem;line-height:1;filter:drop-shadow(0 4px 12px rgba(0,0,0,.12));
   animation:wxBob 2.5s ease-in-out infinite;}
 @keyframes wxBob{0%,100%{transform:scale(1);}50%{transform:scale(1.07);}}
-.wx-name{font-size:1.2rem;font-weight:900;}
+.wx-name{font-size:1.2rem;font-weight:900;text-align:center;}
 .wx-desc{font-size:.78rem;font-weight:700;color:var(--muted);text-align:center;}
 .wx-temp{font-size:.82rem;font-weight:800;padding:4px 14px;border-radius:20px;background:rgba(0,0,0,.07);}
 
@@ -100,7 +100,6 @@ body{background:var(--sun-bg);}
 .cloth-btn.wrong{border-color:#EF4444;background:#FEF2F2;animation:clothErr .38s ease;}
 .cloth-btn.wrong .cbadge{display:flex;background:#EF4444;}
 @keyframes clothErr{0%,100%{transform:translateX(0);}25%{transform:translateX(-8px);}75%{transform:translateX(8px);}}
-.cloth-btn.dimmed{opacity:.25;pointer-events:none;}
 
 .g1-fb{text-align:center;font-size:.92rem;font-weight:900;min-height:24px;color:transparent;flex-shrink:0;}
 .g1-fb.ok{color:#10B981;}.g1-fb.err{color:#EF4444;}
@@ -184,35 +183,33 @@ body{background:var(--sun-bg);}
 <body>
 <div id="dc"></div>
 
-<!-- START -->
 <div id="start" class="scr on">
   <div class="s-sky"><span>☀️</span><span>🌧️</span><span>❄️</span><span>🌸</span></div>
   <div class="s-title">
     <h1>Thời Tiết & Trang Phục</h1>
-    <p>Chọn đồ phù hợp với thời tiết và mùa!</p>
+    <p>Cùng cười bò với những món đồ kỳ cục nhé!</p>
   </div>
   <div class="mode-grid">
     <div class="mode-card on" id="m1" onclick="setMode(1,this)">
       <div class="mc-ico">👚</div>
-      <h3>Ghép Trang Phục</h3>
-      <p>Chọn đồ phù hợp với thời tiết hôm nay</p>
+      <h3>Mặc Đồ Troll</h3>
+      <p>Chọn đồ đúng, tránh xa đồ "ngớ ngẩn"!</p>
     </div>
     <div class="mode-card" id="m2" onclick="setMode(2,this)">
       <div class="mc-ico">🌸</div>
-      <h3>Xếp Theo Mùa</h3>
-      <p>Kéo thả đồ vật vào đúng mùa trong năm</p>
+      <h3>Giải Mã 4 Mùa</h3>
+      <p>Phân loại các hiện tượng siêu buồn cười</p>
     </div>
   </div>
-  <button class="go-btn" onclick="startGame()">Bắt đầu! 🚀</button>
+  <button class="go-btn" onclick="startGame()">Bắt đầu chơi! 🚀</button>
 </div>
 
-<!-- GAME 1: GHÉP TRANG PHỤC -->
 <div id="g1" class="scr">
   <div class="hud">
     <button class="btn-back" onclick="goStart()">◂</button>
     <div class="hud-mid">
       <div class="hud-prog"><div class="hud-prog-fill" id="g1-prog"></div></div>
-      <div class="hud-meta" id="g1-meta">Câu 1/10</div>
+      <div class="hud-meta" id="g1-meta">Câu 1/8</div>
     </div>
     <div class="hud-score" id="g1-sc">0 ⭐</div>
   </div>
@@ -222,13 +219,12 @@ body{background:var(--sun-bg);}
     <div class="wx-desc" id="wx-desc"></div>
     <div class="wx-temp" id="wx-temp"></div>
   </div>
-  <div class="g1-instr">Chọn <strong>tất cả</strong> trang phục phù hợp với thời tiết này!</div>
+  <div class="g1-instr">Chọn <strong>tất cả</strong> trang phục đúng! (Nhớ đừng chọn nhầm đồ ngốc nghếch nha 😜)</div>
   <div class="clothes-pool"><div class="clothes-grid" id="clothes-grid"></div></div>
   <div class="g1-fb" id="g1-fb"></div>
   <button class="btn-next" id="g1-nx" onclick="nextG1()">Câu tiếp theo →</button>
 </div>
 
-<!-- GAME 2: XẾP THEO MÙA -->
 <div id="g2" class="scr">
   <div class="hud">
     <button class="btn-back" onclick="goStart()">◂</button>
@@ -246,7 +242,6 @@ body{background:var(--sun-bg);}
   <button class="btn-next" id="g2-nx" onclick="nextG2()" style="margin-bottom:.6rem;background:linear-gradient(135deg,#10B981,#0EA5E9);">Câu tiếp →</button>
 </div>
 
-<!-- RESULT -->
 <div id="result" class="scr">
   <div class="res-ico" id="res-ico"></div>
   <div class="res-h1" id="res-h1"></div>
@@ -262,48 +257,38 @@ body{background:var(--sun-bg);}
 
 <script>
 /* ============================================================
-   DATA
+   DATA - Đã thêm tính hài hước và tư duy
    ============================================================ */
 const WEATHERS = [
-  {id:'sunny',ico:'☀️',name:'Trời nắng đẹp',desc:'Nắng vàng rực rỡ, không có mây',temp:'30–35°C',
-   correct:['👙','🩳','👒','🕶️','🩴'],
-   wrong:['🧥','🧣','🧤','☂️','🥾'],
+  {id:'sunny',ico:'☀️',name:'Nắng há cả mồm 🥵',desc:'Mặt trời chói chang, mồ hôi ướt đẫm!',temp:'35–40°C',
+   correct:['🩳','👒','🕶️','💧','👙'],
+   wrong:['🧥','🧣','🥾','🔥','🐧'],
    bg:'#FFF9E6',accent:'#F59E0B',prog:'#FB923C',fx:'sun'},
-  {id:'rainy',ico:'🌧️',name:'Trời mưa to',desc:'Mưa rào, sấm sét, đường ướt',temp:'22–26°C',
-   correct:['☂️','🧥','🥾','🧤'],
-   wrong:['👒','🕶️','👙','🩴','🩳'],
+  {id:'rainy',ico:'🌧️',name:'Mưa ướt nhẹp bẹp bẹp 🐸',desc:'Trời mưa rào rào, ếch kêu ộp ộp!',temp:'22–26°C',
+   correct:['☂️','🧥','🥾','🐸'],
+   wrong:['👒','🕶️','👙','🪁','🩴'],
    bg:'#EEF4FF',accent:'#3B82F6',prog:'#60A5FA',fx:'rain'},
-  {id:'cold',ico:'🌨️',name:'Trời lạnh buốt',desc:'Gió lạnh, nhiệt độ thấp, rét cắt da',temp:'5–12°C',
-   correct:['🧥','🧣','🧤','🥾','🎩'],
-   wrong:['👙','🩳','🩴','🕶️','👒'],
+  {id:'cold',ico:'🌨️',name:'Răng va lập cập 🥶',desc:'Gió thổi vù vù, lạnh run người!',temp:'5–12°C',
+   correct:['🧥','🧣','🧤','🔥','🥾'],
+   wrong:['👙','🩳','🩴','🍦','🍉'],
    bg:'#E8F4FF',accent:'#0EA5E9',prog:'#38BDF8',fx:'cold'},
-  {id:'snow',ico:'❄️',name:'Trời có tuyết',desc:'Tuyết rơi trắng xóa, rất lạnh',temp:'-5–3°C',
-   correct:['🧥','🧣','🧤','🥾','🎿'],
-   wrong:['👙','🩳','🩴','👒','🕶️'],
+  {id:'snow',ico:'❄️',name:'Tuyết trắng xóa ⛄',desc:'Cùng ra ngoài đắp người tuyết mũi cà rốt nào!',temp:'-5–0°C',
+   correct:['🧥','🧣','🧤','🎿','⛄'],
+   wrong:['👙','🕶️','🩴','🌺','🍉'],
    bg:'#F0F7FF',accent:'#6366F1',prog:'#818CF8',fx:'snow'},
-  {id:'windy',ico:'💨',name:'Có gió mạnh',desc:'Gió lớn thổi liên tục, bụi mù',temp:'18–24°C',
-   correct:['🧥','🧣','👒','🥾'],
-   wrong:['👙','🩳','🕶️','🩴'],
-   bg:'#F0FDF4',accent:'#10B981',prog:'#34D399',fx:'wind'},
-  {id:'spring',ico:'🌸',name:'Mùa xuân ấm áp',desc:'Hoa nở rộ, gió nhẹ dễ chịu',temp:'20–25°C',
-   correct:['👗','🧣','👟','🌂'],
-   wrong:['🧤','🎿','👙','🧥'],
-   bg:'#F0FDF4',accent:'#10B981',prog:'#34D399',fx:'spring'},
-  {id:'autumn',ico:'🍂',name:'Mùa thu se lạnh',desc:'Lá vàng rụng, trời se lạnh',temp:'15–20°C',
-   correct:['🧥','🧣','👟','🎩'],
-   wrong:['👙','🩳','🩴','🎿'],
-   bg:'#FFF7ED',accent:'#F97316',prog:'#FB923C',fx:'autumn'},
-  {id:'hot',ico:'🌡️',name:'Nắng猛 猛nóng',desc:'Ngày hè oi bức, nhiệt độ cao',temp:'36–40°C',
-   correct:['🩳','👒','🕶️','🩴','💧'],
-   wrong:['🧥','🧣','🧤','🥾'],
-   bg:'#FFF9E6',accent:'#EF4444',prog:'#F87171',fx:'sun'},
+  {id:'windy',ico:'💨',name:'Gió thổi bay nhà 🌪️',desc:'Ui da! Gió thổi bay cả mũ rồi kìa!',temp:'18–24°C',
+   correct:['🧥','🧣','🥾','🪁'],
+   wrong:['👙','🩳','☂️','👒'], /* Ô dù sẽ bị gió thổi lật ngược */
+   bg:'#F0FDF4',accent:'#10B981',prog:'#34D399',fx:'wind'}
 ];
 
-const ALL_CLOTHES = ['👙','🩳','👒','🕶️','🩴','🧥','🧣','🧤','☂️','🥾','👗','👟','🌂','🎩','🎿','💧'];
+/* Cập nhật tên đồ vật cực tấu hài */
 const CLOTH_NAMES = {
-  '👙':'Áo tắm','🩳':'Quần đùi','👒':'Mũ rộng vành','🕶️':'Kính râm','🩴':'Dép lê',
-  '🧥':'Áo khoác','🧣':'Khăn quàng','🧤':'Găng tay','☂️':'Ô dù','🥾':'Bốt','👗':'Váy',
-  '👟':'Giày thể thao','🌂':'Ô nhỏ','🎩':'Mũ phớt','🎿':'Ván trượt tuyết','💧':'Nước uống'
+  '👙':'Áo tắm bikini','🩳':'Quần cộc hoa','👒':'Mũ siêu to','🕶️':'Kính ngầu lòi','🩴':'Dép tổ ong',
+  '🧥':'Áo khoác chăn dạ','🧣':'Khăn quàng ấm','🧤':'Găng tay len','☂️':'Ô dù che mưa','🥾':'Bốt lội nước',
+  '👗':'Váy múa xòe','👟':'Giày siêu tốc','🌂':'Ô nhỏ xíu','🎩':'Mũ ảo thuật','🎿':'Ván trượt tuyết',
+  '💧':'Nước đá lạnh','🔥':'Lò sưởi ấm','🍦':'Kem chảy nước','🍉':'Dưa hấu bự','🐸':'Ếch xanh','🪁':'Diều giấy',
+  '🌺':'Hoa râm bụt','⛄':'Người tuyết','🐧':'Chim cánh cụt'
 };
 
 const SEASONS = [
@@ -313,60 +298,37 @@ const SEASONS = [
   {id:'winter',ico:'❄️',name:'Mùa Đông',color:'#6366F1'},
 ];
 
-/* Each G2 question: show a mix of items, drop to correct season */
+/* Các câu hỏi kích thích tư duy vòng & logic hài hước */
 const G2_QS = [
-  {task:'Kéo đồ vào đúng mùa trong năm!',
+  {task:'Ai đang làm gì ở mùa nào đây ta? 🤔',
    items:[
-     {e:'🌸',n:'Hoa anh đào',s:'spring'},{e:'🌻',n:'Hướng dương',s:'summer'},
-     {e:'🍁',n:'Lá phong đỏ',s:'autumn'},{e:'⛄',n:'Người tuyết',s:'winter'},
-     {e:'🐣',n:'Gà con nở',s:'spring'},{e:'🏖️',n:'Bãi biển',s:'summer'},
+     {e:'🎅',n:'Ông già Noel phát quà',s:'winter'},{e:'🏖️',n:'Cua kẹp ngón chân trên cát',s:'summer'},
+     {e:'🦋',n:'Bướm bay tung tăng',s:'spring'},{e:'🧹',n:'Quét lá mỏi cả tay',s:'autumn'}
    ]},
-  {task:'Những thứ này thuộc mùa nào?',
+  {task:'Đồ ăn này sinh ra cho mùa nào? 😋',
    items:[
-     {e:'🧣',n:'Khăn quàng',s:'winter'},{e:'👙',n:'Áo tắm',s:'summer'},
-     {e:'🌷',n:'Hoa tulip',s:'spring'},{e:'🍂',n:'Lá rụng',s:'autumn'},
-     {e:'☃️',n:'Xây người tuyết',s:'winter'},{e:'🍦',n:'Kem mát lạnh',s:'summer'},
+     {e:'🍦',n:'Kem chảy be bét',s:'summer'},{e:'🍠',n:'Khoai nướng thổi phù phù',s:'winter'},
+     {e:'🍉',n:'Dưa hấu bự chà bá',s:'summer'},{e:'🥮',n:'Bánh trung thu',s:'autumn'}
    ]},
-  {task:'Xếp đồ vật vào đúng mùa!',
+  {task:'Nghe tiếng gì lạ thế nhỉ? 👂',
    items:[
-     {e:'❄️',n:'Tuyết rơi',s:'winter'},{e:'🏄',n:'Lướt sóng',s:'summer'},
-     {e:'🌱',n:'Cây nảy mầm',s:'spring'},{e:'🎃',n:'Bí ngô Halloween',s:'autumn'},
-     {e:'🧤',n:'Găng tay',s:'winter'},{e:'☀️',n:'Nắng chói chang',s:'summer'},
+     {e:'🐸',n:'Ếch kêu ộp ộp gọi mưa',s:'spring'},{e:'🥶',n:'Răng va vào nhau cộp cộp',s:'winter'},
+     {e:'🥵',n:'Mồ hôi rơi tí tách',s:'summer'},{e:'🌬️',n:'Gió rít rụng hết lá',s:'autumn'}
    ]},
-  {task:'Con biết mùa nào có những thứ này không?',
+  {task:'Mang nhầm đồ là tiêu đời nha! 😬',
    items:[
-     {e:'🌺',n:'Hoa nở rộ',s:'spring'},{e:'🏕️',n:'Cắm trại',s:'summer'},
-     {e:'🍎',n:'Thu hoạch táo',s:'autumn'},{e:'🎿',n:'Trượt tuyết',s:'winter'},
-     {e:'🐝',n:'Ong bay',s:'spring'},{e:'🌊',n:'Đi bơi',s:'summer'},
+     {e:'🧣',n:'Quàng khăn kẻo viêm họng',s:'winter'},{e:'👙',n:'Mặc bikini đi bơi',s:'summer'},
+     {e:'🌷',n:'Cầm hoa đi chơi Tết',s:'spring'},{e:'🍁',n:'Nhặt lá phong ép vở',s:'autumn'}
    ]},
-  {task:'Trang phục này mặc vào mùa nào?',
+  {task:'Động vật làm gì vào các mùa? 🐾',
    items:[
-     {e:'🧥',n:'Áo khoác dày',s:'winter'},{e:'👗',n:'Váy mỏng',s:'summer'},
-     {e:'🌂',n:'Ô nhỏ',s:'spring'},{e:'👟',n:'Giày nhẹ',s:'autumn'},
-     {e:'🥾',n:'Bốt da',s:'winter'},{e:'🩳',n:'Quần đùi',s:'summer'},
-   ]},
-  {task:'Thiên nhiên mùa nào đây?',
-   items:[
-     {e:'🌿',n:'Cỏ xanh mướt',s:'spring'},{e:'🥵',n:'Nóng bức',s:'summer'},
-     {e:'🍃',n:'Lá vàng ráo',s:'autumn'},{e:'🌬️',n:'Gió lạnh buốt',s:'winter'},
-     {e:'🐛',n:'Sâu bướm',s:'spring'},{e:'🌅',n:'Hoàng hôn đẹp',s:'autumn'},
-   ]},
-  {task:'Hoạt động nào vào mùa nào?',
-   items:[
-     {e:'⛷️',n:'Trượt tuyết',s:'winter'},{e:'🏊',n:'Bơi lội',s:'summer'},
-     {e:'🌸',n:'Ngắm hoa',s:'spring'},{e:'🎑',n:'Ngắm lá đỏ',s:'autumn'},
-     {e:'🔥',n:'Sưởi lửa',s:'winter'},{e:'🤿',n:'Lặn biển',s:'summer'},
-   ]},
-  {task:'Đồ ăn nào của mùa nào?',
-   items:[
-     {e:'🍓',n:'Dâu tây',s:'spring'},{e:'🍉',n:'Dưa hấu',s:'summer'},
-     {e:'🍎',n:'Quả táo đỏ',s:'autumn'},{e:'🍊',n:'Quít ngọt',s:'winter'},
-     {e:'🌽',n:'Ngô nướng',s:'summer'},{e:'🍁',n:'Xi-rô cây phong',s:'autumn'},
-   ]},
+     {e:'🐻',n:'Gấu béo ngủ ngáy o o',s:'winter'},{e:'🦟',n:'Muỗi chích sưng cục',s:'summer'},
+     {e:'🐣',n:'Gà con mới nở',s:'spring'},{e:'🐿️',n:'Sóc giấu hạt dẻ',s:'autumn'}
+   ]}
 ];
 
 /* ============================================================
-   STATE
+   STATE & CORE FUNCTIONS
    ============================================================ */
 const $=id=>document.getElementById(id);
 const shuffle=a=>{const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;};
@@ -431,27 +393,22 @@ function spawnFX(type,accent){
   }
 }
 
-/* body bg */
 function setBg(color){document.body.style.background=color;}
-
-/* ============================================================
-   NAVIGATION
-   ============================================================ */
 function show(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));$(id).classList.add('on');}
 
 function startGame(){
   score=0;qNum=0;answered=false;
   if(gameMode===1){
-    TOTAL=8;wxPool=shuffle([...WEATHERS]);
+    TOTAL=5;wxPool=shuffle([...WEATHERS]);
     show('g1');nextG1();
   } else {
-    TOTAL=8;g2Pool=shuffle([...G2_QS]);
+    TOTAL=5;g2Pool=shuffle([...G2_QS]);
     show('g2');nextG2();
   }
 }
 
 /* ============================================================
-   GAME 1: GHÉP TRANG PHỤC
+   GAME 1: GHÉP TRANG PHỤC (Đã sửa lỗi iPad)
    ============================================================ */
 let currentWX=null, correctSet=new Set();
 
@@ -467,25 +424,23 @@ function nextG1(){
   currentWX=wxPool[qNum%wxPool.length];
   correctSet=new Set(currentWX.correct);
 
-  // set bg & fx
   setBg(currentWX.bg);
   $('g1-prog').style.background=`linear-gradient(90deg,${currentWX.accent},${currentWX.prog})`;
   $('g1-sc').style.color=currentWX.accent;
   spawnFX(currentWX.fx,currentWX.accent);
 
-  // scene
   $('wx-ico').textContent=currentWX.ico;
   $('wx-name').textContent=currentWX.name;$('wx-name').style.color=currentWX.accent;
   $('wx-desc').textContent=currentWX.desc;
   $('wx-temp').textContent=`🌡️ ${currentWX.temp}`;
 
-  // build clothes options: correct + wrong mixed, limit to 8
   const pool=shuffle([...currentWX.correct,...currentWX.wrong.slice(0,8-currentWX.correct.length)]).slice(0,8);
   const grid=$('clothes-grid');grid.innerHTML='';
   pool.forEach(e=>{
     const btn=document.createElement('div');btn.className='cloth-btn';
     btn.innerHTML=`<div class="cbadge" id="cb-${e}">✓</div><div class="ce">${e}</div><div class="ct">${CLOTH_NAMES[e]||e}</div>`;
-    btn.addEventListener('pointerdown',ev=>{ev.preventDefault();tapCloth(e,btn);},{passive:false});
+    /* ĐÃ SỬA: Dùng onclick chuẩn thay vì pointerdown chặn event */
+    btn.onclick = () => tapCloth(e, btn);
     grid.appendChild(btn);
   });
 }
@@ -494,35 +449,35 @@ function tapCloth(e,btn){
   if(answered)return;
   const isCorrect=correctSet.has(e);
   if(isCorrect){
-    if(btn.classList.contains('correct'))return; // already selected
+    if(btn.classList.contains('correct'))return; 
     btn.classList.add('correct');
     btn.querySelector('.cbadge').textContent='✓';
     selectedClothes.add(e);
-    // check if all correct picked
+    
     const allPicked=[...correctSet].every(c=>selectedClothes.has(c));
     if(allPicked){
       answered=true;score++;qNum++;
       $('g1-sc').textContent=score+' ⭐';
-      $('g1-fb').textContent='Chọn đúng hết rồi! Tuyệt vời! 🎉';$('g1-fb').className='g1-fb ok';
+      $('g1-fb').textContent='Cười xỉu! Con chọn chuẩn quá! 🎉';$('g1-fb').className='g1-fb ok';
       confetti();
       setTimeout(()=>$('g1-nx').style.display='block',400);
     } else {
-      $('g1-fb').textContent=`Đúng! Còn ${correctSet.size-selectedClothes.size} đồ nữa...`;
+      $('g1-fb').textContent=`Đúng rồi! Cứu, còn thiếu ${correctSet.size-selectedClothes.size} món nữa!`;
       $('g1-fb').className='g1-fb ok';
     }
   } else {
     btn.classList.add('wrong');
     btn.querySelector('.cbadge').textContent='✗';
-    $('g1-fb').textContent='Cái này không phù hợp! Thử lại 😊';$('g1-fb').className='g1-fb err';
+    $('g1-fb').textContent='Ối giời ơi sai rồi! Thử lại nha 😂';$('g1-fb').className='g1-fb err';
     setTimeout(()=>{btn.classList.remove('wrong');btn.querySelector('.cbadge').textContent='✗';},800);
   }
 }
 
 /* ============================================================
-   GAME 2: SORT BY SEASON
+   GAME 2: XẾP MÙA (Đã sửa lỗi iPad Drag & Drop)
    ============================================================ */
 let G2={items:[],placed:{},done:false};
-let DRAG={on:false,idx:-1,zone:null};
+let DRAG={on:false,idx:-1,zone:null,moved:false,sx:0,sy:0};
 
 function nextG2(){
   if(qNum>=TOTAL){endGame();return;}
@@ -535,22 +490,20 @@ function nextG2(){
 
   const q=g2Pool[qNum%g2Pool.length];
   G2.items=shuffle([...q.items]);
-  $('sort-task').innerHTML=`<strong>Nhiệm vụ:</strong> ${q.task}`;
+  $('sort-task').innerHTML=`<strong>Phá án:</strong> ${q.task}`;
 
-  // banner (show general header)
-  $('sb-inner').innerHTML=`<div class="sb-ico">🌍</div><div class="sb-text"><h3>4 Mùa Trong Năm</h3><p>Kéo thả đồ vật vào đúng mùa!</p></div>`;
+  $('sb-inner').innerHTML=`<div class="sb-ico">🌍</div><div class="sb-text"><h3>4 Mùa Tấu Hài</h3><p>Kéo đồ vật vào đúng mùa của nó!</p></div>`;
   setBg('#F8FAFC');spawnFX('autumn','#F97316');
 
-  // render pool
   const pool=$('s2-pool');pool.innerHTML='';
   G2.items.forEach((it,i)=>{
     const d=document.createElement('div');d.className='drag-item';d.id=`di${i}`;d.textContent=it.e;
     d.title=it.n;
-    d.addEventListener('pointerdown',e=>{e.preventDefault();startDrag(e,i);},{passive:false});
+    /* ĐÃ SỬA: Bỏ preventDefault() chặn click */
+    d.addEventListener('pointerdown',e=>{startDrag(e,i);},{passive:false});
     pool.appendChild(d);
   });
 
-  // render season zones
   const sr=$('seasons-row');sr.innerHTML='';
   SEASONS.forEach(s=>{
     const z=document.createElement('div');z.className='season-zone';z.dataset.zone=s.id;z.id=`sz-${s.id}`;
@@ -560,10 +513,10 @@ function nextG2(){
   });
 }
 
-/* DRAG ENGINE */
+/* DRAG ENGINE (Tối ưu cho iPad) */
 function startDrag(e,idx){
   if(G2.placed[idx]!==undefined)return;
-  DRAG={on:true,idx,zone:null};
+  DRAG={on:true,idx,zone:null,moved:false,sx:e.clientX,sy:e.clientY};
   const it=G2.items[idx];
   const dc=$('dc');dc.textContent=it.e;dc.style.display='block';
   moveClone(e);
@@ -573,7 +526,12 @@ function startDrag(e,idx){
   window.addEventListener('pointercancel',onDU);
 }
 function onDM(e){
-  if(!DRAG.on)return;e.preventDefault();
+  if(!DRAG.on)return;
+  /* Nếu di chuyển ngón tay > 5px thì mới tính là Kéo (chặn cuộn trang) */
+  if (Math.abs(e.clientX - DRAG.sx) > 5 || Math.abs(e.clientY - DRAG.sy) > 5) {
+      DRAG.moved = true;
+      e.preventDefault(); 
+  }
   moveClone(e);
   const dc=$('dc');dc.style.display='none';
   const u=document.elementFromPoint(e.clientX,e.clientY);
@@ -589,10 +547,10 @@ function onDU(){
   $('dc').style.display='none';
   document.querySelectorAll('.season-zone').forEach(el=>el.classList.remove('hi'));
   const src=$('di'+DRAG.idx);if(src)src.classList.remove('dragging');
-  if(DRAG.zone&&G2.placed[DRAG.idx]===undefined){
+  if(DRAG.zone && G2.placed[DRAG.idx]===undefined && DRAG.moved){
     placeSeason(DRAG.idx,DRAG.zone);
   }
-  DRAG.on=false;
+  setTimeout(() => { DRAG.on = false; }, 50);
 }
 function moveClone(e){const dc=$('dc');dc.style.left=(e.clientX-24)+'px';dc.style.top=(e.clientY-24)+'px';}
 
@@ -601,12 +559,10 @@ function placeSeason(idx,zoneId){
   const it=G2.items[idx];
   const src=$('di'+idx);if(src)src.style.display='none';
 
-  // add to zone display
   const zItems=$('szit-'+zoneId);if(zItems)zItems.innerHTML+=`<span title="${it.n}">${it.e}</span>`;
   const zCnt=$('szcnt-'+zoneId);
   if(zCnt)zCnt.textContent=Object.values(G2.placed).filter(z=>z===zoneId).length;
 
-  // check done
   if(Object.keys(G2.placed).length===G2.items.length){
     G2.done=true;
     let correct=0;
@@ -615,7 +571,7 @@ function placeSeason(idx,zoneId){
     if(allOk){score++;confetti();}
     qNum++;
     $('g2-sc').textContent=score+' ⭐';
-    $('s2-fb').textContent=allOk?`Xếp đúng hết! Tuyệt vời! 🎉`:`${correct}/${G2.items.length} đúng! Cố thêm nhé 😊`;
+    $('s2-fb').textContent=allOk?`Con làm thám tử được rồi đó! Xuất sắc! 🕵️‍♀️🎉`:`Đúng ${correct}/${G2.items.length}! Lần sau ráng né mấy món lừa nha 😂`;
     $('s2-fb').className='s2-fb '+(allOk?'ok':'err');
     setTimeout(()=>$('g2-nx').style.display='block',500);
   }
@@ -639,19 +595,16 @@ function endGame(){
   clearFX();setBg('#FFF9E6');show('result');
   const pct=score/TOTAL;
   let ico,h1,sub;
-  if(pct>=.9){ico='🏆';h1='Thời trang số 1!';sub='Con chọn đồ cực kỳ giỏi!';}
-  else if(pct>=.7){ico='⭐';h1='Giỏi lắm!';sub='Con đã hiểu thời tiết tốt rồi!';}
-  else if(pct>=.5){ico='😊';h1='Cố gắng lắm!';sub='Luyện thêm sẽ giỏi hơn nhé!';}
-  else{ico='💪';h1='Tiếp tục nhé!';sub='Quan sát kỹ thời tiết trước khi chọn đồ!';}
+  if(pct>=.9){ico='🏆';h1='Vua Thời Tiết!';sub='Con là chuyên gia bắt bài thời tiết rồi đấy! Quá dữ!';}
+  else if(pct>=.7){ico='⭐';h1='Giỏi quá chừng!';sub='Tư duy siêu bén! Chỉ nhầm một tẹo thôi!';}
+  else if(pct>=.5){ico='😊';h1='Rất cố gắng!';sub='Khó lừa con nhỉ! Cùng chơi lại cho nhớ lâu nha!';}
+  else{ico='😂';h1='Cười vỡ bụng!';sub='Lần sau nhớ đừng mặc bikini ra nặn người tuyết nha!';}
   $('res-ico').textContent=ico;$('res-h1').textContent=h1;$('res-sub').textContent=sub;
   $('res-big').textContent=score+' / '+TOTAL;
   confetti();
 }
 
-/* prevent double-tap zoom */
-document.addEventListener('touchend',e=>{
-  if(e.target.closest('.cloth-btn,.go-btn,.mode-card,.btn-next,.rb,.btn-back'))e.preventDefault();
-},{passive:false});
+/* ĐÃ XÓA: Lệnh chặn touchend gây lỗi Safari iPad */
 </script>
 </body>
 </html>
