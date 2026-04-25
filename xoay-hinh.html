@@ -13,7 +13,8 @@
   --white:#E2EDF8;--muted:#4E6A88;
   --rad:22px;--radsm:14px;
 }
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none;}
+/* Đã thêm touch-action:manipulation vào đây để fix lỗi iPad */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none;touch-action:manipulation;}
 html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Nunito',system-ui,sans-serif;color:var(--white);}
 
 /* cosmic bg */
@@ -190,7 +191,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;
 </head>
 <body>
 
-<!-- ====== START ====== -->
 <div id="start" class="scr on">
   <div class="s-spinner">
     <svg viewBox="0 0 120 120" width="120" height="120">
@@ -218,7 +218,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;
   <button class="go-btn" onclick="startGame()">Bắt đầu! 🚀</button>
 </div>
 
-<!-- ====== GAME A: FIND MATCHING ====== -->
 <div id="gA" class="scr">
   <div class="hud">
     <button class="btn-back" onclick="goStart()">◂</button>
@@ -242,7 +241,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;
   </div>
 </div>
 
-<!-- ====== GAME B: SPIN TO MATCH ====== -->
 <div id="gB" class="scr">
   <div class="hud">
     <button class="btn-back" onclick="goStart()">◂</button>
@@ -272,7 +270,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;
     <div class="fb-msg" id="B-fb"></div>
     <button class="btn-next" id="B-nx" onclick="nextB()">Tiếp theo →</button>
   </div>
-  <!-- target reference (small, always visible) -->
   <div style="position:absolute;top:72px;right:14px;display:flex;flex-direction:column;align-items:center;gap:3px;z-index:10;">
     <div style="font-size:.6rem;font-weight:800;color:var(--muted);">MỤC TIÊU</div>
     <div style="background:rgba(251,191,36,.12);border:2px solid rgba(251,191,36,.4);border-radius:12px;padding:6px;">
@@ -281,7 +278,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;
   </div>
 </div>
 
-<!-- ====== RESULT ====== -->
 <div id="result" class="scr">
   <div class="res-ico" id="res-ico"></div>
   <div class="res-h1" id="res-h1"></div>
@@ -672,9 +668,9 @@ function endGame(){
 
 /* init */
 renderPreview();
-document.addEventListener('touchend',e=>{
-  if(e.target.closest('.opt-card,.go-btn,.mpill,.btn-next,.rb,.btn-back,.spin-btn,.spin-confirm'))e.preventDefault();
-},{passive:false});
+
+/* ĐÃ XÓA ĐOẠN JS GÂY KẸT TRÊN IPAD Ở ĐÂY */
+
 </script>
 </body>
 </html>
