@@ -44,7 +44,6 @@ body{background:radial-gradient(ellipse at 20% 10%,#FFF0E6,#FEF9F0 50%,#EBF5FF);
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 
 /* ---- GAME CARD ---- */
-/* Dùng div + onclick thay vì <a href> để tránh lỗi Safari iPad */
 .gc{
   background:var(--card);border-radius:var(--r);padding:1rem .9rem;
   display:flex;align-items:center;gap:11px;
@@ -95,11 +94,11 @@ body{background:radial-gradient(ellipse at 20% 10%,#FFF0E6,#FEF9F0 50%,#EBF5FF);
   <div class="hero">
     <span class="emo">🌟</span>
     <h1>Bé Học Tư Duy</h1>
-    <p>15 game · Không cần internet · Tối ưu iPad</p>
+    <p>16 game · Không cần internet · Tối ưu iPad</p>
   </div>
 
   <div class="stats-bar">
-    <div class="stat-chip"><div class="sv">15</div><div class="sl">Tổng game</div></div>
+    <div class="stat-chip"><div class="sv">16</div><div class="sl">Tổng game</div></div>
     <div class="stat-chip"><div class="sv">4</div><div class="sl">Chủ đề</div></div>
     <div class="stat-chip"><div class="sv">100%</div><div class="sl">Offline</div></div>
   </div>
@@ -107,18 +106,17 @@ body{background:radial-gradient(ellipse at 20% 10%,#FFF0E6,#FEF9F0 50%,#EBF5FF);
   <div class="howto">
     <h4>📱 Cách dùng trên iPad / iPhone</h4>
     <ol>
-      <li>Mở link này bằng <strong>Safari</strong> trên iPad</li>
+      <li>Mở link này bằng <strong>Safari</strong> trên thiết bị</li>
       <li>Bấm vào game bất kỳ để bắt đầu chơi</li>
       <li>Bấm <strong>◂</strong> trong game để quay về menu</li>
       <li>Thêm vào màn hình chính: bấm <strong>Chia sẻ → Thêm vào màn hình chính</strong></li>
     </ol>
   </div>
 
-  <!-- ===== SỐ HỌC ===== -->
   <div class="section">
     <div class="section-header">
       <div class="section-title">🔢 Số học &amp; Toán cơ bản</div>
-      <div class="section-count">6 game · 1 file</div>
+      <div class="section-count">6 game · File: be-hoc-toan-v2.html</div>
     </div>
     <div class="grid">
 
@@ -161,11 +159,10 @@ body{background:radial-gradient(ellipse at 20% 10%,#FFF0E6,#FEF9F0 50%,#EBF5FF);
     </div>
   </div>
 
-  <!-- ===== TƯ DUY LOGIC ===== -->
   <div class="section">
     <div class="section-header">
       <div class="section-title">🔮 Tư duy logic &amp; Quy luật</div>
-      <div class="section-count">4 game · 4 file</div>
+      <div class="section-count">4 game</div>
     </div>
     <div class="grid">
 
@@ -196,17 +193,22 @@ body{background:radial-gradient(ellipse at 20% 10%,#FFF0E6,#FEF9F0 50%,#EBF5FF);
     </div>
   </div>
 
-  <!-- ===== KHÔNG GIAN ===== -->
   <div class="section">
     <div class="section-header">
       <div class="section-title">🧩 Không gian &amp; Hình học</div>
-      <div class="section-count">3 game · 3 file</div>
+      <div class="section-count">4 game</div>
     </div>
     <div class="grid">
 
       <div class="gc c9" onclick="go('xoay-hinh.html')">
         <div class="ico">🔄</div>
         <div class="info"><h3>Xoay Hình</h3><p>Nhận dạng hình sau khi xoay</p><span class="badge duo">2 chế độ</span></div>
+        <span class="arr">›</span>
+      </div>
+      
+      <div class="gc c12" onclick="go('tangram.html')">
+        <div class="ico">🔺</div>
+        <div class="info"><h3>Xếp Hình Tangram</h3><p>Ghép hình từ 7 mảnh</p><span class="badge new">Mới</span></div>
         <span class="arr">›</span>
       </div>
 
@@ -218,18 +220,17 @@ body{background:radial-gradient(ellipse at 20% 10%,#FFF0E6,#FEF9F0 50%,#EBF5FF);
 
       <div class="gc c3" onclick="go('me-cung.html')">
         <div class="ico">🗺️</div>
-        <div class="info"><h3>Mê Cung Định Hướng</h3><p>Trái phải trên dưới</p><span class="badge duo">2 chế độ</span></div>
+        <div class="info"><h3>Mê Cung</h3><p>Trái phải trên dưới</p><span class="badge duo">2 chế độ</span></div>
         <span class="arr">›</span>
       </div>
 
     </div>
   </div>
 
-  <!-- ===== THIÊN NHIÊN ===== -->
   <div class="section">
     <div class="section-header">
       <div class="section-title">🌿 Thiên nhiên &amp; Thế giới</div>
-      <div class="section-count">2 game · 2 file</div>
+      <div class="section-count">2 game</div>
     </div>
     <div class="grid">
 
@@ -241,33 +242,31 @@ body{background:radial-gradient(ellipse at 20% 10%,#FFF0E6,#FEF9F0 50%,#EBF5FF);
 
       <div class="gc c3" onclick="go('tim-khac.html')">
         <div class="ico">🐾</div>
-        <div class="info"><h3>Phân Loại Sinh Vật</h3><p>Động vật · Thực phẩm · Thiên nhiên</p><span class="badge nat">6 chủ đề</span></div>
+        <div class="info"><h3>Phân Loại Sinh Vật</h3><p>Động vật · Thực phẩm...</p><span class="badge nat">6 chủ đề</span></div>
         <span class="arr">›</span>
       </div>
 
     </div>
   </div>
 
-  <!-- FILE TABLE -->
   <div class="file-table">
-    <h4>📁 Danh sách file trong repo GitHub</h4>
+    <h4>📁 Cấu trúc thư mục hiện tại</h4>
     <div class="ft-row"><span class="fg">🌟</span><span class="fn">index.html</span><span>Menu chính (file này)</span></div>
-    <div class="ft-row"><span class="fg">🔢</span><span class="fn">be-hoc-toan-v2.html</span><span>6 game số học</span></div>
-    <div class="ft-row"><span class="fg">🔁</span><span class="fn">quy-luat.html</span><span>Tìm quy luật dãy hình</span></div>
+    <div class="ft-row"><span class="fg">🔢</span><span class="fn">be-hoc-toan-v2.html</span><span>Bộ 6 game toán học (Bản mới)</span></div>
+    <div class="ft-row"><span class="fg">🔢</span><span class="fn">be-hoc-toan.html</span><span>Bộ game toán học (Bản cũ)</span></div>
     <div class="ft-row"><span class="fg">🎭</span><span class="fn">ma-tran.html</span><span>Ma trận 3×3</span></div>
-    <div class="ft-row"><span class="fg">🔍</span><span class="fn">tim-khac.html</span><span>Tìm vật khác nhau</span></div>
-    <div class="ft-row"><span class="fg">🧠</span><span class="fn">suy-luan.html</span><span>Suy luận nhân quả</span></div>
-    <div class="ft-row"><span class="fg">🌤️</span><span class="fn">thoi-tiet.html</span><span>Thời tiết &amp; mùa</span></div>
-    <div class="ft-row"><span class="fg">🔄</span><span class="fn">xoay-hinh.html</span><span>Xoay hình nhận dạng</span></div>
-    <div class="ft-row"><span class="fg">🪞</span><span class="fn">doi-xung.html</span><span>Hình đối xứng gương</span></div>
     <div class="ft-row"><span class="fg">🗺️</span><span class="fn">me-cung.html</span><span>Mê cung định hướng</span></div>
+    <div class="ft-row"><span class="fg">🧠</span><span class="fn">suy-luan.html</span><span>Suy luận nhân quả</span></div>
+    <div class="ft-row"><span class="fg">🔺</span><span class="fn">tangram.html</span><span>Xếp hình Tangram</span></div>
+    <div class="ft-row"><span class="fg">🌤️</span><span class="fn">thoi-tiet.html</span><span>Thời tiết &amp; mùa</span></div>
+    <div class="ft-row"><span class="fg">🔍</span><span class="fn">tim-khac.html</span><span>Tìm vật khác nhau</span></div>
+    <div class="ft-row"><span class="fg">🔄</span><span class="fn">xoay-hinh.html</span><span>Xoay hình nhận dạng</span></div>
   </div>
 
-  <div class="footer">✨ 15 game · 10 file HTML · Chạy hoàn toàn offline · Không quảng cáo</div>
+  <div class="footer">✨ 16 game · Chạy hoàn toàn offline · Không quảng cáo</div>
 </div>
 
 <script>
-// Dùng window.location.href thay vì <a href> để đảm bảo hoạt động trên Safari iPad
 function go(url) {
   window.location.href = url;
 }
