@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Tìm Quy Luật</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FEF9F0; --card: #fff; --tx: #1E1E2E; 
+    --primary: #38BDF8; --success: #44BE5A; --error: #E84444;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    background: var(--bg); font-family: 'Nunito', sans-serif;
+    color: var(--tx); height: 100vh; display: flex; flex-direction: column;
+    overflow: hidden; user-select: none; -webkit-user-select: none;
+  }
+  
+  /* Header */
+  .header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 15px 20px; background: var(--card); box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  }
+  .back-btn {
+    font-size: 1.2rem; font-weight: 800; color: #6B6B80; text-decoration: none;
+    background: #f0f4f8; padding: 8px 16px; border-radius: 20px; border: none; cursor: pointer;
+  }
+  .back-btn:active { transform: scale(0.95); }
+  .title { font-size: 1.4rem; font-weight: 900; color: var(--primary); }
+  .stars { font-size: 1.5rem; letter-spacing: 2px; }
+
+  /* Game Area */
+  .game-area {
+    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 20px; width: 100%; max-width: 800px; margin: 0 auto;
+  }
+  
+  .instruction { font-size: 1.4rem; font-weight: 800; color: #6B6B80; margin-bottom: 30px; text-align: center; }
+
+  /* Pattern Row */
+  .pattern-row { display: flex; gap: 15px; margin-bottom: 50px; flex-wrap: wrap; justify-content: center; }
+  .box {
+    width: 80px; height: 80px; background: var(--card); border-radius: 20px;
+    display: flex; align-items: center; justify-content: center; font-size: 3.5rem;
+    box-shadow: 0 6px 0 #E2E8F0; border: 3px solid #E2E8F0; transition: all 0.3s;
+  }
+  .box.question {
+    background: #FFF0E6; border-color: #FF6B35; color: #FF6B35; border-style: dashed;
+    box-shadow: none; font-weight: 900; font-size: 3rem;
+  }
+  
+  /* Options */
+  .options-row { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+  .option {
+    width: 90px; height: 90px; background: var(--card); border-radius: 25px;
+    display: flex; align-items: center; justify-content: center; font-size: 4rem;
+    box-shadow: 0 8px 0 #E2E8F0; border: 3px solid #E2E8F0; cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s;
+  }
+  .option:active { transform: translateY(8px); box-shadow: 0 0 0 #E2E8F0; }
+
+  /* Animations & States */
+  .correct-ans { border-color: var(--success); background: #D6F5DC; animation: bounce 0.6s ease; }
+  .wrong-ans { border-color: var(--error); background: #FFE5D8; animation: shake 0.4s ease; }
+  
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+  }
+  @keyframes bounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+  }
+
+  /* Victory Screen */
+  .victory {
+    display: none; flex-direction: column; align-items: center; justify-content: center;
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(254, 249, 240, 0.95); z-index: 10;
+  }
+  .victory h1 { font-size: 3rem; color: #FF6B35; margin-bottom: 20px; animation: bounce 1s infinite; }
+  .replay-btn {
+    font-size: 1.5rem; font-weight: 800; background: var(--success); color: white;
+    padding: 15px 40px; border-radius: 30px; border: none; cursor: pointer;
+    box-shadow: 0 6px 0 #2A9440; font-family: 'Nunito', sans-serif;
+  }
+  .replay-btn:active { transform: translateY(6px); box-shadow: 0 0 0 #2A9440; }
+
+  /* Responsive for smaller screens */
+  @media (max-width: 600px) {
+    .box { width: 60px; height: 60px; font-size: 2.5rem; }
+    .box.question { font-size: 2rem; }
+    .option { width: 75px; height: 75px; font-size: 3rem; }
+    .instruction { font-size: 1.1rem; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="header">
+    <button class="back-btn" onclick="window.location.href='index.html'">◂ Quay lại</button>
+    <div class="title">Tìm Quy Luật</div>
+    <div class="stars" id="star-display"></div>
+  </div>
+
+  <div class="game-area">
+    <div class="instruction">Hình nào sẽ tiếp theo nhỉ? Bé chọn bên dưới nhé 👇</div>
+    
+    <div class="pattern-row" id="pattern-container">
+      </div>
+
+    <div class="options-row" id="options-container">
+      </div>
+  </div>
+
+  <div class="victory" id="victory-screen">
+    <h1>🎉 Bé Giỏi Quá! 🌟</h1>
+    <button class="replay-btn" onclick="initGame()">Chơi lại nhé</button>
+  </div>
+
+<script>
+  // Kho dữ liệu các bài toán quy luật (Tăng dần độ khó)
+  const allLevels = [
+    { pattern: ['🍎', '🍌', '🍎', '🍌', '🍎'], answer: '🍌', options: ['🍎', '🍌', '🍇'] }, // ABAB
+    { pattern: ['🐶', '🐱', '🐶', '🐱', '🐶'], answer: '🐱', options: ['🐷', '🐱', '🐶'] }, // ABAB
+    { pattern: ['🚗', '🚗', '🚌', '🚗', '🚗'], answer: '🚌', options: ['🚌', '🚗', '✈️'] }, // AABAAB
+    { pattern: ['🔴', '🔵', '🟡', '🔴', '🔵'], answer: '🟡', options: ['🔴', '🟡', '🔵'] }, // ABCABC
+    { pattern: ['🌞', '🌙', '⭐', '🌞', '🌙'], answer: '⭐', options: ['🌙', '🌞', '⭐'] }, // ABCABC
+    { pattern: ['🍉', '🍉', '🍓', '🍓', '🍉'], answer: '🍉', options: ['🍓', '🍉', '🥝'] }, // AABBAA
+    { pattern: ['🐸', '🐒', '🐒', '🐸', '🐒'], answer: '🐒', options: ['🐸', '🐒', '🐯'] }  // ABBABB
+  ];
+
+  let currentLevelIndex = 0;
+  let gameLevels = [];
+  let isAnimating = false;
+
+  const patternContainer = document.getElementById('pattern-container');
+  const optionsContainer = document.getElementById('options-container');
+  const starDisplay = document.getElementById('star-display');
+  const victoryScreen = document.getElementById('victory-screen');
+
+  // Trộn mảng ngẫu nhiên (Fisher-Yates)
+  function shuffle(array) {
+    let currentIndex = array.length, randomIndex;
+    while (currentIndex != 0) {
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+      [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+    }
+    return array;
+  }
+
+  function initGame() {
+    // Lấy 5 câu hỏi ngẫu nhiên mỗi lần chơi
+    gameLevels = shuffle([...allLevels]).slice(0, 5);
+    currentLevelIndex = 0;
+    victoryScreen.style.display = 'none';
+    updateStars();
+    loadLevel();
+  }
+
+  function updateStars() {
+    starDisplay.innerHTML = '⭐'.repeat(currentLevelIndex);
+  }
+
+  function loadLevel() {
+    isAnimating = false;
+    patternContainer.innerHTML = '';
+    optionsContainer.innerHTML = '';
+    
+    const levelData = gameLevels[currentLevelIndex];
+
+    // Render dãy hình
+    levelData.pattern.forEach(emoji => {
+      const box = document.createElement('div');
+      box.className = 'box';
+      box.innerText = emoji;
+      patternContainer.appendChild(box);
+    });
+
+    // Render ô chứa dấu chấm hỏi
+    const questionBox = document.createElement('div');
+    questionBox.className = 'box question';
+    questionBox.innerText = '?';
+    questionBox.id = 'target-box';
+    patternContainer.appendChild(questionBox);
+
+    // Render các đáp án (xáo trộn vị trí)
+    const shuffledOptions = shuffle([...levelData.options]);
+    shuffledOptions.forEach(emoji => {
+      const opt = document.createElement('div');
+      opt.className = 'option';
+      opt.innerText = emoji;
+      opt.onclick = () => checkAnswer(opt, emoji, levelData.answer);
+      optionsContainer.appendChild(opt);
+    });
+  }
+
+  function checkAnswer(element, selectedEmoji, correctEmoji) {
+    if (isAnimating) return; // Khóa click khi đang chạy hiệu ứng
+
+    const targetBox = document.getElementById('target-box');
+
+    if (selectedEmoji === correctEmoji) {
+      isAnimating = true;
+      element.classList.add('correct-ans');
+      targetBox.innerText = selectedEmoji;
+      targetBox.classList.remove('question');
+      targetBox.classList.add('correct-ans');
+
+      // Đợi 1 giây rồi qua bài mới
+      setTimeout(() => {
+        currentLevelIndex++;
+        updateStars();
+        if (currentLevelIndex < gameLevels.length) {
+          loadLevel();
+        } else {
+          showVictory();
+        }
+      }, 1000);
+
+    } else {
+      // Đáp án sai
+      isAnimating = true;
+      element.classList.add('wrong-ans');
+      
+      setTimeout(() => {
+        element.classList.remove('wrong-ans');
+        isAnimating = false;
+      }, 500); // 500ms tương ứng thời gian rung
+    }
+  }
+
+  function showVictory() {
+    victoryScreen.style.display = 'flex';
+  }
+
+  // Bắt đầu game khi tải trang
+  window.onload = initGame;
+
+</script>
+</body>
+</html>
