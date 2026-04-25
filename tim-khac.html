@@ -13,7 +13,7 @@
   --white:#EEF2F7;--muted:#6C8099;
   --rad:22px;--radsm:14px;
 }
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none;}
 html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Nunito',system-ui,sans-serif;color:var(--white);}
 
 /* animated star bg */
@@ -26,26 +26,26 @@ body::before{content:'';position:fixed;inset:0;
   pointer-events:none;}
 
 /* SCREENS */
-.scr{display:none;position:fixed;inset:0;flex-direction:column;align-items:center;}
+.scr{display:none;position:fixed;inset:0;flex-direction:column;align-items:center;overflow-y:auto;-webkit-overflow-scrolling:touch;}
 .scr.on{display:flex;}
 
 /* ===== START ===== */
-#start{justify-content:center;gap:1.6rem;padding:2rem 1.4rem;}
-.s-blob{width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,var(--b),var(--p));display:flex;align-items:center;justify-content:center;font-size:4rem;box-shadow:0 0 40px rgba(17,138,178,.5);animation:blobPulse 3s ease-in-out infinite;}
+#start{justify-content:flex-start;gap:1.2rem;padding:2rem 1.4rem;}
+.s-blob{width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,var(--b),var(--p));display:flex;align-items:center;justify-content:center;font-size:3rem;box-shadow:0 0 40px rgba(17,138,178,.5);animation:blobPulse 3s ease-in-out infinite; flex-shrink: 0;}
 @keyframes blobPulse{0%,100%{transform:scale(1);box-shadow:0 0 40px rgba(17,138,178,.5);}50%{transform:scale(1.06);box-shadow:0 0 60px rgba(17,138,178,.7);}};
-.s-title{text-align:center;}
-.s-title h1{font-size:2.2rem;font-weight:900;color:var(--y);letter-spacing:-.5px;}
-.s-title p{font-size:.95rem;color:var(--muted);margin-top:5px;font-weight:700;}
-.cat-label{font-size:.75rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
-.cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;max-width:380px;}
-.cat-btn{padding:10px 14px;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;border-radius:30px;border:2px solid rgba(255,255,255,.12);background:rgba(255,255,255,.07);color:var(--white);cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .15s;}
+.s-title{text-align:center; flex-shrink: 0;}
+.s-title h1{font-size:1.8rem;font-weight:900;color:var(--y);letter-spacing:-.5px;}
+.s-title p{font-size:.9rem;color:var(--muted);margin-top:5px;font-weight:700;}
+.cat-label{font-size:.75rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px; flex-shrink: 0; margin-top: 10px;}
+.cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;max-width:400px; flex-shrink: 0;}
+.cat-btn{padding:10px 12px;font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:800;border-radius:30px;border:2px solid rgba(255,255,255,.12);background:rgba(255,255,255,.07);color:var(--white);cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .15s;}
 .cat-btn.on{border-color:var(--y);background:rgba(255,209,102,.15);color:var(--y);}
 .cat-btn:active{transform:scale(.95);}
-.go-btn{padding:18px 52px;font-family:'Nunito',sans-serif;font-size:1.25rem;font-weight:900;border:none;border-radius:40px;background:linear-gradient(135deg,var(--y),var(--o));color:#0D1B2A;cursor:pointer;box-shadow:0 8px 28px rgba(255,209,102,.4);transition:transform .12s;}
+.go-btn{padding:16px 40px;font-family:'Nunito',sans-serif;font-size:1.2rem;font-weight:900;border:none;border-radius:40px;background:linear-gradient(135deg,var(--y),var(--o));color:#0D1B2A;cursor:pointer;box-shadow:0 8px 28px rgba(255,209,102,.4);transition:transform .12s; margin-top: 15px; margin-bottom: 30px; flex-shrink: 0;}
 .go-btn:active{transform:scale(.94);}
 
 /* ===== GAME ===== */
-#game{justify-content:space-between;padding:0;}
+#game{justify-content:space-between;padding:0;overflow:hidden;}
 
 /* HUD */
 .hud{width:100%;display:flex;align-items:center;gap:10px;padding:.8rem 1.2rem .4rem;flex-shrink:0;}
@@ -93,7 +93,7 @@ body::before{content:'';position:fixed;inset:0;
 .reason-box .r-why{font-size:.72rem;color:var(--muted);margin-top:3px;}
 
 /* NEXT BTN */
-.next-area{width:100%;padding:.6rem 1.2rem .9rem;flex-shrink:0;display:flex;justify-content:center;}
+.next-area{width:100%;padding:.6rem 1.2rem .9rem;flex-shrink:0;display:flex;justify-content:center; min-height: 70px;}
 .btn-next{padding:14px 48px;font-family:'Nunito',sans-serif;font-size:1.05rem;font-weight:900;border:none;border-radius:30px;background:linear-gradient(135deg,var(--g),var(--b));color:#fff;cursor:pointer;box-shadow:0 6px 20px rgba(6,214,160,.35);display:none;transition:transform .1s;}
 .btn-next:active{transform:scale(.95);}
 
@@ -129,19 +129,17 @@ body::before{content:'';position:fixed;inset:0;
 </head>
 <body>
 
-<!-- START -->
 <div id="start" class="scr on">
   <div class="s-blob">🔍</div>
   <div class="s-title">
     <h1>Tìm Vật Khác!</h1>
     <p>Chọn hình không cùng nhóm với các hình còn lại</p>
   </div>
-  <div class="cat-label">Chủ đề muốn luyện:</div>
+  <div class="cat-label">Chọn 1 hoặc nhiều chủ đề:</div>
   <div class="cat-grid" id="cat-grid"></div>
-  <button class="go-btn" onclick="startGame()">Bắt đầu! 🚀</button>
+  <button class="go-btn" onclick="startGame()">Bắt đầu chơi! 🚀</button>
 </div>
 
-<!-- GAME -->
 <div id="game" class="scr">
   <div class="hud">
     <button class="btn-back" onclick="goStart()">◂</button>
@@ -165,7 +163,6 @@ body::before{content:'';position:fixed;inset:0;
   </div>
 </div>
 
-<!-- RESULT -->
 <div id="result" class="scr">
   <div class="res-ring" id="res-ring"></div>
   <div class="res-h1" id="res-h1"></div>
@@ -174,80 +171,99 @@ body::before{content:'';position:fixed;inset:0;
   <div class="score-card"><div class="score-big" id="score-big"></div><div class="score-lbl">Điểm số</div></div>
   <div class="res-btns">
     <button class="rb pri" onclick="startGame()">Chơi lại 🔁</button>
-    <button class="rb sec" onclick="goStart()">Trang chủ</button>
+    <button class="rb sec" onclick="goStart()">Menu chính</button>
   </div>
 </div>
 
 <script>
-/* ===== DATA ===== */
+/* ===== DATA VỚI 10 CHỦ ĐỀ & CÂU HỎI LẦY LỘI ===== */
 const CATS = {
   animals: {
     label:'🐾 Động vật', color:'#06D6A0',
     q: [
-      {items:[{e:'🐶',n:'Chó'},{e:'🐱',n:'Mèo'},{e:'🐸',n:'Ếch'},{e:'🍎',n:'Táo'}],odd:3,reason:'🍎 Táo là thực vật',why:'Ba con kia đều là động vật'},
-      {items:[{e:'🦁',n:'Sư tử'},{e:'🐯',n:'Hổ'},{e:'🐘',n:'Voi'},{e:'🐠',n:'Cá'}],odd:3,reason:'🐠 Cá sống dưới nước',why:'Ba con kia sống trên cạn'},
-      {items:[{e:'🦋',n:'Bướm'},{e:'🐦',n:'Chim'},{e:'🦅',n:'Đại bàng'},{e:'🐢',n:'Rùa'}],odd:3,reason:'🐢 Rùa không biết bay',why:'Ba con kia đều có thể bay'},
-      {items:[{e:'🐮',n:'Bò'},{e:'🐷',n:'Heo'},{e:'🐔',n:'Gà'},{e:'🦊',n:'Cáo'}],odd:3,reason:'🦊 Cáo là động vật hoang dã',why:'Ba con kia là vật nuôi trong nhà'},
-      {items:[{e:'🐬',n:'Cá heo'},{e:'🦈',n:'Cá mập'},{e:'🐙',n:'Bạch tuộc'},{e:'🐘',n:'Voi'}],odd:3,reason:'🐘 Voi sống trên cạn',why:'Ba con kia sống dưới nước'},
-      {items:[{e:'🦁',n:'Sư tử'},{e:'🐯',n:'Hổ'},{e:'🐻',n:'Gấu'},{e:'🐹',n:'Chuột hamster'}],odd:3,reason:'🐹 Chuột hamster là vật nuôi',why:'Ba con kia là thú hoang dã nguy hiểm'},
-      {items:[{e:'🦜',n:'Vẹt'},{e:'🦚',n:'Công'},{e:'🦩',n:'Hồng hạc'},{e:'🐊',n:'Cá sấu'}],odd:3,reason:'🐊 Cá sấu là bò sát',why:'Ba con kia đều là loài chim'},
+      {items:[{e:'🐶',n:'Chó'},{e:'🐱',n:'Mèo'},{e:'🐰',n:'Thỏ'},{e:'🚁',n:'Trực thăng'}],odd:3,reason:'🚁 Trực thăng chạy bằng xăng chứ đâu có ăn cỏ!',why:'Ba bạn kia đều là động vật dễ thương'},
+      {items:[{e:'🐟',n:'Cá'},{e:'🦀',n:'Cua'},{e:'🦑',n:'Mực'},{e:'🐈',n:'Mèo'}],odd:3,reason:'🐈 Mèo rất sợ nước nha!',why:'Ba bạn kia đều bơi tung tăng dưới nước'},
+      {items:[{e:'🦅',n:'Đại bàng'},{e:'🦉',n:'Cú mèo'},{e:'🦇',n:'Dơi'},{e:'🐢',n:'Rùa'}],odd:3,reason:'🐢 Rùa mang mai nặng lắm, sao mà bay được!',why:'Ba bạn kia đều biết bay trên trời'},
+      {items:[{e:'🐄',n:'Bò sữa'},{e:'🐖',n:'Heo'},{e:'🐓',n:'Gà'},{e:'🦖',n:'Khủng long'}],odd:3,reason:'🦖 Khủng long tuyệt chủng từ lâu rồi!',why:'Ba bạn kia sống ở nông trại hiền lành'},
     ]
   },
   food: {
-    label:'🍎 Thực phẩm', color:'#FFD166',
+    label:'🍎 Đồ ăn', color:'#FFD166',
     q: [
-      {items:[{e:'🍎',n:'Táo'},{e:'🍌',n:'Chuối'},{e:'🍇',n:'Nho'},{e:'🥕',n:'Cà rốt'}],odd:3,reason:'🥕 Cà rốt là rau củ',why:'Ba loại kia đều là trái cây'},
-      {items:[{e:'🍕',n:'Pizza'},{e:'🍔',n:'Burger'},{e:'🌮',n:'Taco'},{e:'🍓',n:'Dâu tây'}],odd:3,reason:'🍓 Dâu tây là trái cây',why:'Ba loại kia đều là đồ ăn nhanh'},
-      {items:[{e:'🥦',n:'Bông cải'},{e:'🥕',n:'Cà rốt'},{e:'🌽',n:'Bắp'},{e:'🍰',n:'Bánh kem'}],odd:3,reason:'🍰 Bánh kem là đồ ngọt',why:'Ba loại kia đều là rau củ'},
-      {items:[{e:'🍊',n:'Cam'},{e:'🍋',n:'Chanh'},{e:'🍈',n:'Dưa lưới'},{e:'🍇',n:'Nho'}],odd:3,reason:'🍈 Dưa lưới vị ngọt',why:'Ba loại kia đều có vị chua'},
-      {items:[{e:'🍦',n:'Kem'},{e:'🍩',n:'Bánh donut'},{e:'🍫',n:'Sô-cô-la'},{e:'🥦',n:'Bông cải'}],odd:3,reason:'🥦 Bông cải là rau',why:'Ba loại kia đều là đồ ngọt'},
-      {items:[{e:'🥚',n:'Trứng'},{e:'🥛',n:'Sữa'},{e:'🧀',n:'Phô mai'},{e:'🍞',n:'Bánh mì'}],odd:3,reason:'🍞 Bánh mì là ngũ cốc',why:'Ba loại kia đến từ động vật'},
-      {items:[{e:'🍜',n:'Mì'},{e:'🍚',n:'Cơm'},{e:'🍝',n:'Pasta'},{e:'🍎',n:'Táo'}],odd:3,reason:'🍎 Táo là trái cây',why:'Ba loại kia đều là món bột/tinh bột'},
+      {items:[{e:'🍕',n:'Pizza'},{e:'🍔',n:'Burger'},{e:'🌭',n:'Xúc xích'},{e:'👟',n:'Đôi giày'}],odd:3,reason:'👟 Giày có mùi hôi lắm, không ăn được đâu! 🤢',why:'Ba món kia ăn rất ngon lành'},
+      {items:[{e:'🍎',n:'Táo'},{e:'🍌',n:'Chuối'},{e:'🍉',n:'Dưa hấu'},{e:'🍗',n:'Đùi gà'}],odd:3,reason:'🍗 Đùi gà là thịt mà!',why:'Ba món kia đều là trái cây thơm ngọt'},
+      {items:[{e:'🍦',n:'Kem'},{e:'🧊',n:'Đá viên'},{e:'🍧',n:'Đá bào'},{e:'🔥',n:'Lửa'}],odd:3,reason:'🔥 Lửa nóng bỏng tay, ăn vào là khóc nhè!',why:'Ba món kia đều lạnh buốt'},
+      {items:[{e:'🥛',n:'Sữa'},{e:'🧃',n:'Nước ép'},{e:'🍵',n:'Trà'},{e:'🥨',n:'Bánh quy'}],odd:3,reason:'🥨 Bánh quy phải nhai rộp rộp!',why:'Ba món kia đều là đồ uống để hút'},
     ]
   },
   vehicles: {
-    label:'🚗 Phương tiện', color:'#118AB2',
+    label:'🚗 Xe cộ', color:'#118AB2',
     q: [
-      {items:[{e:'🚗',n:'Ô tô'},{e:'🚌',n:'Xe buýt'},{e:'🚂',n:'Tàu hỏa'},{e:'✈️',n:'Máy bay'}],odd:3,reason:'✈️ Máy bay bay trên trời',why:'Ba loại kia đi trên đường'},
-      {items:[{e:'🚢',n:'Tàu thủy'},{e:'🛥️',n:'Ca nô'},{e:'⛵',n:'Thuyền buồm'},{e:'🚁',n:'Trực thăng'}],odd:3,reason:'🚁 Trực thăng bay trên không',why:'Ba loại kia di chuyển trên nước'},
-      {items:[{e:'🚲',n:'Xe đạp'},{e:'🛵',n:'Xe máy'},{e:'🚗',n:'Ô tô'},{e:'🚀',n:'Tên lửa'}],odd:3,reason:'🚀 Tên lửa bay vào vũ trụ',why:'Ba loại kia đi trên đường phố'},
-      {items:[{e:'🚒',n:'Xe cứu hỏa'},{e:'🚑',n:'Xe cứu thương'},{e:'🚓',n:'Xe cảnh sát'},{e:'🛳️',n:'Du thuyền'}],odd:3,reason:'🛳️ Du thuyền đi trên biển',why:'Ba loại kia đều là xe khẩn cấp'},
-      {items:[{e:'🚁',n:'Trực thăng'},{e:'✈️',n:'Máy bay'},{e:'🛩️',n:'Phi cơ nhỏ'},{e:'🚂',n:'Tàu hỏa'}],odd:3,reason:'🚂 Tàu hỏa đi trên đất',why:'Ba loại kia đều bay trên không'},
+      {items:[{e:'🚗',n:'Ô tô'},{e:'🚌',n:'Xe buýt'},{e:'🛵',n:'Xe máy'},{e:'🛋️',n:'Ghế sofa'}],odd:3,reason:'🛋️ Ghế sofa ngồi êm nhưng không có bánh xe để chạy!',why:'Ba món kia đều là xe đi trên đường'},
+      {items:[{e:'🚢',n:'Tàu thủy'},{e:'🚤',n:'Ca nô'},{e:'⛵',n:'Thuyền buồm'},{e:'🚂',n:'Tàu hỏa'}],odd:3,reason:'🚂 Tàu hỏa lọt xuống nước là chìm nghỉm!',why:'Ba phương tiện kia nổi trên mặt nước'},
+      {items:[{e:'🚒',n:'Xe cứu hỏa'},{e:'🚑',n:'Cứu thương'},{e:'🚓',n:'Xe cảnh sát'},{e:'🛺',n:'Xe ba gác'}],odd:3,reason:'🛺 Xe ba gác chỉ đi chở hàng thôi!',why:'Ba xe kia đều rú còi hú inh ỏi khi làm nhiệm vụ'},
     ]
   },
   nature: {
     label:'🌿 Thiên nhiên', color:'#9B5DE5',
     q: [
-      {items:[{e:'🌹',n:'Hoa hồng'},{e:'🌻',n:'Hướng dương'},{e:'🌷',n:'Tulip'},{e:'🌵',n:'Xương rồng'}],odd:3,reason:'🌵 Xương rồng không có hoa đẹp',why:'Ba loại kia đều là hoa đẹp'},
-      {items:[{e:'☀️',n:'Mặt trời'},{e:'🌙',n:'Mặt trăng'},{e:'⭐',n:'Ngôi sao'},{e:'🌧️',n:'Mưa'}],odd:3,reason:'🌧️ Mưa là hiện tượng thời tiết',why:'Ba loại kia là thiên thể trên bầu trời'},
-      {items:[{e:'🌊',n:'Sóng biển'},{e:'🏔️',n:'Núi'},{e:'🌋',n:'Núi lửa'},{e:'🌪️',n:'Lốc xoáy'}],odd:3,reason:'🌪️ Lốc xoáy là hiện tượng thời tiết',why:'Ba loại kia là địa hình'},
-      {items:[{e:'🌸',n:'Hoa anh đào'},{e:'🍁',n:'Lá phong'},{e:'🍂',n:'Lá thu'},{e:'🌿',n:'Cỏ xanh'}],odd:3,reason:'🌿 Cỏ xanh là mùa xuân',why:'Ba loại kia gợi nhớ mùa thu'},
-      {items:[{e:'🌈',n:'Cầu vồng'},{e:'⚡',n:'Sấm sét'},{e:'❄️',n:'Tuyết'},{e:'🌳',n:'Cây xanh'}],odd:3,reason:'🌳 Cây xanh không phải thời tiết',why:'Ba loại kia đều là hiện tượng thời tiết'},
+      {items:[{e:'☀️',n:'Mặt trời'},{e:'🌙',n:'Mặt trăng'},{e:'⭐',n:'Ngôi sao'},{e:'💡',n:'Bóng đèn'}],odd:3,reason:'💡 Bóng đèn là do con người chế tạo ra!',why:'Ba thứ kia ở tít trên bầu trời vũ trụ'},
+      {items:[{e:'🌲',n:'Cây thông'},{e:'🌳',n:'Cây cổ thụ'},{e:'🌴',n:'Cây dừa'},{e:'🥦',n:'Bông cải'}],odd:3,reason:'🥦 Bông cải tuy xanh nhưng bỏ vào nồi luộc được!',why:'Ba loại kia là cây thân gỗ khổng lồ'},
+      {items:[{e:'🌧️',n:'Mưa'},{e:'❄️',n:'Tuyết'},{e:'🌪️',n:'Lốc xoáy'},{e:'🚿',n:'Vòi sen'}],odd:3,reason:'🚿 Vòi sen ở trong phòng tắm nhà bé!',why:'Ba cái kia là hiện tượng thời tiết ngoài trời'},
     ]
   },
   shapes: {
     label:'🔷 Hình & Màu', color:'#EF476F',
     q: [
-      {items:[{e:'🔴',n:'Đỏ tròn'},{e:'🟡',n:'Vàng tròn'},{e:'🔵',n:'Xanh tròn'},{e:'🟩',n:'Xanh vuông'}],odd:3,reason:'🟩 Hình vuông xanh',why:'Ba hình kia đều là hình tròn'},
-      {items:[{e:'🟥',n:'Đỏ vuông'},{e:'🟧',n:'Cam vuông'},{e:'🟨',n:'Vàng vuông'},{e:'🔵',n:'Xanh tròn'}],odd:3,reason:'🔵 Hình tròn xanh',why:'Ba hình kia đều là hình vuông'},
-      {items:[{e:'🔴',n:'Đỏ'},{e:'🟥',n:'Đỏ đậm'},{e:'❤️',n:'Tim đỏ'},{e:'🔵',n:'Xanh'}],odd:3,reason:'🔵 Màu xanh',why:'Ba hình kia đều màu đỏ'},
-      {items:[{e:'⭐',n:'Sao vàng'},{e:'🌟',n:'Sao lấp lánh'},{e:'💫',n:'Sao xoay'},{e:'🔶',n:'Thoi cam'}],odd:3,reason:'🔶 Hình thoi',why:'Ba hình kia đều là ngôi sao'},
-      {items:[{e:'🟢',n:'Xanh tròn'},{e:'🟩',n:'Xanh vuông'},{e:'💚',n:'Xanh tim'},{e:'🔴',n:'Đỏ tròn'}],odd:3,reason:'🔴 Màu đỏ',why:'Ba hình kia đều màu xanh lá'},
+      {items:[{e:'🔴',n:'Đỏ tròn'},{e:'🟡',n:'Vàng tròn'},{e:'🔵',n:'Xanh tròn'},{e:'🟩',n:'Xanh vuông'}],odd:3,reason:'🟩 Xanh vuông có 4 góc nhọn!',why:'Ba hình kia tròn xoe lăn lông lốc'},
+      {items:[{e:'🟥',n:'Đỏ vuông'},{e:'🟧',n:'Cam vuông'},{e:'🟨',n:'Vàng vuông'},{e:'🔵',n:'Xanh tròn'}],odd:3,reason:'🔵 Xanh tròn không có góc nào hết!',why:'Ba hình kia đều là hình vuông'},
+      {items:[{e:'❤️',n:'Tim đỏ'},{e:'🍎',n:'Táo đỏ'},{e:'🍓',n:'Dâu đỏ'},{e:'🐸',n:'Ếch xanh'}],odd:3,reason:'🐸 Ếch xanh lè kêu ộp ộp!',why:'Ba món kia đều có màu đỏ rực'},
     ]
   },
   professions: {
     label:'👩‍⚕️ Nghề nghiệp', color:'#FF9F1C',
     q: [
-      {items:[{e:'👨‍⚕️',n:'Bác sĩ'},{e:'👩‍⚕️',n:'Y tá'},{e:'💊',n:'Thuốc'},{e:'👨‍🍳',n:'Đầu bếp'}],odd:3,reason:'👨‍🍳 Đầu bếp nấu ăn',why:'Ba người kia làm việc trong bệnh viện'},
-      {items:[{e:'👮',n:'Cảnh sát'},{e:'👨‍🚒',n:'Lính cứu hỏa'},{e:'🧑‍⚕️',n:'Cứu thương'},{e:'👨‍🎨',n:'Họa sĩ'}],odd:3,reason:'👨‍🎨 Họa sĩ vẽ tranh',why:'Ba người kia đều là nghề cứu hộ'},
-      {items:[{e:'👨‍🏫',n:'Thầy giáo'},{e:'👩‍🏫',n:'Cô giáo'},{e:'📚',n:'Sách'},{e:'👨‍🍳',n:'Đầu bếp'}],odd:3,reason:'👨‍🍳 Đầu bếp không dạy học',why:'Ba người/vật kia đều liên quan đến việc học'},
-      {items:[{e:'👨‍🌾',n:'Nông dân'},{e:'🌾',n:'Lúa mì'},{e:'🚜',n:'Máy cày'},{e:'✈️',n:'Máy bay'}],odd:3,reason:'✈️ Máy bay không liên quan đến nông nghiệp',why:'Ba hình kia đều liên quan đến nông trại'},
+      {items:[{e:'👨‍⚕️',n:'Bác sĩ'},{e:'👩‍⚕️',n:'Y tá'},{e:'🚑',n:'Cứu thương'},{e:'👨‍🍳',n:'Đầu bếp'}],odd:3,reason:'👨‍🍳 Đầu bếp cầm chảo chiên trứng, không biết khám bệnh!',why:'Ba hình kia đều làm việc trong bệnh viện'},
+      {items:[{e:'👨‍🏫',n:'Thầy giáo'},{e:'👩‍🏫',n:'Cô giáo'},{e:'📚',n:'Sách vở'},{e:'👨‍🚀',n:'Phi hành gia'}],odd:3,reason:'👨‍🚀 Phi hành gia bay tuốt lên mặt trăng rồi!',why:'Ba hình kia ở trong trường học của bé'},
+      {items:[{e:'👨‍🌾',n:'Nông dân'},{e:'🌾',n:'Lúa gạo'},{e:'🚜',n:'Máy cày'},{e:'💻',n:'Máy tính'}],odd:3,reason:'💻 Đem máy tính ra ruộng dính bùn hư mất!',why:'Ba thứ kia đều ở ngoài cánh đồng'},
+    ]
+  },
+  school: {
+    label:'✏️ Đồ học tập', color:'#48CAE4',
+    q: [
+      {items:[{e:'✏️',n:'Bút chì'},{e:'📏',n:'Cây thước'},{e:'✂️',n:'Cái kéo'},{e:'🍗',n:'Đùi gà'}],odd:3,reason:'🍗 Đùi gà mỡ màng không dùng để viết được nha!',why:'Ba món kia để bé học bài ngoan'},
+      {items:[{e:'🎒',n:'Balo'},{e:'📚',n:'Sách giáo khoa'},{e:'📓',n:'Quyển vở'},{e:'📱',n:'Điện thoại'}],odd:3,reason:'📱 Đem điện thoại lên lớp cô giáo phạt đó!',why:'Ba món kia đều nằm gọn trong cặp đi học'},
+      {items:[{e:'🖍️',n:'Bút màu'},{e:'🖌️',n:'Cọ vẽ'},{e:'🎨',n:'Bảng màu'},{e:'🎤',n:'Micro'}],odd:3,reason:'🎤 Micro để hát vang nhà!',why:'Ba món kia dùng để vẽ tranh siêu đẹp'},
+    ]
+  },
+  clothes: {
+    label:'👕 Quần áo', color:'#F72585',
+    q: [
+      {items:[{e:'👕',n:'Áo thun'},{e:'👖',n:'Quần dài'},{e:'👗',n:'Váy đẹp'},{e:'🍲',n:'Cái nồi'}],odd:3,reason:'🍲 Đội nồi lên đầu nhìn buồn cười lắm luôn!',why:'Ba món kia là quần áo để bé mặc đi chơi'},
+      {items:[{e:'🧢',n:'Mũ lưỡi trai'},{e:'👒',n:'Mũ rộng vành'},{e:'⛑️',n:'Mũ bảo hộ'},{e:'🧦',n:'Chiếc tất'}],odd:3,reason:'🧦 Tất thì phải xỏ vào chân chứ sao đội lên đầu!',why:'Ba món kia dùng để đội lên đầu che nắng'},
+      {items:[{e:'👟',n:'Giày thể thao'},{e:'👢',n:'Ủng'},{e:'🩴',n:'Dép lê'},{e:'🧤',n:'Găng tay'}],odd:3,reason:'🧤 Găng tay xỏ vào chân không vừa đâu nha!',why:'Ba món kia để mang vào đôi chân bé xinh'},
+    ]
+  },
+  toys: {
+    label:'🧸 Đồ chơi', color:'#4CC9F0',
+    q: [
+      {items:[{e:'🧸',n:'Gấu bông'},{e:'🪀',n:'Yoyo'},{e:'🪁',n:'Diều'},{e:'🧹',n:'Cái chổi'}],odd:3,reason:'🧹 Cầm chổi là phải đi quét nhà giúp mẹ thôi!',why:'Ba món kia là đồ chơi siêu vui'},
+      {items:[{e:'🚗',n:'Xe ô tô nhỏ'},{e:'🚂',n:'Tàu hỏa gỗ'},{e:'✈️',n:'Máy bay nhựa'},{e:'🐊',n:'Cá sấu thật'}],odd:3,reason:'🐊 Cá sấu thật cắn đau lắm, không phải đồ chơi!',why:'Ba món kia là đồ chơi mô hình'},
+      {items:[{e:'🧩',n:'Xếp hình'},{e:'🎲',n:'Xúc xắc'},{e:'🎮',n:'Máy game'},{e:'🧅',n:'Củ hành tây'}],odd:3,reason:'🧅 Bóc hành tây là cay chảy nước mắt luôn!',why:'Ba món kia bé chơi hoài không chán'},
+    ]
+  },
+  home: {
+    label:'🏠 Trong nhà', color:'#7209B7',
+    q: [
+      {items:[{e:'🛏️',n:'Cái giường'},{e:'🛋️',n:'Ghế sofa'},{e:'🪑',n:'Cái ghế'},{e:'🌵',n:'Xương rồng'}],odd:3,reason:'🌵 Ngồi lên xương rồng là thủng quần luôn đó!',why:'Ba món kia êm ái để bé ngồi hoặc nằm'},
+      {items:[{e:'📺',n:'Tivi'},{e:'📻',n:'Radio'},{e:'💻',n:'Máy tính'},{e:'🍎',n:'Quả táo'}],odd:3,reason:'🍎 Quả táo ăn cái rộp là hết, đâu có cắm điện được!',why:'Ba món kia là đồ điện tử phát ra tiếng'},
+      {items:[{e:'🛁',n:'Bồn tắm'},{e:'🚽',n:'Bồn cầu'},{e:'🚿',n:'Vòi sen'},{e:'🍳',n:'Cái chảo'}],odd:3,reason:'🍳 Chảo dùng để chiên trứng trong bếp cơ mà!',why:'Ba món kia đều nằm ngoan trong phòng tắm'},
     ]
   }
 };
 
 /* ===== STATE ===== */
-let selectedCats = new Set(['animals','food','vehicles']);
+let selectedCats = new Set(['animals','food','vehicles','toys','school']);
 let score=0, qNum=0, total=10, pool=[], answered=false;
 
 /* ===== INIT CATEGORIES ===== */
@@ -261,6 +277,7 @@ function initCats(){
     b.style.borderColor=selectedCats.has(key)?cat.color:'';
     b.style.background=selectedCats.has(key)?`rgba(${hexToRgb(cat.color)},.15)`:'';
     b.style.color=selectedCats.has(key)?cat.color:'';
+    /* Đã sửa lỗi: Dùng onclick chuẩn thay vì event listeners phức tạp */
     b.onclick=()=>toggleCat(key,b,cat.color);
     g.appendChild(b);
   });
@@ -273,17 +290,19 @@ function toggleCat(key,btn,col){
 
 /* ===== HELPERS ===== */
 const $=id=>document.getElementById(id);
-const pick=a=>a[Math.floor(Math.random()*a.length)];
 const shuffle=a=>{const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;};
 function show(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));$(id).classList.add('on');}
 
 /* ===== GAME FLOW ===== */
 function startGame(){
   score=0; qNum=0; answered=false;
-  // build shuffled pool from selected cats
   pool=[];
   selectedCats.forEach(k=>{CATS[k].q.forEach(q=>pool.push({...q,catKey:k}));});
   pool=shuffle(pool);
+  
+  // Đảm bảo không vượt quá số lượng câu hỏi hiện có trong pool
+  total = Math.min(10, pool.length);
+  
   show('game');
   nextQ();
 }
@@ -296,28 +315,30 @@ function nextQ(){
   $('btn-next').style.display='none';
   $('reason-area').style.visibility='hidden';
 
-  const q=pool[qNum%pool.length];
+  const q=pool[qNum];
   const cat=CATS[q.catKey];
 
   // Update HUD
   $('prog-bar').style.width=((qNum/total)*100)+'%';
   $('hud-score').textContent=score+' ⭐';
   $('q-cat').textContent=cat.label;
-  $('q-text').innerHTML=`Hình nào <span>không cùng nhóm</span>?`;
+  $('q-text').innerHTML=`Hình nào <span>vô lý / không cùng nhóm</span>?`;
 
-  // Shuffle items but remember which position is the odd one
   const items=shuffle(q.items.map((it,i)=>({...it,isOdd:i===q.odd})));
   const grid=$('items-grid');
   grid.innerHTML='';
 
-  items.forEach((item,i)=>{
+  items.forEach((item)=>{
     const card=document.createElement('div');
     card.className='item-card';
     card.innerHTML=`
       <div class="overlay">${item.isOdd?'✓':'✗'}</div>
       <div class="item-ico">${item.e}</div>
       <div class="item-lbl">${item.n}</div>`;
-    card.addEventListener('pointerdown',e=>{e.preventDefault();selectItem(item,card,items,q);},{passive:false});
+    
+    /* Đã Fix lỗi chạm trên iOS: Dùng onclick thay vì pointerdown chặn event */
+    card.onclick = () => { selectItem(item,card,items,q); };
+    
     grid.appendChild(card);
   });
 }
@@ -336,7 +357,6 @@ function selectItem(item,card,items,q){
     confetti();
   }else{
     card.classList.add('wrong');
-    // reveal correct after short delay
     setTimeout(()=>{
       cards.forEach(c=>{
         const hasOdd=c.querySelector('.item-ico').textContent===items.find(x=>x.isOdd).e;
@@ -346,9 +366,8 @@ function selectItem(item,card,items,q){
     },600);
   }
 
-  // show reason
   setTimeout(()=>{
-    $('r-ico').textContent=correct?'💡':'🙈';
+    $('r-ico').textContent=correct?'🤣':'💡';
     $('r-msg').textContent=q.reason;
     $('r-why').textContent=q.why;
     $('reason-area').style.visibility='visible';
@@ -377,17 +396,16 @@ function endGame(){
   show('result');
   const pct=score/total;
   let icon,h1,sub;
-  if(pct>=.9){icon='🏆';h1='Siêu giỏi!';sub='Con phân biệt cực kỳ tốt!';}
-  else if(pct>=.7){icon='🌟';h1='Giỏi lắm!';sub='Con đã quan sát rất tốt!';}
-  else if(pct>=.5){icon='😊';h1='Cố gắng lắm!';sub='Luyện thêm sẽ giỏi hơn nhé!';}
-  else{icon='💪';h1='Tiếp tục nhé!';sub='Quan sát kỹ hơn là được thôi!';}
+  if(pct>=.9){icon='🏆';h1='Siêu đỉnh!';sub='Con phát hiện ra điểm vô lý cực nhanh!';}
+  else if(pct>=.7){icon='🌟';h1='Giỏi lắm!';sub='Con suy luận rất tốt!';}
+  else if(pct>=.5){icon='😊';h1='Cố gắng lắm!';sub='Chơi lại để cười nhiều hơn nhé!';}
+  else{icon='💪';h1='Chưa quen thôi!';sub='Lần sau con sẽ tìm được hết!';}
   $('res-ring').textContent=icon;
   $('res-ring').style.background=pct>=.7?'linear-gradient(135deg,#FFD166,#FF9F1C)':'linear-gradient(135deg,#118AB2,#9B5DE5)';
   $('res-h1').textContent=h1;
   $('res-sub').textContent=sub;
   $('score-big').textContent=score+' / '+total;
 
-  // stars
   const sr=$('stars-row');sr.innerHTML='';
   const numStars=pct>=.9?3:pct>=.6?2:pct>=.3?1:0;
   for(let i=0;i<3;i++){
@@ -399,9 +417,7 @@ function endGame(){
 
 /* ===== INIT ===== */
 initCats();
-document.addEventListener('touchend',e=>{
-  if(e.target.closest('.item-card,.go-btn,.cat-btn,.btn-next,.rb,.btn-back'))e.preventDefault();
-},{passive:false});
+/* Đã gỡ bỏ block event preventDefault làm hỏng Safari iPad */
 </script>
 </body>
 </html>
