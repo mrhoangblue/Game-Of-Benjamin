@@ -88,7 +88,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Nunito',
 /* G1 DRAG */
 .drag-task{background:#fff;border-radius:var(--r);padding:10px 16px;text-align:center;box-shadow:var(--sh-sm);font-size:.88rem;font-weight:700;color:var(--tx);width:100%;max-width:460px;line-height:1.5;}
 .drag-pool{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;background:#fff;border-radius:var(--r);padding:10px;box-shadow:var(--sh-sm);width:100%;max-width:460px;min-height:64px;}
-.dsh{width:42px;height:42px;display:flex;align-items:center;justify-content:center;border:2px solid #e0e0e0;border-radius:10px;cursor:grab;background:#fafafa;transition:border-color .15s,background .15s;}
+.dsh{width:42px;height:42px;display:flex;align-items:center;justify-content:center;border:2px solid #e0e0e0;border-radius:10px;cursor:grab;background:#fafafa;transition:border-color .15s,background .15s;touch-action:none;} /* touch-action:none chống kẹt cuộn trang khi kéo */
 .dsh.dragging-src{opacity:.25;}
 .dsh.in1{border-color:var(--pu);background:var(--pu-l);}
 .dsh.in2{border-color:var(--am);background:var(--am-l);}
@@ -164,7 +164,6 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Nunito',
 </head>
 <body>
 
-<!-- HOME -->
 <div id="home" class="scr on">
   <div class="home-hero">
     <div class="emo">🌟</div>
@@ -181,10 +180,8 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Nunito',
   </div>
 </div>
 
-<!-- drag clone -->
 <div id="drag-clone" style="display:none"></div>
 
-<!-- G1: TÁCH SỐ KÉO THẢ -->
 <div id="g1" class="scr">
   <div class="top-bar">
     <button class="btn-back" onclick="goHome()">◂</button>
@@ -219,7 +216,6 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Nunito',
   </div>
 </div>
 
-<!-- G2: GỘP SỐ -->
 <div id="g2" class="scr">
   <div class="top-bar">
     <button class="btn-back" onclick="goHome()">◂</button>
@@ -241,7 +237,6 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Nunito',
   </div>
 </div>
 
-<!-- G3: NỐI SỐ -->
 <div id="g3" class="scr">
   <div class="top-bar">
     <button class="btn-back" onclick="goHome()">◂</button>
@@ -262,7 +257,6 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Nunito',
   </div>
 </div>
 
-<!-- G4: ĐẾM & XẾP -->
 <div id="g4" class="scr">
   <div class="top-bar">
     <button class="btn-back" onclick="goHome()">◂</button>
@@ -295,7 +289,6 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Nunito',
   </div>
 </div>
 
-<!-- G5: SO SÁNH -->
 <div id="g5" class="scr">
   <div class="top-bar">
     <button class="btn-back" onclick="goHome()">◂</button>
@@ -321,7 +314,6 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Nunito',
   </div>
 </div>
 
-<!-- G6: CỘNG & TRỪ -->
 <div id="g6" class="scr">
   <div class="top-bar">
     <button class="btn-back" onclick="goHome()">◂</button>
@@ -385,7 +377,8 @@ function buildKpad(kpId,aid){
 function addKey(kp,k,aid,del=false){
   const b=document.createElement('button');
   b.className='kb'+(del?' del':'');b.textContent=k;
-  b.addEventListener('pointerdown',e=>{e.preventDefault();pressK(k,aid);});
+  /* Đã thay đổi: Dùng onclick thuần thay vì bắt sự kiện pointerdown để tránh kẹt tương tác trên iOS */
+  b.onclick = () => pressK(k,aid);
   kp.appendChild(b);
 }
 function pressK(k,aid){
@@ -413,7 +406,7 @@ function startGame(n){
 }
 
 /* ===== G1: TÁCH SỐ KÉO THẢ ===== */
-let G1={},DRAG={active:false,idx:-1,zone:null};
+let G1={},DRAG={active:false,idx:-1,zone:null,moved:false,sx:0,sy:0};
 
 function nxtG1(){
   const max=RNG[1],si=rnd(0,4),sh=SHP[si],cl=CLR[si];
@@ -455,15 +448,16 @@ function renderG1(){
 }
 
 function tapSh(idx){
-  if(G1.done)return;
+  /* Đã tối ưu logic phân biệt Kéo (Drag) và Chạm (Tap) */
+  if(G1.done || (DRAG.active && DRAG.moved)) return;
   G1.state[idx]=(G1.state[idx]+1)%3;
   renderG1();
 }
 
 function onDS(e,idx){
   if(G1.done)return;
-  e.preventDefault();
-  DRAG={active:true,idx,zone:null};
+  /* Đã gỡ bỏ e.preventDefault() ở đây để không chặn sự kiện click tự nhiên của iOS */
+  DRAG={active:true,idx,zone:null,moved:false,sx:e.clientX,sy:e.clientY};
   const clone=$('drag-clone');
   clone.innerHTML=svg(G1.sh,G1.cl,28);
   clone.style.display='flex';
@@ -475,7 +469,11 @@ function onDS(e,idx){
 }
 function onDM(e){
   if(!DRAG.active)return;
-  e.preventDefault();
+  /* Kiểm tra xem ngón tay có di chuyển xa không, nếu có thì là Drag, chặn Scroll của trang */
+  if (Math.abs(e.clientX - DRAG.sx) > 5 || Math.abs(e.clientY - DRAG.sy) > 5) {
+      DRAG.moved = true;
+      e.preventDefault(); 
+  }
   mvClone(e);
   const c=$('drag-clone');c.style.display='none';
   const u=document.elementFromPoint(e.clientX,e.clientY);
@@ -492,8 +490,8 @@ function onDU(){
   $('drag-clone').style.display='none';
   $('dz1').classList.remove('drag-over');$('dz2').classList.remove('drag-over');
   const src=$('dsh'+DRAG.idx);if(src)src.classList.remove('dragging-src');
-  if(DRAG.zone&&!G1.done){G1.state[DRAG.idx]=parseInt(DRAG.zone);renderG1();}
-  DRAG.active=false;
+  if(DRAG.zone&&!G1.done&&DRAG.moved){G1.state[DRAG.idx]=parseInt(DRAG.zone);renderG1();}
+  setTimeout(() => { DRAG.active=false; }, 50); /* Trì hoãn một chút để click không bị gọi nhầm */
 }
 function mvClone(e){
   const c=$('drag-clone');
@@ -668,10 +666,7 @@ function chkG6(){
   stars('g6-stars',ok);updSc(6,ok);$('g6-chk').style.display='none';$('g6-nxt').style.display='block';
 }
 
-/* prevent iOS double-tap zoom — chỉ apply cho button, KHÔNG apply cho .gc để tránh block onclick trên iPad */
-document.querySelectorAll('button,.m-opt').forEach(el=>{
-  el.addEventListener('touchend',e=>e.preventDefault(),{passive:false});
-});
+/* Đã xóa bỏ đoạn mã chặn touchend cũ vì không cần thiết nữa. */
 </script>
 </body>
 </html>
