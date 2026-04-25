@@ -13,7 +13,7 @@
   --white:#DDE8F5;--muted:#4D6A8A;
   --rad:22px;--radsm:14px;
 }
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none;touch-action:manipulation;}
 html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Nunito',system-ui,sans-serif;color:var(--white);}
 
 /* nebula bg */
@@ -71,6 +71,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;
 .hud{width:100%;display:flex;align-items:center;gap:10px;padding:.75rem 1.2rem .3rem;flex-shrink:0;}
 .btn-back{font-size:1.2rem;background:rgba(255,255,255,.08);border:none;border-radius:11px;
   padding:6px 12px;color:var(--white);cursor:pointer;font-weight:800;}
+.btn-back:active{transform:scale(0.9);}
 .hud-mid{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;}
 .hud-prog{width:100%;height:7px;background:rgba(255,255,255,.07);border-radius:8px;overflow:hidden;}
 .hud-prog-fill{height:100%;background:linear-gradient(90deg,var(--b),var(--p));border-radius:8px;transition:width .45s ease;}
@@ -87,7 +88,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;
 /* STORY PANELS */
 .story-wrap{flex-shrink:0;width:100%;padding:0 .9rem;display:flex;flex-direction:column;gap:6px;}
 
-/* single cause/effect panel */
 .story-panel{background:var(--card);border-radius:var(--rad);padding:14px;
   display:flex;align-items:center;gap:12px;border:1.5px solid rgba(255,255,255,.08);
   box-shadow:0 6px 20px rgba(0,0,0,.35);}
@@ -97,10 +97,9 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;
 .sp-main{font-size:1.05rem;font-weight:900;line-height:1.35;}
 .sp-tag{font-size:.7rem;font-weight:700;color:var(--muted);margin-top:2px;}
 
-/* chain: 3 panels in row */
 .chain-row{display:flex;align-items:stretch;gap:4px;width:100%;}
 .chain-cell{flex:1;background:var(--card);border-radius:var(--radsm);padding:10px 6px;
-  display:flex;flex-direction:column;align-items:center;gap:4px;border:1.5px solid rgba(255,255,255,.08);}
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:1.5px solid rgba(255,255,255,.08);}
 .chain-cell.missing{background:rgba(72,202,228,.07);border:2px dashed rgba(72,202,228,.35);
   animation:chainPulse 1.6s ease-in-out infinite;}
 @keyframes chainPulse{0%,100%{border-color:rgba(72,202,228,.35);}50%{border-color:rgba(72,202,228,.7);}};
@@ -112,12 +111,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;
 .chain-cell.fill-ok{border-style:solid;border-color:var(--g);background:rgba(6,214,160,.1);animation:cellIn .4s ease;}
 @keyframes cellIn{0%{transform:scale(.8);opacity:0;}100%{transform:scale(1);opacity:1;}};
 
-/* Q connector */
-.q-connector{display:flex;align-items:center;gap:8px;padding:0 2px;}
-.qc-line{flex:1;height:2px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);}
-.qc-text{font-size:.82rem;font-weight:800;color:var(--muted);white-space:nowrap;}
-.qc-arrow{font-size:1.2rem;color:var(--b);}
-
 /* QUESTION TEXT */
 .q-text{font-size:.95rem;font-weight:900;text-align:center;padding:0 1rem;flex-shrink:0;
   color:var(--white);}
@@ -128,7 +121,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;
 .opts-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;max-width:460px;margin:0 auto;}
 .opt{background:var(--card);border:2.5px solid rgba(255,255,255,.08);border-radius:var(--rad);
   cursor:pointer;padding:11px 10px;
-  display:flex;flex-direction:column;align-items:center;gap:6px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
   transition:transform .1s,border-color .15s,background .15s;
   box-shadow:0 4px 14px rgba(0,0,0,.3);position:relative;overflow:hidden;min-height:80px;}
 .opt::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.04),transparent);pointer-events:none;}
@@ -144,8 +137,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;
 .opt.wrong .ob{display:flex;background:var(--r);color:#fff;}
 @keyframes optErr{0%,100%{transform:translateX(0);}25%{transform:translateX(-9px);}75%{transform:translateX(9px);}};
 .opt.dimmed{opacity:.25;pointer-events:none;}
-.opt.reveal{border-color:var(--g);background:rgba(6,214,160,.12);}
-.opt.reveal .ob{display:flex;background:var(--g);color:#08111F;}
 
 /* EXPLANATION */
 .explain-area{flex-shrink:0;padding:0 .9rem;width:100%;min-height:50px;}
@@ -200,7 +191,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;
 </head>
 <body>
 
-<!-- START -->
 <div id="start" class="scr on">
   <div class="s-brain">🧠</div>
   <div class="s-title">
@@ -225,7 +215,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;
   <button class="go-btn" onclick="startGame()">Bắt đầu! 🚀</button>
 </div>
 
-<!-- GAME -->
 <div id="game" class="scr">
   <div class="hud">
     <button class="btn-back" onclick="goStart()">◂</button>
@@ -246,7 +235,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;
   </div>
 </div>
 
-<!-- RESULT -->
 <div id="result" class="scr">
   <div class="res-ico" id="res-ico"></div>
   <div class="res-title" id="res-title"></div>
@@ -264,197 +252,44 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;
 
 <script>
 /* ============================================================
-   DATA: Questions
-   type: 'CE' = cause→effect,  'EC' = effect→cause,  'CH' = chain (fill middle)
-   scene: what we show
-   q: question text
-   ans: correct answer option
-   wrong: 3 wrong options
-   explain: explanation shown after
-   fact: fun fact
-   cat: category emoji+name
-   diff: easy|med|hard
+   NGÂN HÀNG CÂU HỎI (30 Câu - Không trùng lặp)
    ============================================================ */
 const QS = [
-  // ===== THIÊN NHIÊN =====
-  {type:'CE',scene:{e:'🌧️',t:'Trời mưa rất to',tag:'Thiên nhiên'},
-   q:'Sau khi trời tạnh mưa, điều gì có thể xảy ra?',
-   ans:{e:'🌈',t:'Có cầu vồng đẹp'},
-   wrong:[{e:'⛄',t:'Trời tuyết rơi'},{e:'🌪️',t:'Có lốc xoáy'},{e:'🌋',t:'Núi lửa phun'}],
-   explain:'Sau mưa, ánh nắng chiếu qua hạt nước tạo ra cầu vồng 7 màu!',fact:'🌈 Cầu vồng có 7 màu: Đỏ-Cam-Vàng-Lục-Lam-Chàm-Tím',diff:'easy',cat:'🌿 Thiên nhiên'},
+  // --- MỨC ĐỘ: DỄ (EASY) ---
+  {type:'CE',scene:{e:'🌧️',t:'Trời mưa rất to',tag:'Thời tiết'},q:'Sau khi trời tạnh mưa, điều gì có thể xảy ra?',ans:{e:'🌈',t:'Có cầu vồng đẹp'},wrong:[{e:'⛄',t:'Tuyết rơi'},{e:'🌪️',t:'Lốc xoáy'},{e:'🌋',t:'Núi lửa'}],explain:'Sau mưa, ánh nắng chiếu qua hạt nước tạo ra cầu vồng 7 màu!',fact:'🌈 Cầu vồng có 7 màu: Đỏ-Cam-Vàng-Lục-Lam-Chàm-Tím',diff:'easy',cat:'🌦️ Thời tiết'},
+  {type:'CE',scene:{e:'🌱',t:'Gieo hạt giống xuống đất ẩm',tag:'Thực vật'},q:'Sau vài ngày, điều gì sẽ xảy ra?',ans:{e:'🌿',t:'Mầm non nhú lên'},wrong:[{e:'🍎',t:'Ra quả ngay'},{e:'🌳',t:'Thành cây to'},{e:'🌸',t:'Nở hoa luôn'}],explain:'Hạt giống cần nước và ánh sáng để nảy mầm!',fact:'🌱 Một hạt nhỏ xíu có thể trở thành cây to lớn',diff:'easy',cat:'🌿 Thực vật'},
+  {type:'CE',scene:{e:'🙌',t:'Bé rửa tay bằng xà phòng',tag:'Sức khỏe'},q:'Việc rửa tay giúp ích gì?',ans:{e:'🦠❌',t:'Diệt sạch vi khuẩn'},wrong:[{e:'😴',t:'Ngủ ngon hơn'},{e:'🏃',t:'Chạy nhanh hơn'},{e:'🎨',t:'Vẽ đẹp hơn'}],explain:'Xà phòng giúp cuốn trôi bụi bẩn và vi khuẩn trên tay.',fact:'🤲 Rửa tay đúng cách cần ít nhất 20 giây!',diff:'easy',cat:'🏠 Đời sống'},
+  {type:'CE',scene:{e:'🎈',t:'Thả quả bóng bay bơm khí',tag:'Khoa học'},q:'Quả bóng sẽ đi đâu?',ans:{e:'⬆️',t:'Bay lên bầu trời'},wrong:[{e:'⬇️',t:'Rơi bịch xuống đất'},{e:'🔄',t:'Quay vòng tròn'},{e:'💥',t:'Nổ tung ngay'}],explain:'Khí bên trong (Heli) nhẹ hơn không khí bên ngoài nên bóng bay lên!',fact:'🎈 Bóng bay lên quá cao sẽ nổ do áp suất!',diff:'easy',cat:'🔬 Khoa học'},
+  {type:'CE',scene:{e:'🍦',t:'Để cây kem dưới nắng gắt',tag:'Vật lý'},q:'Điều gì sẽ xảy ra với cây kem?',ans:{e:'💧',t:'Kem tan chảy thành nước'},wrong:[{e:'🧊',t:'Kem cứng hơn'},{e:'🌈',t:'Đổi màu'},{e:'🎂',t:'Thành bánh kem'}],explain:'Nhiệt độ nóng từ mặt trời làm băng tuyết và kem tan chảy!',fact:'🍦 Nắng nóng làm kem chảy chỉ trong vài phút.',diff:'easy',cat:'🏠 Đời sống'},
+  {type:'CE',scene:{e:'🥚',t:'Quả trứng rơi mạnh xuống sàn cứng',tag:'Vật lý'},q:'Kết quả sẽ ra sao?',ans:{e:'🍳',t:'Trứng bị vỡ tung tóe'},wrong:[{e:'🐣',t:'Nở ra gà con'},{e:'⚽',t:'Nảy lên như bóng'},{e:'🧊',t:'Đóng băng'}],explain:'Vỏ trứng rất mỏng và giòn, khi va đập mạnh sẽ vỡ ngay.',fact:'🥚 Vỏ trứng gà được làm từ Canxi, giống hệt răng của chúng ta!',diff:'easy',cat:'🏠 Đời sống'},
+  {type:'CE',scene:{e:'🥶',t:'Ra đường tuyết không mặc áo ấm',tag:'Sức khỏe'},q:'Bé sẽ cảm thấy thế nào?',ans:{e:'🤧',t:'Bị lạnh và ốm'},wrong:[{e:'💪',t:'Khỏe mạnh hơn'},{e:'🔥',t:'Thấy quá nóng'},{e:'😊',t:'Thấy bình thường'}],explain:'Cơ thể người cần giữ ấm, nếu ra lạnh không mặc áo sẽ bị cảm bệnh.',fact:'🧥 Áo khoác giúp giữ lại nhiệt độ mà cơ thể tỏa ra.',diff:'easy',cat:'🏠 Đời sống'},
+  {type:'CE',scene:{e:'🌬️',t:'Gió thổi rất mạnh ở bãi cỏ',tag:'Vui chơi'},q:'Trò chơi nào sẽ rất vui lúc này?',ans:{e:'🪁',t:'Thả diều bay cao'},wrong:[{e:'🕯️',t:'Thắp nến'},{e:'🏸',t:'Đánh cầu lông'},{e:'📚',t:'Đọc sách'}],explain:'Gió tạo ra lực nâng giúp chiếc diều có thể bay vút lên bầu trời.',fact:'🪁 Diều đã được con người phát minh ra cách đây 2000 năm!',diff:'easy',cat:'🌦️ Thời tiết'},
+  {type:'CE',scene:{e:'💧',t:'Tưới nước cho cây mỗi ngày',tag:'Thực vật'},q:'Cây sẽ phát triển như thế nào?',ans:{e:'🌳',t:'Cây lớn lên và xanh tươi'},wrong:[{e:'🥀',t:'Cây héo khô'},{e:'🔥',t:'Cây bốc cháy'},{e:'🧊',t:'Cây đóng băng'}],explain:'Cây giống như con người, cần uống nước mỗi ngày để lớn lên.',fact:'💧 Nước giúp cây vận chuyển chất dinh dưỡng từ rễ lên lá.',diff:'easy',cat:'🌿 Thực vật'},
+  {type:'CE',scene:{e:'🐶',t:'Bạn cún nhìn thấy khúc xương',tag:'Động vật'},q:'Bạn cún sẽ làm gì?',ans:{e:'🦴',t:'Chạy đến gặm xương'},wrong:[{e:'🐈',t:'Kêu meo meo'},{e:'🐦',t:'Bay lên trời'},{e:'🐟',t:'Bơi xuống nước'}],explain:'Chó rất thích ngửi và gặm xương vì đó là bản năng của chúng.',fact:'🐶 Khứu giác (mũi) của chó thính hơn con người gấp vạn lần!',diff:'easy',cat:'🐾 Động vật'},
 
-  {type:'EC',scene:{e:'🌵',t:'Cây xương rồng sống tốt ở sa mạc',tag:'Thiên nhiên'},
-   q:'Tại sao cây xương rồng sống được ở nơi rất ít nước?',
-   ans:{e:'💧',t:'Nó tích trữ nước bên trong thân'},
-   wrong:[{e:'☁️',t:'Nó hút nước từ mây'},{e:'🌊',t:'Nó đi tìm sông suối'},{e:'🧊',t:'Nó không cần nước'}],
-   explain:'Thân cây xương rồng dày và mọng nước giúp nó tự trữ nước để sống qua mùa khô!',fact:'🌵 Xương rồng có thể sống hàng tháng không cần mưa',diff:'med',cat:'🌿 Thiên nhiên'},
+  // --- MỨC ĐỘ: VỪA (MEDIUM) ---
+  {type:'EC',scene:{e:'🌵',t:'Cây xương rồng sống tốt ở sa mạc',tag:'Thực vật'},q:'Tại sao nó sống được ở nơi ít nước?',ans:{e:'💧',t:'Tích trữ nước trong thân mập'},wrong:[{e:'☁️',t:'Hút mây'},{e:'🌊',t:'Đi tìm sông'},{e:'🧊',t:'Không cần nước'}],explain:'Thân cây dày và mọng nước giúp nó tự trữ nước để sống qua mùa khô.',fact:'🌵 Xương rồng có thể sống hàng tháng trời không cần mưa rơi.',diff:'med',cat:'🌿 Thực vật'},
+  {type:'CE',scene:{e:'🍂',t:'Mùa thu đến, trời se lạnh',tag:'Thiên nhiên'},q:'Chuyện gì xảy ra với lá cây?',ans:{e:'🍁',t:'Đổi màu vàng/đỏ và rụng'},wrong:[{e:'🌸',t:'Nở hoa rực rỡ'},{e:'💚',t:'Xanh tươi hơn'},{e:'🍎',t:'Ra nhiều quả'}],explain:'Khi trời lạnh, cây rụng lá để tiết kiệm năng lượng ngủ đông.',fact:'🍂 Lá cây có chất diệp lục giúp chúng màu xanh, thu đến chất này mất đi.',diff:'med',cat:'🌿 Thiên nhiên'},
+  {type:'EC',scene:{e:'🦔',t:'Nhím cuộn tròn lại thành bóng gai',tag:'Động vật'},q:'Tại sao nhím lại cuộn tròn?',ans:{e:'🦁',t:'Để bảo vệ khỏi kẻ thù'},wrong:[{e:'😴',t:'Để ngủ ngon'},{e:'🎮',t:'Chơi trò lăn'},{e:'🌡️',t:'Vì quá nóng'}],explain:'Khi gặp nguy hiểm, nhím cuộn tròn để đưa gai nhọn ra ngoài bảo vệ cơ thể.',fact:'🦔 Một con nhím có thể mang trên mình tới 5000 chiếc gai!',diff:'med',cat:'🐾 Động vật'},
+  {type:'CH',scene:{chain:[{e:'📚',t:'Đọc sách mỗi ngày'},{e:'❓',t:'???'},{e:'🧠',t:'Thông minh hơn'}]},q:'Điều gì xảy ra ở giữa?',ans:{e:'💡',t:'Học được điều mới'},wrong:[{e:'😴',t:'Buồn ngủ'},{e:'🏋️',t:'Cơ bắp to'},{e:'🍕',t:'Thấy đói'}],explain:'Sách chứa rất nhiều kiến thức mới, giúp não bộ của chúng ta khỏe mạnh hơn.',fact:'📚 Đọc sách 20 phút mỗi ngày giúp con học được hàng triệu từ mới.',diff:'med',cat:'🏠 Đời sống'},
+  {type:'CE',scene:{e:'❄️',t:'Để ly nước vào ngăn đá tủ lạnh',tag:'Vật lý'},q:'Vài giờ sau, điều gì xảy ra?',ans:{e:'🧊',t:'Nước đông lại thành đá cứng'},wrong:[{e:'♨️',t:'Nước sôi bốc hơi'},{e:'🌈',t:'Đổi 7 màu'},{e:'💥',t:'Ly nước nổ tung'}],explain:'Khi nhiệt độ xuống dưới 0 độ C, nước lỏng sẽ biến thành thể rắn (đá).',fact:'🧊 Đá nhẹ hơn nước nên nó luôn nổi trên mặt nước.',diff:'med',cat:'🔬 Khoa học'},
+  {type:'EC',scene:{e:'🥁',t:'Trống kêu bùm bùm rất to',tag:'Âm nhạc'},q:'Làm sao để trống phát ra tiếng?',ans:{e:'🥢',t:'Dùng dùi đánh mạnh vào mặt trống'},wrong:[{e:'💨',t:'Thổi gió vào'},{e:'💧',t:'Đổ nước vào'},{e:'🔥',t:'Đốt lửa'}],explain:'Dùi đập vào màng da căng làm nó rung lên, tạo ra sóng âm thanh!',fact:'🥁 Sóng âm thanh từ trống to đến mức ta cảm nhận được bằng nhịp tim!',diff:'med',cat:'🎵 Âm nhạc'},
+  {type:'CE',scene:{e:'🐦',t:'Chim nhỏ thấy con mèo đang rình',tag:'Động vật'},q:'Chim sẽ làm gì ngay lập tức?',ans:{e:'✈️',t:'Bay vụt lên cành cao'},wrong:[{e:'🤝',t:'Chào mèo'},{e:'😴',t:'Nằm ngủ tiếp'},{e:'🍽️',t:'Mời mèo ăn'}],explain:'Chim biết mèo là kẻ săn mồi nguy hiểm nên phản xạ tự vệ là bay lên cao.',fact:'🐦 Phản xạ của các loài chim nhanh hơn con người từ 3-4 lần!',diff:'med',cat:'🐾 Động vật'},
+  {type:'CH',scene:{chain:[{e:'👕💦',t:'Quần áo đang ướt'},{e:'❓',t:'???'},{e:'👕✨',t:'Quần áo khô ráo'}]},q:'Cần điều gì ở giữa để quần áo khô?',ans:{e:'☀️',t:'Phơi dưới ánh nắng mặt trời'},wrong:[{e:'🌧️',t:'Để dưới trời mưa'},{e:'🧊',t:'Bỏ vào tủ lạnh'},{e:'🕳️',t:'Giấu vào tủ tối'}],explain:'Nhiệt độ nóng từ mặt trời làm nước trong quần áo bốc hơi bay đi.',fact:'👕 Ánh nắng mặt trời còn giúp diệt vi khuẩn trên quần áo nữa!',diff:'med',cat:'🏠 Đời sống'},
+  {type:'CH',scene:{chain:[{e:'🔵',t:'Màu Xanh dương'},{e:'❓',t:'???'},{e:'🟢',t:'Thành Màu Xanh lá'}]},q:'Cần trộn thêm màu gì?',ans:{e:'🟡',t:'Trộn với Màu Vàng'},wrong:[{e:'🔴',t:'Trộn Màu Đỏ'},{e:'⚫',t:'Trộn Màu Đen'},{e:'⚪',t:'Trộn Màu Trắng'}],explain:'Xanh dương pha với Vàng luôn tạo ra màu Xanh lá cây (Green)!',fact:'🎨 Đỏ, Vàng, Xanh dương là 3 màu gốc để pha ra mọi màu khác.',diff:'med',cat:'🎨 Nghệ thuật'},
+  {type:'CE',scene:{e:'🥛',t:'Thả một viên bi sắt vào ly nước đầy',tag:'Vật lý'},q:'Điều gì sẽ xảy ra?',ans:{e:'🌊',t:'Nước sẽ bị tràn ra ngoài'},wrong:[{e:'🔥',t:'Nước bốc cháy'},{e:'🧊',t:'Nước đóng băng'},{e:'🌈',t:'Viên bi nổi lên'}],explain:'Viên bi chiếm chỗ của nước trong ly, nên nước không còn chỗ phải tràn ra.',fact:'💧 Nguyên lý này được nhà bác học Ác-si-mét tìm ra khi đang tắm!',diff:'med',cat:'🔬 Khoa học'},
 
-  {type:'CE',scene:{e:'🌱',t:'Hạt giống được gieo vào đất ẩm',tag:'Thiên nhiên'},
-   q:'Sau vài ngày, điều gì sẽ xảy ra?',
-   ans:{e:'🌿',t:'Mầm non nhú lên'},
-   wrong:[{e:'🍎',t:'Ra quả ngay lập tức'},{e:'🌳',t:'Thành cây to ngay'},{e:'🌸',t:'Nở hoa luôn'}],
-   explain:'Hạt giống cần nước và ánh sáng để nảy mầm, sau đó từ từ lớn thành cây!',fact:'🌱 Một hạt nhỏ xíu có thể trở thành cây to hàng chục năm',diff:'easy',cat:'🌿 Thiên nhiên'},
-
-  {type:'CE',scene:{e:'🍂',t:'Mùa thu đến, trời se lạnh',tag:'Thiên nhiên'},
-   q:'Chuyện gì xảy ra với lá cây?',
-   ans:{e:'🍁',t:'Lá chuyển màu vàng đỏ và rụng'},
-   wrong:[{e:'🌸',t:'Cây nở hoa rực rỡ'},{e:'💚',t:'Lá xanh tươi hơn'},{e:'🍎',t:'Cây ra rất nhiều quả'}],
-   explain:'Khi trời lạnh và ít nắng, cây không cần lá nhiều nữa nên lá đổi màu và rụng để bảo toàn năng lượng!',fact:'🍂 Lá cây có chất diệp lục giúp chúng hấp thụ ánh sáng mặt trời',diff:'med',cat:'🌿 Thiên nhiên'},
-
-  {type:'CH',scene:{chain:[
-    {e:'☀️',t:'Mặt trời đốt nóng nước biển'},
-    {e:'❓',t:'???'},
-    {e:'🌧️',t:'Mưa rơi xuống'}
-  ]},q:'Điều gì xảy ra ở giữa — trước khi có mưa?',
-   ans:{e:'☁️',t:'Hơi nước bay lên thành mây'},
-   wrong:[{e:'🌊',t:'Biển tràn vào đất liền'},{e:'❄️',t:'Nước đóng băng ngay'},{e:'🌈',t:'Cầu vồng xuất hiện'}],
-   explain:'Nước biển bốc hơi bay lên cao, gặp lạnh thành mây, rồi mưa rơi xuống — đây là vòng tuần hoàn nước!',fact:'💧 Nước trên Trái Đất đã tuần hoàn hàng tỉ năm rồi!',diff:'hard',cat:'🌿 Thiên nhiên'},
-
-  {type:'CE',scene:{e:'🌬️',t:'Gió mạnh thổi liên tục',tag:'Thiên nhiên'},
-   q:'Điều gì sẽ xảy ra với chiếc diều?',
-   ans:{e:'🪁',t:'Diều bay cao lên trời'},
-   wrong:[{e:'💧',t:'Diều bị ướt nước'},{e:'🔥',t:'Diều bị cháy'},{e:'🧊',t:'Diều bị đóng băng'}],
-   explain:'Gió tạo ra lực nâng giúp diều bay lên cao — không có gió thì diều không thể bay!',fact:'🪁 Diều đã được phát minh cách đây hơn 2000 năm ở Trung Quốc',diff:'easy',cat:'🌿 Thiên nhiên'},
-
-  // ===== ĐỘNG VẬT =====
-  {type:'CE',scene:{e:'🐝',t:'Con ong thấy cánh đồng hoa',tag:'Động vật'},
-   q:'Con ong sẽ làm gì?',
-   ans:{e:'🍯',t:'Bay đến hút mật và làm mật ong'},
-   wrong:[{e:'😴',t:'Ngủ trưa trên cánh đồng'},{e:'🏊',t:'Nhảy xuống ao bơi'},{e:'📚',t:'Ngồi đọc sách'}],
-   explain:'Ong hút mật hoa rồi mang về tổ để tạo ra mật ong — đây cũng giúp hoa thụ phấn!',fact:'🐝 Một con ong cần bay thăm 2 triệu bông hoa để làm 0.5kg mật!',diff:'easy',cat:'🐾 Động vật'},
-
-  {type:'EC',scene:{e:'🐻❄️',t:'Gấu Bắc Cực có bộ lông dày và màu trắng',tag:'Động vật'},
-   q:'Tại sao gấu Bắc Cực có lông màu trắng?',
-   ans:{e:'🏔️',t:'Để lẫn vào tuyết trắng, dễ săn mồi'},
-   wrong:[{e:'🛁',t:'Vì nó hay tắm bằng sữa'},{e:'🌞',t:'Vì nó thích ánh nắng'},{e:'🧊',t:'Vì nó ăn nhiều đá'}],
-   explain:'Lông trắng giúp gấu Bắc Cực ngụy trang trong tuyết để tiếp cận con mồi mà không bị phát hiện!',fact:'🐻‍❄️ Thực ra lông gấu Bắc Cực trong suốt — ánh sáng phản chiếu làm nó trông trắng!',diff:'med',cat:'🐾 Động vật'},
-
-  {type:'CE',scene:{e:'🐸',t:'Ếch nghe tiếng sấm và trời mưa',tag:'Động vật'},
-   q:'Ếch sẽ làm gì?',
-   ans:{e:'🎵',t:'Kêu ộp ộp rất to'},
-   wrong:[{e:'😴',t:'Ngủ ngon lành'},{e:'🏃',t:'Chạy trốn vào hang'},{e:'🍕',t:'Đi tìm đồ ăn'}],
-   explain:'Ếch kêu to khi trời mưa vì đây là lúc chúng đi kiếm ăn và gặp nhau — mưa là bữa tiệc của ếch!',fact:'🐸 Ếch uống nước qua da, không phải qua miệng!',diff:'easy',cat:'🐾 Động vật'},
-
-  {type:'CH',scene:{chain:[
-    {e:'🐛',t:'Sâu bướm'},
-    {e:'❓',t:'???'},
-    {e:'🦋',t:'Bướm xinh đẹp'}
-  ]},q:'Giai đoạn ở giữa là gì?',
-   ans:{e:'🫘',t:'Nhộng (kén)'},
-   wrong:[{e:'🥚',t:'Quả trứng'},{e:'🌸',t:'Bông hoa'},{e:'🐞',t:'Con bọ rùa'}],
-   explain:'Sâu bướm tạo kén xung quanh mình, bên trong nó biến đổi hoàn toàn thành con bướm!',fact:'🦋 Quá trình biến đổi này gọi là "lột xác" và mất từ 10 ngày đến vài tuần',diff:'med',cat:'🐾 Động vật'},
-
-  {type:'CE',scene:{e:'🐦',t:'Chim thấy con mèo đang đến gần',tag:'Động vật'},
-   q:'Chim sẽ làm gì?',
-   ans:{e:'✈️',t:'Bay vội lên cao để thoát'},
-   wrong:[{e:'🤝',t:'Chào hỏi con mèo'},{e:'😴',t:'Ngủ yên không động'},{e:'🍽️',t:'Mời mèo cùng ăn'}],
-   explain:'Chim biết mèo là kẻ săn mồi nguy hiểm nên phản xạ đầu tiên là bay đi để tự bảo vệ!',fact:'🐦 Chim có tốc độ phản xạ nhanh hơn con người 3-4 lần!',diff:'easy',cat:'🐾 Động vật'},
-
-  {type:'EC',scene:{e:'🦔',t:'Nhím cuộn tròn lại thành quả bóng gai',tag:'Động vật'},
-   q:'Tại sao nhím lại cuộn tròn?',
-   ans:{e:'🦁',t:'Để bảo vệ mình khỏi kẻ thù'},
-   wrong:[{e:'😴',t:'Để ngủ thoải mái hơn'},{e:'🎮',t:'Để chơi trò lăn'},{e:'🌡️',t:'Vì trời quá nóng'}],
-   explain:'Khi gặp nguy hiểm, nhím cuộn tròn để những chiếc gai nhọn bảo vệ toàn bộ cơ thể mềm bên trong!',fact:'🦔 Nhím có thể có tới 5000 chiếc gai trên mình!',diff:'med',cat:'🐾 Động vật'},
-
-  // ===== CUỘC SỐNG =====
-  {type:'CE',scene:{e:'🍦',t:'Để cây kem dưới nắng nóng',tag:'Cuộc sống'},
-   q:'Điều gì sẽ xảy ra với cây kem?',
-   ans:{e:'💧',t:'Kem chảy ra thành nước'},
-   wrong:[{e:'🧊',t:'Kem đông cứng hơn'},{e:'🌈',t:'Kem đổi màu đẹp hơn'},{e:'🎂',t:'Kem thành bánh sinh nhật'}],
-   explain:'Nhiệt độ nóng làm kem tan chảy — đây là lý do phải ăn kem thật nhanh ngoài nắng!',fact:'🍦 Nhiệt độ làm kem chảy chỉ cần vài phút dưới ánh nắng mặt trời',diff:'easy',cat:'🏠 Cuộc sống'},
-
-  {type:'CE',scene:{e:'🌱',t:'Không tưới nước cho cây nhiều ngày',tag:'Cuộc sống'},
-   q:'Cây sẽ trở nên như thế nào?',
-   ans:{e:'🥀',t:'Cây héo và lá rủ xuống'},
-   wrong:[{e:'🌳',t:'Cây to lớn hơn nhiều'},{e:'🌸',t:'Cây ra hoa rất đẹp'},{e:'💪',t:'Cây mạnh khỏe hơn'}],
-   explain:'Cây cần nước để sống — không có nước, cây không thể tự đứng thẳng và sẽ héo!',fact:'🌱 Cây cần nước để vận chuyển chất dinh dưỡng lên các lá',diff:'easy',cat:'🏠 Cuộc sống'},
-
-  {type:'CE',scene:{e:'🙌',t:'Con rửa tay sạch trước khi ăn',tag:'Cuộc sống'},
-   q:'Việc rửa tay giúp ích gì?',
-   ans:{e:'🦠❌',t:'Tiêu diệt vi khuẩn gây bệnh'},
-   wrong:[{e:'😴',t:'Giúp con ngủ ngon hơn'},{e:'🏃',t:'Giúp con chạy nhanh hơn'},{e:'🎨',t:'Giúp tay vẽ đẹp hơn'}],
-   explain:'Tay tiếp xúc với nhiều thứ mang vi khuẩn — rửa tay giúp loại bỏ chúng trước khi ăn!',fact:'🤲 Rửa tay đúng cách là rửa ít nhất 20 giây với xà phòng',diff:'easy',cat:'🏠 Cuộc sống'},
-
-  {type:'EC',scene:{e:'😬',t:'Bé bị đau răng và phải đi gặp nha sĩ',tag:'Cuộc sống'},
-   q:'Điều gì có thể đã dẫn đến tình huống này?',
-   ans:{e:'🍬',t:'Ăn nhiều kẹo ngọt mà không đánh răng'},
-   wrong:[{e:'📚',t:'Đọc sách quá nhiều'},{e:'🏃',t:'Chạy nhảy quá mạnh'},{e:'🎵',t:'Hát to quá nhiều'}],
-   explain:'Vi khuẩn trong miệng ăn đường từ kẹo và tạo ra axit phá hủy men răng, gây sâu răng!',fact:'🦷 Đánh răng 2 lần mỗi ngày giúp bảo vệ răng khỏi vi khuẩn',diff:'med',cat:'🏠 Cuộc sống'},
-
-  {type:'CH',scene:{chain:[
-    {e:'📚',t:'Đọc sách mỗi ngày'},
-    {e:'❓',t:'???'},
-    {e:'🧠',t:'Trở nên thông minh hơn'}
-  ]},q:'Điều gì xảy ra ở giữa?',
-   ans:{e:'💡',t:'Học được nhiều điều mới'},
-   wrong:[{e:'😴',t:'Buồn ngủ hơn nhiều'},{e:'🏋️',t:'Cơ bắp to hơn'},{e:'🍕',t:'Thấy đói bụng hơn'}],
-   explain:'Đọc sách giúp não học từ mới, ý tưởng mới, và kết nối các kiến thức lại với nhau!',fact:'📚 Đọc sách 20 phút mỗi ngày giúp học được hơn 1 triệu từ mỗi năm!',diff:'med',cat:'🏠 Cuộc sống'},
-
-  {type:'CE',scene:{e:'🏃',t:'Con tập thể dục và chạy nhảy mỗi ngày',tag:'Cuộc sống'},
-   q:'Điều tốt gì xảy ra với cơ thể?',
-   ans:{e:'💪',t:'Cơ thể khỏe mạnh và cơ bắp to hơn'},
-   wrong:[{e:'😴',t:'Luôn buồn ngủ hơn'},{e:'🤧',t:'Hay bị ốm hơn'},{e:'📉',t:'Trở nên yếu hơn'}],
-   explain:'Khi vận động, tim đập mạnh hơn, cơ bắp được rèn luyện và cơ thể tiết ra hormone giúp vui vẻ!',fact:'🏃 Trẻ em nên vận động ít nhất 60 phút mỗi ngày',diff:'easy',cat:'🏠 Cuộc sống'},
-
-  // ===== THỜI TIẾT =====
-  {type:'CE',scene:{e:'❄️',t:'Nhiệt độ xuống rất thấp, trời lạnh buốt',tag:'Thời tiết'},
-   q:'Điều gì có thể xảy ra với nước?',
-   ans:{e:'🧊',t:'Nước đóng thành băng'},
-   wrong:[{e:'☁️',t:'Nước bay lên thành mây'},{e:'🌊',t:'Nước chảy thành sóng lớn'},{e:'🌈',t:'Nước đổi màu thành cầu vồng'}],
-   explain:'Khi nhiệt độ xuống dưới 0°C, các phân tử nước chuyển động chậm lại và liên kết thành băng cứng!',fact:'🧊 Nước là chất hiếm hoi nở ra khi đóng băng — đó là sao băng nhẹ hơn nước',diff:'med',cat:'🌦️ Thời tiết'},
-
-  {type:'EC',scene:{e:'🌪️',t:'Có lốc xoáy mạnh đang đến gần',tag:'Thời tiết'},
-   q:'Con người nên làm gì ngay lập tức?',
-   ans:{e:'🏠',t:'Vào nhà và xuống tầng hầm ngay'},
-   wrong:[{e:'📸',t:'Đứng ngoài chụp ảnh'},{e:'🏃',t:'Chạy ra đồng trống'},{e:'🌳',t:'Trèo lên cây cao'}],
-   explain:'Tầng hầm hoặc phòng không có cửa sổ là nơi an toàn nhất — lốc xoáy có thể hất bay người!',fact:'🌪️ Lốc xoáy có thể đạt tốc độ 480 km/h — nhanh hơn xe đua F1!',diff:'hard',cat:'🌦️ Thời tiết'},
-
-  {type:'CE',scene:{e:'☀️🌡️',t:'Trời nắng to, nhiệt độ rất cao',tag:'Thời tiết'},
-   q:'Con nên làm gì để không bị say nắng?',
-   ans:{e:'💧🧢',t:'Uống nhiều nước và đội mũ'},
-   wrong:[{e:'🏃',t:'Chạy nhanh ra nắng thật nhiều'},{e:'🧊',t:'Ăn thật nhiều đá lạnh'},{e:'😴',t:'Ngủ ngoài trời nắng'}],
-   explain:'Uống nước bù lại lượng mồ hôi mất đi, mũ che nắng bảo vệ đầu khỏi nhiệt — hai thứ quan trọng nhất!',fact:'☀️ Cơ thể có thể mất đến 1 lít nước mỗi giờ khi ở ngoài nắng',diff:'easy',cat:'🌦️ Thời tiết'},
-
-  // ===== KHOA HỌC VUI =====
-  {type:'CE',scene:{e:'🎈',t:'Thả bóng bay ra ngoài tay',tag:'Khoa học'},
-   q:'Bóng bay sẽ làm gì?',
-   ans:{e:'⬆️',t:'Bay lên cao và xa dần'},
-   wrong:[{e:'⬇️',t:'Rơi xuống đất ngay'},{e:'🔄',t:'Quay vòng tại chỗ'},{e:'💥',t:'Nổ ngay lập tức'}],
-   explain:'Bóng bay chứa khí heli nhẹ hơn không khí, nên nó bị đẩy lên cao bởi không khí xung quanh!',fact:'🎈 Bóng bay sẽ tiếp tục bay lên đến khi áp suất ngoài làm nó nổ — thường ở 8km so với mặt đất!',diff:'easy',cat:'🔬 Khoa học'},
-
-  {type:'EC',scene:{e:'🧲',t:'Nam châm hút được đinh sắt',tag:'Khoa học'},
-   q:'Tại sao nam châm hút được đinh sắt?',
-   ans:{e:'⚡',t:'Đinh sắt có tính từ, bị lực từ hút'},
-   wrong:[{e:'🍯',t:'Vì đinh sắt có chất keo bên trong'},{e:'🌊',t:'Vì nước giúp chúng dính lại'},{e:'🔥',t:'Vì nhiệt độ cao làm chúng gắn lại'}],
-   explain:'Nam châm tạo ra từ trường, và sắt là kim loại có tính từ — chúng bị lực từ kéo lại với nhau!',fact:'🧲 Nam châm mạnh nhất thế giới mạnh hơn nam châm thông thường 300.000 lần!',diff:'hard',cat:'🔬 Khoa học'},
-
-  {type:'CH',scene:{chain:[
-    {e:'🌱',t:'Hạt giống'},
-    {e:'❓',t:'???'},
-    {e:'🍎',t:'Cây táo sai quả'}
-  ]},q:'Điều gì cần xảy ra ở giữa?',
-   ans:{e:'☀️💧',t:'Cần ánh sáng, nước và thời gian'},
-   wrong:[{e:'🎵',t:'Cho cây nghe nhạc mỗi ngày'},{e:'🎨',t:'Vẽ quả lên cây'},{e:'🛒',t:'Mua quả rồi gắn vào'}],
-   explain:'Cây cần ánh sáng để quang hợp, nước để vận chuyển chất dinh dưỡng, và thời gian để lớn và ra quả!',fact:'🍎 Cây táo mất 4-10 năm mới bắt đầu ra quả lần đầu tiên!',diff:'med',cat:'🔬 Khoa học'},
-
-  {type:'CE',scene:{e:'🕯️',t:'Thắp nến trong phòng tối',tag:'Khoa học'},
-   q:'Điều gì xảy ra với căn phòng?',
-   ans:{e:'💡',t:'Phòng sáng lên, có thể thấy mọi thứ'},
-   wrong:[{e:'🌑',t:'Phòng tối hơn nữa'},{e:'❄️',t:'Phòng trở nên lạnh hơn'},{e:'💨',t:'Gió thổi mạnh vào phòng'}],
-   explain:'Nến tạo ra ánh sáng từ phản ứng đốt cháy — ánh sáng lan ra mọi hướng giúp ta nhìn thấy!',fact:'🕯️ Ánh sáng từ nến truyền đi với tốc độ 300.000 km/giây!',diff:'easy',cat:'🔬 Khoa học'},
-
-  // Extra variety
-  {type:'CE',scene:{e:'🎸',t:'Gảy dây đàn guitar mạnh',tag:'Âm nhạc'},
-   q:'Điều gì xảy ra với dây đàn?',
-   ans:{e:'〰️',t:'Dây rung và tạo ra âm thanh'},
-   wrong:[{e:'🔥',t:'Dây đàn bắt lửa'},{e:'💧',t:'Dây đàn chảy nước'},{e:'🌈',t:'Dây đàn đổi màu'}],
-   explain:'Khi gảy, dây đàn rung rất nhanh, tạo ra sóng âm lan qua không khí đến tai chúng ta!',fact:'🎸 Dây đàn guitar có thể rung 400 lần mỗi giây để tạo ra một nốt nhạc!',diff:'easy',cat:'🎵 Âm nhạc'},
-
-  {type:'EC',scene:{e:'🥁',t:'Trống kêu bùm bùm rất to',tag:'Âm nhạc'},
-   q:'Bằng cách nào tạo ra âm thanh như vậy?',
-   ans:{e:'🥢',t:'Dùi đánh vào mặt trống làm nó rung'},
-   wrong:[{e:'💨',t:'Thổi gió vào lỗ trống'},{e:'💧',t:'Đổ nước vào trong trống'},{e:'🔥',t:'Đốt lửa gần trống'}],
-   explain:'Dùi đánh vào mặt trống làm màng da căng rung lên, rung động này tạo ra sóng âm mạnh!',fact:'🥁 Sóng âm từ trống có thể cảm nhận được qua da thịt, không chỉ qua tai!',diff:'med',cat:'🎵 Âm nhạc'},
+  // --- MỨC ĐỘ: KHÓ (HARD) ---
+  {type:'CH',scene:{chain:[{e:'☀️🌊',t:'Nắng làm nóng nước biển'},{e:'❓',t:'???'},{e:'🌧️',t:'Mưa rơi xuống'}]},q:'Quá trình nào nằm ở giữa?',ans:{e:'☁️',t:'Nước bốc hơi tạo thành mây'},wrong:[{e:'❄️',t:'Đóng băng ngay'},{e:'🌈',t:'Cầu vồng'},{e:'🌪️',t:'Lốc xoáy'}],explain:'Nước bốc hơi bay lên cao, gặp lạnh ngưng tụ thành mây rồi rơi xuống thành mưa.',fact:'💧 Vòng tuần hoàn nước trên Trái Đất đã lặp lại hàng tỉ năm qua.',diff:'hard',cat:'🌦️ Thời tiết'},
+  {type:'EC',scene:{e:'🌪️',t:'Lốc xoáy cực mạnh đang ập đến',tag:'An toàn'},q:'Con người phải làm gì để an toàn?',ans:{e:'🏠',t:'Trốn xuống hầm trú ẩn'},wrong:[{e:'📸',t:'Đứng chụp hình'},{e:'🏃',t:'Chạy ra đồng'},{e:'🌳',t:'Trèo lên cây'}],explain:'Lốc xoáy có sức hút cực lớn, trốn dưới lòng đất hoặc hầm là an toàn nhất.',fact:'🌪️ Lốc xoáy có thể xoay với tốc độ ngang ngửa xe đua Thể thức 1!',diff:'hard',cat:'🌦️ Thời tiết'},
+  {type:'EC',scene:{e:'🧲',t:'Nam châm hút chặt chiếc đinh',tag:'Vật lý'},q:'Tại sao nam châm hút được đinh?',ans:{e:'⚡',t:'Vì đinh làm bằng sắt (có từ tính)'},wrong:[{e:'🍯',t:'Vì có keo dán'},{e:'🌊',t:'Vì bị ướt'},{e:'🔥',t:'Vì quá nóng'}],explain:'Nam châm có từ trường vô hình, nó sẽ kéo các vật bằng sắt, thép về phía mình.',fact:'🧲 Trái Đất của chúng ta cũng là một khối nam châm khổng lồ!',diff:'hard',cat:'🔬 Khoa học'},
+  {type:'CH',scene:{chain:[{e:'🌱',t:'Hạt giống nhỏ'},{e:'❓',t:'???'},{e:'🍎',t:'Cây táo sai quả'}]},q:'Điều kiện quan trọng ở giữa là gì?',ans:{e:'☀️💧',t:'Cần ánh sáng, nước và thời gian'},wrong:[{e:'🎵',t:'Bật nhạc cho nghe'},{e:'🎨',t:'Tô màu lên cây'},{e:'🛒',t:'Ra siêu thị mua'}],explain:'Cây cần Quang hợp (nhờ nắng) và Dinh dưỡng (nhờ nước) để lớn lên.',fact:'🍎 Một cây táo cần 4 đến 10 năm mới bắt đầu ra quả!',diff:'hard',cat:'🌿 Thực vật'},
+  {type:'EC',scene:{e:'👤',t:'Đứng dưới nắng thấy có bóng đen (bóng râm)',tag:'Vật lý'},q:'Tại sao lại xuất hiện bóng râm?',ans:{e:'☀️🧱',t:'Vì cơ thể cản ánh sáng mặt trời'},wrong:[{e:'🎨',t:'Vì có người vẽ ra'},{e:'👻',t:'Đó là bóng ma'},{e:'💨',t:'Do gió thổi tạo thành'}],explain:'Ánh sáng đi theo đường thẳng, khi bị con người che lại sẽ tạo ra vùng tối ở sau (bóng râm).',fact:'🌑 Bóng của bạn sẽ dài nhất vào buổi sáng sớm và chiều muộn!',diff:'hard',cat:'🔬 Khoa học'},
+  {type:'CH',scene:{chain:[{e:'🚲',t:'Xe đạp xẹp lốp (hết hơi)'},{e:'❓',t:'???'},{e:'🚴',t:'Đạp xe chạy bon bon'}]},q:'Cần làm gì ở giữa?',ans:{e:'💨',t:'Dùng bơm bơm đầy không khí'},wrong:[{e:'💧',t:'Đổ nước vào lốp'},{e:'🔥',t:'Hơ lửa lốp xe'},{e:'🍬',t:'Nhét kẹo vào lốp'}],explain:'Không khí được nén vào trong lốp cao su giúp bánh xe căng tròn và lăn được.',fact:'💨 Không khí vô hình nhưng lại có sức nâng rất lớn.',diff:'hard',cat:'🏠 Đời sống'},
+  {type:'EC',scene:{e:'😬',t:'Bé bị đau răng sâu phải đi bác sĩ',tag:'Sức khỏe'},q:'Nguyên nhân nào gây ra răng sâu?',ans:{e:'🍬',t:'Ăn kẹo nhiều, không đánh răng'},wrong:[{e:'📚',t:'Học bài quá lâu'},{e:'🏃',t:'Chạy bộ quá sức'},{e:'🎵',t:'Hát quá to'}],explain:'Vi khuẩn trong miệng ăn đường và tiết ra Axit làm thủng men răng của bé.',fact:'🦷 Đánh răng 2 lần mỗi ngày đánh bay vi khuẩn sâu răng!',diff:'hard',cat:'🏠 Đời sống'},
+  {type:'CH',scene:{chain:[{e:'🧊',t:'Cục đá lạnh'},{e:'💧',t:'Thành Nước lỏng'},{e:'❓',t:'???'}]},q:'Nếu đun sôi tiếp, nước lỏng biến thành gì?',ans:{e:'☁️',t:'Hơi nước bay lên'},wrong:[{e:'🪨',t:'Thành hòn đá'},{e:'🔥',t:'Bốc cháy'},{e:'🌈',t:'Thành cầu vồng'}],explain:'Khi bị đun rất nóng (100 độ), nước lỏng sẽ sôi và bốc hơi lên không khí.',fact:'♨️ Hơi nước nóng có thể làm bỏng tay, nên bé phải cẩn thận nhé!',diff:'hard',cat:'🔬 Khoa học'},
+  {type:'CE',scene:{e:'🕯️',t:'Thắp nến rồi úp ly thủy tinh kín lên',tag:'Khoa học'},q:'Điều gì sẽ xảy ra với ngọn nến?',ans:{e:'💨',t:'Nến tắt vì hết không khí (Oxy)'},wrong:[{e:'💥',t:'Ly bị nổ tung'},{e:'🔥',t:'Nến cháy to hơn'},{e:'🌈',t:'Lửa đổi sang màu xanh'}],explain:'Lửa cần có khí Oxy để cháy. Khi bị úp ly kín, Oxy cạn kiệt thì lửa tắt ngay.',fact:'🔥 Trong không gian vũ trụ không có Oxy, nên không thể đốt lửa!',diff:'hard',cat:'🔬 Khoa học'},
+  {type:'CH',scene:{chain:[{e:'🔴',t:'Màu Đỏ'},{e:'❓',t:'???'},{e:'🟣',t:'Thành Màu Tím'}]},q:'Cần trộn thêm màu gì?',ans:{e:'🔵',t:'Trộn với Màu Xanh dương'},wrong:[{e:'🟡',t:'Trộn Màu Vàng'},{e:'⚫',t:'Trộn Màu Đen'},{e:'⚪',t:'Trộn Màu Trắng'}],explain:'Màu Đỏ (Red) pha với Xanh dương (Blue) luôn tạo ra Màu Tím (Purple)!',fact:'🎨 Những họa sĩ tài ba chỉ cần 3 màu gốc để vẽ được cả thế giới.',diff:'hard',cat:'🎨 Nghệ thuật'}
 ];
 
 /* ============================================================
@@ -462,7 +297,6 @@ const QS = [
    ============================================================ */
 let diff='easy', score=0, qNum=0, TOTAL=10, answered=false, pool=[];
 const $=id=>document.getElementById(id);
-const pick=a=>a[Math.floor(Math.random()*a.length)];
 const shuffle=a=>{const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;};
 function show(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));$(id).classList.add('on');}
 
@@ -473,12 +307,15 @@ function goStart(){show('start');}
    GAME FLOW
    ============================================================ */
 function startGame(){
-  score=0;qNum=0;answered=false;
-  // build pool
-  const diffMap={easy:['easy'],med:['easy','med'],hard:['easy','med','hard']};
-  const allowed=diffMap[diff];
-  pool=shuffle(QS.filter(q=>allowed.includes(q.diff)));
-  if(pool.length<TOTAL){while(pool.length<TOTAL)pool.push(...shuffle(QS.filter(q=>allowed.includes(q.diff))));}
+  score=0; qNum=0; answered=false;
+  
+  // LOGIC MỚI: Chỉ lấy đúng câu hỏi của mức độ đã chọn, không bị trộn lẫn
+  const filteredQS = QS.filter(q => q.diff === diff);
+  pool = shuffle(filteredQS);
+  
+  // Lấy tối đa 10 câu (Nếu pool ít hơn 10 thì lấy tất cả)
+  TOTAL = Math.min(10, pool.length);
+  
   show('game');
   nextQ();
 }
@@ -513,7 +350,6 @@ function renderQuestion(q){
   const sw=$('story-wrap');
   sw.innerHTML='';
   if(q.type==='CH'){
-    // chain row
     const crow=document.createElement('div');crow.className='chain-row';
     q.scene.chain.forEach((cell,i)=>{
       if(i>0){const a=document.createElement('div');a.className='chain-arr';a.textContent='→';crow.appendChild(a);}
@@ -526,7 +362,6 @@ function renderQuestion(q){
     });
     sw.appendChild(crow);
   } else {
-    // single panel
     const sp=document.createElement('div');sp.className='story-panel';
     sp.innerHTML=`<div class="sp-emoji">${q.scene.e}</div><div class="sp-text"><div class="sp-label">${q.type==='CE'?'Nguyên nhân:':'Kết quả:'}</div><div class="sp-main">${q.scene.t}</div>${q.scene.tag?`<div class="sp-tag">${q.scene.tag}</div>`:''}</div>`;
     sw.appendChild(sp);
@@ -541,7 +376,10 @@ function renderQuestion(q){
   opts.forEach(opt=>{
     const btn=document.createElement('div');btn.className='opt';
     btn.innerHTML=`<div class="ob">${opt.correct?'✓':'✗'}</div><div class="oe">${opt.e}</div><div class="ot">${opt.t}</div>`;
-    btn.addEventListener('pointerdown',e=>{e.preventDefault();selectOpt(opt,btn);},{passive:false});
+    
+    /* FIX IPAD: Dùng onclick thuần thay vì pointerdown & preventDefault */
+    btn.onclick = () => selectOpt(opt,btn);
+    
     og.appendChild(btn);
   });
 }
@@ -554,7 +392,6 @@ function selectOpt(opt,btn){
     answered=true;
     btn.classList.add('correct');
     document.querySelectorAll('.opt').forEach(b=>{if(b!==btn)b.classList.add('dimmed');});
-    // fill chain missing cell
     if(currentQ.type==='CH'){
       const mc=$('chain-missing');
       if(mc){mc.className='chain-cell fill-ok';mc.innerHTML=`<div class="cc-e">${opt.e}</div><div class="cc-t">${opt.t}</div>`;}
@@ -562,7 +399,6 @@ function selectOpt(opt,btn){
     score++;
     confetti();
     $('fb-msg').textContent='Đúng rồi! Thông minh quá! 🎉';$('fb-msg').className='fb-msg ok';
-    // show explanation
     $('explain-p').textContent=currentQ.explain;
     $('explain-fact').textContent=currentQ.fact||'';
     $('explain-box').style.display='block';
@@ -605,11 +441,6 @@ function endGame(){
   $('res-big').textContent=score+' / '+TOTAL;
   confetti();if(pct>=.7)setTimeout(confetti,400);
 }
-
-/* prevent iOS double-tap zoom */
-document.addEventListener('touchend',e=>{
-  if(e.target.closest('.opt,.go-btn,.pill,.btn-next,.rb,.btn-back'))e.preventDefault();
-},{passive:false});
 </script>
 </body>
 </html>
